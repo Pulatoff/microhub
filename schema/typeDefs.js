@@ -21,6 +21,8 @@ const typeDefs = gql`
   }
 
   input CreateConsumer {
+    weight: Weight!
+    height: Height!
     favorite_foods: [String]!
     least_favorite_foods: [String]!
     allergies: [String]!
@@ -40,11 +42,23 @@ const typeDefs = gql`
 
   input Programm {
     course: Coure!
-    user_id: ID!
     food_id: ID!
     quantity_id: ID!
     serving_id: ID!
   }
+
+  input Dairy {
+    programm_id: ID!
+    course: Coure!
+    food_id: ID!
+    quantity_id: ID!
+    serving_id: ID!
+  }
+
+  input Version {
+    category: String
+  }
+  # only admin input category version
 
   type User {
     id: ID!
@@ -124,6 +138,7 @@ const typeDefs = gql`
   }
 
   type Dairy {
+    food_id: ID!
     quantity_id: Int!
     serving_id: Int!
     course: Coure!
@@ -131,6 +146,7 @@ const typeDefs = gql`
   }
 
   type Programm {
+    food_id: ID!
     quantity_id: Int!
     serving_id: Int!
     course: Coure!
