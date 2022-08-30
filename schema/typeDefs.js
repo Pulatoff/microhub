@@ -1,6 +1,32 @@
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
+  type Query {
+    users: [User!]!
+  }
+
+  input Register {
+    name: String!
+    password: String!
+    passwordConfirm: String!
+    photo: String
+    email: String!
+    phone: String!
+    role: String!
+  }
+
+  input Login {
+    login: String!
+    password: String!
+  }
+
+  input CreateConsumer {
+    favorite_foods: [String!]!
+    least_favorite_foods: [String!]!
+    user_id: ID!
+    status: ID!
+  }
+
   type User {
     id: ID!
     login: String!
@@ -23,6 +49,7 @@ const typeDefs = gql`
     kg
     lb
   }
+
   type Weight {
     measure: WeightMeasure!
     weight: Int!
@@ -103,10 +130,6 @@ const typeDefs = gql`
     status: Boolean!
     consumer: [Consumer]!
     link: String!
-  }
-
-  type Query {
-    users: [User!]!
   }
 `;
 
