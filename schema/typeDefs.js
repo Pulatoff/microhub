@@ -21,10 +21,29 @@ const typeDefs = gql`
   }
 
   input CreateConsumer {
-    favorite_foods: [String!]!
-    least_favorite_foods: [String!]!
+    favorite_foods: [String]!
+    least_favorite_foods: [String]!
+    allergies: [String]!
     user_id: ID!
     status: ID!
+  }
+
+  input Goals {
+    user_id: ID!
+    protein: String!
+    carbohydrates: String!
+    fats: String!
+    colories: String!
+    start_date: String!
+    end_date: String!
+  }
+
+  input Programm {
+    course: Coure!
+    user_id: ID!
+    food_id: ID!
+    quantity_id: ID!
+    serving_id: ID!
   }
 
   type User {
@@ -69,8 +88,9 @@ const typeDefs = gql`
     id: ID!
     weight: Weight!
     height: Height!
-    favorite_foods: [String!]!
-    least_favorite_foods: [String!]!
+    allergies: [String]!
+    favorite_foods: [String]!
+    least_favorite_foods: [String]!
     user: User!
     dairy: [Dairy]!
     goals: [Goals]!
