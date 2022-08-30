@@ -91,13 +91,17 @@ const typeDefs = gql`
 
   enum Coure {
     Breakfast
+    Brunch
+    Lunch
+    Snacks
+    Dinner
   }
 
   type Personal_Trainer {
     user: User!
     programms: [Programm]!
     status: Boolean!
-    consumer: [Consumer!]!
+    consumer: [Consumer]!
     link: String!
   }
 
