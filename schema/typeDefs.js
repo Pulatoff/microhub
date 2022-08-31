@@ -98,8 +98,16 @@ const typeDefs = gql`
     measure: HeightMeasure!
   }
 
+  # schema for consumer schema
+  type Body_fat {
+    lean_body_mass: Float!
+    body_fat: Float!
+    body_fat_pct: Float!
+  }
+
   type Consumer {
     id: ID!
+    body_fat: Body_fat!
     weight: Weight!
     height: Height!
     allergies: [String]!
@@ -112,6 +120,7 @@ const typeDefs = gql`
     status: Status!
   }
 
+  # enum for consumer schema
   enum Activity_level {
     # "Sendentary: Little or No Exercise, Desk Job"  === 1.2
     sendentary
