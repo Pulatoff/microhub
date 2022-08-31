@@ -108,7 +108,25 @@ const typeDefs = gql`
     user: User!
     dairy: [Dairy]!
     goals: [Goals]!
+    activity_level: Activity_level!
     status: Status!
+  }
+
+  enum Activity_level {
+    # "Sendentary: Little or No Exercise, Desk Job"  === 1.2
+    sendentary
+
+    # "Lightly Active: Light exercise, Sports 1-3 days/week"  === 1.375
+    lightly_active
+
+    # "Moderate Active: Moderate exercise, Sports 3-5 days/week" === 1.55
+    modarate_active
+
+    # "Very Active: Heavy Exercise, Sports 6-7 days/week" === 1.725
+    very_active
+
+    # "Extremely Active: Exercise, Sports several times per day" === 1.9
+    extrmely_active
   }
 
   type Status {
