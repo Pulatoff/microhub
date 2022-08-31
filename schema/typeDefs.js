@@ -57,9 +57,10 @@ const typeDefs = gql`
 
   input createVersion {
     category: String!
+    # only admin input category version
   }
-  # only admin input category version
 
+  # user schema main info
   type User {
     id: ID!
     login: String!
@@ -69,8 +70,16 @@ const typeDefs = gql`
     email: String!
     role: Role
     phone: String!
+    gender: Gender!
   }
 
+  # enum for user schema gender field
+  enum Gender {
+    male
+    female
+  }
+
+  # enum to user schema field role
   enum Role {
     Admin
     Personal
@@ -78,6 +87,7 @@ const typeDefs = gql`
     Consumer
   }
 
+  # enum for consumer schema weight field
   enum WeightMeasure {
     kg
     lb
