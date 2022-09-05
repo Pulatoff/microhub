@@ -155,7 +155,11 @@ const typeDefs = gql`
   # food preferenses consumers
   enum Preferenses {
     diet
-    food
+    standard
+    vegetarian
+    lacto_vegetarian
+    ovo_vegetarian
+    vegan
     gluten_free
     halal
     kosher
