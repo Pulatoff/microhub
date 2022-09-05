@@ -5,60 +5,60 @@ const typeDefs = gql`
     users: [User!]!
   }
 
-  input Register {
-    name: String!
-    password: String!
-    passwordConfirm: String!
-    photo: String
-    email: String!
-    phone: String!
-    role: String!
-  }
+  # input Register {
+  #   name: String!
+  #   password: String!
+  #   passwordConfirm: String!
+  #   photo: String
+  #   email: String!
+  #   phone: String!
+  #   role: String!
+  # }
 
-  input Login {
-    login: String!
-    password: String!
-  }
+  # input Login {
+  #   login: String!
+  #   password: String!
+  # }
 
-  input CreateConsumer {
-    weight: String!
-    height: String!
-    favorite_foods: [String]!
-    least_favorite_foods: [String]!
-    allergies: [String]!
-    user_id: ID!
-    status: ID!
-  }
+  # input CreateConsumer {
+  #   weight: String!
+  #   height: String!
+  #   favorite_foods: [String]!
+  #   least_favorite_foods: [String]!
+  #   allergies: [String]!
+  #   user_id: ID!
+  #   status: ID!
+  # }
 
-  input createGoal {
-    user_id: ID!
-    protein: String!
-    carbohydrates: String!
-    fats: String!
-    colories: String!
-    start_date: String!
-    end_date: String!
-  }
+  # input createGoal {
+  #   user_id: ID!
+  #   protein: String!
+  #   carbohydrates: String!
+  #   fats: String!
+  #   colories: String!
+  #   start_date: String!
+  #   end_date: String!
+  # }
 
-  input createProgramm {
-    course: Coure!
-    food_id: ID!
-    quantity_id: ID!
-    serving_id: ID!
-  }
+  # input createProgramm {
+  #   course: Coure!
+  #   food_id: ID!
+  #   quantity_id: ID!
+  #   serving_id: ID!
+  # }
 
-  input createDairy {
-    programm_id: ID!
-    course: Coure!
-    food_id: ID!
-    quantity_id: ID!
-    serving_id: ID!
-  }
+  # input createDairy {
+  #   programm_id: ID!
+  #   course: Coure!
+  #   food_id: ID!
+  #   quantity_id: ID!
+  #   serving_id: ID!
+  # }
 
-  input createVersion {
-    category: String!
-    # only admin input category version
-  }
+  # input createVersion {
+  #   category: String!
+  #   # only admin input category version
+  # }
 
   # user schema main info
   type User {
@@ -82,8 +82,8 @@ const typeDefs = gql`
   # enum to user schema field role
   enum Role {
     Admin
-    Personal
-    Trainer
+    Personal_trainer
+    Nutritionist
     Consumer
   }
 
@@ -115,6 +115,20 @@ const typeDefs = gql`
     body_fat_pct: Float!
   }
 
+  # consumer daily targets based on weight and tdee
+  type Daily_targets {
+    daily_calorie: Int!
+    daily_protein: Int!
+    daily_fat: Int!
+    daily_carbs: Int!
+  }
+
+  enum Body_frame {
+    small
+    medium
+    large
+  }
+
   type Consumer {
     id: ID!
     body_fat: Body_fat!
@@ -128,8 +142,27 @@ const typeDefs = gql`
     goals: [Goals]!
     activity_level: Activity_level!
     status: Status!
+    bmi: Float!
+    tdee: Int!
+    daily_targets: Daily_targets!
+    # body frame only enum fields
+    body_frame: Body_frame!
+    colories_burnt: Int!
+    healthy_weight: Float!
+    types_of_preferenses: Preferenses!
   }
 
+  # food preferenses consumers
+  enum Preferenses {
+    diet
+    food
+    gluten_free
+    halal
+    kosher
+    meat
+    pescetarian
+    pollotarian
+  }
   # enum for consumer schema
   enum Activity_level {
     # "Sendentary: Little or No Exercise, Desk Job"  === 1.2
@@ -180,6 +213,7 @@ const typeDefs = gql`
     serving_id: Int!
     course: Coure!
     programm: Programm!
+    createdAt: String!
   }
 
   type Programm {
@@ -187,9 +221,11 @@ const typeDefs = gql`
     quantity_id: Int!
     serving_id: Int!
     course: Coure!
+    createdAt: String!
   }
 
-  enum Coure {
+  # enum for programms schema course field
+  enum Course {
     Breakfast
     Brunch
     Lunch
