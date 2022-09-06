@@ -87,27 +87,6 @@ const typeDefs = gql`
     Consumer
   }
 
-  # enum for consumer schema weight field
-  enum WeightMeasure {
-    kg
-    lb
-  }
-
-  type Weight {
-    measure: WeightMeasure!
-    weight: Int!
-  }
-
-  enum HeightMeasure {
-    cm
-    inch
-  }
-
-  type Height {
-    height: Int!
-    measure: HeightMeasure!
-  }
-
   # schema for consumer schema
   type Body_fat {
     lean_body_mass: Float!
@@ -132,8 +111,8 @@ const typeDefs = gql`
   type Consumer {
     id: ID!
     body_fat: Body_fat!
-    weight: Weight!
-    height: Height!
+    weight: Float!
+    height: Float!
     allergies: [String]!
     favorite_foods: [String]!
     least_favorite_foods: [String]!
@@ -224,7 +203,7 @@ const typeDefs = gql`
     food_id: ID!
     quantity_id: Int!
     serving_id: Int!
-    course: Coure!
+    course: Course!
     createdAt: String!
   }
 
