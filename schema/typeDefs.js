@@ -35,21 +35,21 @@ const typeDefs = gql`
   #   protein: String!
   #   carbohydrates: String!
   #   fats: String!
-  #   colories: String!
+  #   calories: String!
   #   start_date: String!
   #   end_date: String!
   # }
 
-  # input createProgramm {
-  #   course: Coure!
+  # input createprogram {
+  #   course: Course!
   #   food_id: ID!
   #   quantity_id: ID!
   #   serving_id: ID!
   # }
 
   # input createDairy {
-  #   programm_id: ID!
-  #   course: Coure!
+  #   program_id: ID!
+  #   course: Course!
   #   food_id: ID!
   #   quantity_id: ID!
   #   serving_id: ID!
@@ -126,13 +126,13 @@ const typeDefs = gql`
     daily_targets: Daily_targets!
     # body frame only enum fields
     body_frame: Body_frame!
-    colories_burnt: Int!
+    calories_burnt: Int!
     healthy_weight: Float!
-    types_of_preferenses: Preferenses!
+    types_of_preferences: preferences!
   }
 
-  # food preferenses consumers
-  enum Preferenses {
+  # food preferences consumers
+  enum preferences {
     diet
     standard
     vegetarian
@@ -155,7 +155,7 @@ const typeDefs = gql`
     lightly_active
 
     # "Moderate Active: Moderate exercise, Sports 3-5 days/week" === 1.55
-    modarate_active
+    moderate_active
 
     # "Very Active: Heavy Exercise, Sports 6-7 days/week" === 1.725
     very_active
@@ -185,7 +185,7 @@ const typeDefs = gql`
     carbohydrates: String!
     protein: String!
     fats: String!
-    colories: String!
+    calories: String!
     start_date: String!
     end_date: String!
   }
@@ -194,12 +194,12 @@ const typeDefs = gql`
     food_id: ID!
     quantity_id: Int!
     serving_id: Int!
-    course: Coure!
-    programm: Programm!
+    course: Course!
+    program: program!
     createdAt: String!
   }
 
-  type Programm {
+  type program {
     food_id: ID!
     quantity_id: Int!
     serving_id: Int!
@@ -207,7 +207,7 @@ const typeDefs = gql`
     createdAt: String!
   }
 
-  # enum for programms schema course field
+  # enum for programs schema course field
   enum Course {
     Breakfast
     Brunch
@@ -218,7 +218,7 @@ const typeDefs = gql`
 
   type Personal_Trainer {
     user: User!
-    programms: [Programm]!
+    programs: [program]!
     status: Boolean!
     consumer: [Consumer]!
     link: String!
