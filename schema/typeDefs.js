@@ -72,6 +72,7 @@ const typeDefs = gql`
     role: Role!
     phone: String!
     gender: Gender!
+    createdAt: String!
   }
 
   # enum for user schema gender field
@@ -130,6 +131,7 @@ const typeDefs = gql`
     calories_burnt: Int!
     healthy_weight: Float!
     types_of_preferences: preferences!
+    createdAt: String!
   }
 
   # food preferences consumers
@@ -169,11 +171,13 @@ const typeDefs = gql`
     id: ID!
     expires_date: String!
     version: Version!
+    createdAt: String!
   }
 
   type Version {
     id: ID!
     category: Category!
+    createdAt: String!
   }
 
   enum Category {
@@ -187,23 +191,29 @@ const typeDefs = gql`
     protein: String!
     fats: String!
     calories: String!
+    consumer: Consumer!
     start_date: String!
     end_date: String!
+    createdAt: String!
   }
 
   type Dairy {
-    food_id: ID!
-    quantity_id: Int!
-    serving_id: Int!
+    id: ID!
+    food_id: String!
+    quantity_id: String!
+    serving_id: String!
     course: Course!
     program: program!
+    user: Consumer!
     createdAt: String!
   }
 
   type program {
+    id: ID!
     food_id: ID!
     quantity_id: Int!
     serving_id: Int!
+    nutritionist: Personal_Trainer!
     course: Course!
     createdAt: String!
   }
@@ -218,11 +228,13 @@ const typeDefs = gql`
   }
 
   type Personal_Trainer {
+    id: ID!
     user: User!
     programs: [program]!
     status: Boolean!
     consumer: [Consumer]!
     link: String!
+    createdAt: String!
   }
 `;
 
