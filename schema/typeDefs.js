@@ -64,11 +64,12 @@ const typeDefs = gql`
   type User {
     id: ID!
     login: String!
-    name: String!
+    first_name: String!
+    last_name: String!
     password: String!
     photo: String!
     email: String!
-    role: Role
+    role: Role!
     phone: String!
     gender: Gender!
   }
