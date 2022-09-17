@@ -1,6 +1,6 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../configs/db");
-
+const Program = require("../models/programModel");
 const Dairy = sequelize.define("dairies", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   course: {
@@ -16,7 +16,7 @@ const Dairy = sequelize.define("dairies", {
   program_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: { model: "programs", key: "id" },
+    references: { model: Program, key: "id" },
   },
 });
 
