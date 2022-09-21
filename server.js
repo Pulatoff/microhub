@@ -1,15 +1,15 @@
-require("dotenv").config({});
-const { ApolloServer } = require("apollo-server");
-const { resolvers } = require("./schema/resolvers");
-const { typeDefs } = require("./schema/typeDefs");
-const sequlize = require("./configs/db");
+require('dotenv').config({})
+const { ApolloServer } = require('apollo-server')
+const resolvers = require('./schema/resolvers')
+const { typeDefs } = require('./schema/typeDefs')
+const sequlize = require('./configs/db')
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+    typeDefs,
+    resolvers,
+})
 
-sequlize.sync();
+sequlize.sync()
 
 server.listen().then(({ url }) => {
-  console.log(`Server running in: ${url}`);
-});
+    console.log(`Server running in: ${url}`)
+})
