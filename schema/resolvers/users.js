@@ -2,6 +2,7 @@ const User = require('../../models/userModel')
 const { ApolloError } = require('apollo-server-errors')
 const bcrypt = require('bcryptjs')
 const createJwt = require('../../utils/createJWT')
+const protect = require('../../utils/protect')
 
 module.exports = {
     Query: {
@@ -9,19 +10,17 @@ module.exports = {
             return []
         },
     },
+
     Mutation: {
         register: async (
             _,
-            { register: { first_name, last_name, email, password, passwordConfirm, phone, photo } }
+            { register: { first_name, last_name, email, password, passwordConfirm, phone, photo } },
+            { req, res }
         ) => {
             try {
                 // checking email
                 if (!email) throw new Error("Email don't exist")
-                const existUser = await User.findOne({
-                    where: {
-                        email,
-                    },
-                })
+                const existUser = await User.findOne({ where: { email } })
                 if (existUser) throw new Error('this email user exists,Please login')
 
                 // checking password
@@ -32,7 +31,8 @@ module.exports = {
 
                 // creating jwt
                 const accessToken = createJwt(user.id)
-                return user
+                const newUser = Object.assign(user, { accessToken })
+                return newUser
             } catch (error) {
                 return new ApolloError(error.message)
             }
@@ -42,12 +42,21 @@ module.exports = {
                 // checking exist user
                 const oldUser = await User.findOne({ where: { email } })
                 if (!oldUser) throw new Error("User don't exist")
+
                 // checking password
                 const compare = await bcrypt.compare(password, oldUser.password)
                 if (!compare) throw new Error('Entering wrong password')
+
                 // creating jwt
                 const accessToken = createJwt(oldUser.id)
-                return oldUser
+                const user = Object.assign(oldUser, { accessToken })
+                return user
+            } catch (error) {
+                return new ApolloError(error.message)
+            }
+        },
+        updateMe: async (_, { updateMe }) => {
+            try {
             } catch (error) {
                 return new ApolloError(error.message)
             }
