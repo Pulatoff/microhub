@@ -15,10 +15,7 @@ const typeDefs = gql`
         last_name: String!
         password: String!
         passwordConfirm: String!
-        photo: String
         email: String!
-        phone: String
-        role: String!
     }
 
     input Login {

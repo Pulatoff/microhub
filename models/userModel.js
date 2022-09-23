@@ -6,10 +6,7 @@ const User = sequelize.define('users', {
     first_name: { type: DataTypes.STRING, allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
-    photo: {
-        type: DataTypes.STRING,
-        defaultValue: 'default.jpg ',
-    },
+    photo: { type: DataTypes.STRING, defaultValue: 'default.jpg ' },
     email: { type: DataTypes.STRING, allowNull: false },
     role: {
         type: Sequelize.ENUM('admin', 'personal_trainer', 'nutritionist', 'consumer'),
