@@ -21,5 +21,5 @@ const server = new ApolloServer({
 sequlize.sync()
 
 server.listen().then(({ url }) => {
-    console.log(`Server running in: ${url}`)
+    console.log(url)
 })

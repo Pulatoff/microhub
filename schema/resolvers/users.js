@@ -14,7 +14,7 @@ module.exports = {
     Mutation: {
         register: async (
             _,
-            { register: { first_name, last_name, email, password, passwordConfirm, phone, photo } },
+            { register: { first_name, last_name, email, password, passwordConfirm, phone, photo, role } },
             { req, res }
         ) => {
             try {
@@ -27,7 +27,7 @@ module.exports = {
                 if (password !== passwordConfirm) throw new Error('passwords not the same, please try again')
                 const hash = await bcrypt.hash(password, 16)
 
-                const user = await User.create({ first_name, last_name, email, photo, phone, password: hash })
+                const user = await User.create({ first_name, last_name, email, photo, phone, password: hash, role })
 
                 // creating jwt
                 const accessToken = createJwt(user.id)
@@ -61,14 +61,14 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-        checkMe: async (_, _, { req }) => {
-            try {
-                let accessToken
-                if (req.headers.authorization && req.headers.authorization.startWith('Bearer'))
-                    accessToken = req.headers.authorization.split(' ')[1]
-            } catch (error) {
-                return new ApolloError('')
-            }
-        },
+        // checkMe: async (_, _, { req }) => {
+        //     try {
+        //         let accessToken
+        //         if (req.headers.authorization && req.headers.authorization.startWith('Bearer'))
+        //             accessToken = req.headers.authorization.split(' ')[1]
+        //     } catch (error) {
+        //         return new ApolloError('')
+        //     }
+        // },
     },
 }

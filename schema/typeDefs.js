@@ -25,6 +25,7 @@ const typeDefs = gql`
         password: String!
         passwordConfirm: String!
         email: String!
+        role: String!
     }
 
     input Login {
