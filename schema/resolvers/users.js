@@ -61,14 +61,14 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-        checkMe: async (_, _, { req }) => {
-            try {
-                let accessToken
-                if (req.headers.authorization && req.headers.authorization.startWith('Bearer'))
-                    accessToken = req.headers.authorization.split(' ')[1]
-            } catch (error) {
-                return new ApolloError('')
-            }
-        },
+        // checkMe: async (_, {}, { req }) => {
+        //     try {
+        //         let accessToken
+        //         if (req.headers.authorization && req.headers.authorization.startWith('Bearer'))
+        //             accessToken = req.headers.authorization.split(' ')[1]
+        //     } catch (error) {
+        //         return new ApolloError('')
+        //     }
+        // },
     },
 }

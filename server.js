@@ -20,6 +20,6 @@ const server = new ApolloServer({
 
 sequlize.sync()
 
-server.listen().then(({ url }) => {
+server.listen({port:80}).then(({ url }) => {
     console.log(`Server running in: ${url}`)
 })
