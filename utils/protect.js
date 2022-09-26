@@ -2,7 +2,7 @@ const { ApolloError } = require('apollo-server-errors')
 const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 
-const checkUser = async (req) => {
+const checkUser = async ({ req }) => {
     try {
         let token
 
@@ -13,11 +13,9 @@ const checkUser = async (req) => {
 
         // check valid token
         const accessToken = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        if (!accessToken) throw new Error('Expired token, please login ')
 
-        // finding user
-        const user = await User.findByPk(accessToken.id)
-        if (!user) throw new Error('This your is not exist')
-        return user
+        return accessToken
     } catch (error) {
         return new ApolloError(error.message)
     }
