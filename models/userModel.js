@@ -8,7 +8,17 @@ const User = sequelize.define(
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         first_name: { type: DataTypes.STRING, allowNull: false },
         last_name: { type: DataTypes.STRING, allowNull: false },
-        password: { type: DataTypes.STRING, allowNull: false },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: { msg: 'Please provide a password' },
+                len: {
+                    args: [8, 20],
+                    msg: 'The password should be between 8 and 20 characters',
+                },
+            },
+        },
         photo: { type: DataTypes.STRING, defaultValue: 'default.jpg ' },
         email: {
             type: DataTypes.STRING,

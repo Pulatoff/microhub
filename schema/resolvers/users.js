@@ -48,9 +48,7 @@ module.exports = {
                 if (!oldUser) throw new Error("User don't exist")
 
                 // checking password
-                console.time()
                 const compare = await bcrypt.compare(password, oldUser.password)
-                console.timeEnd()
                 if (!compare) throw new Error('Entering wrong password')
 
                 // creating jwt
@@ -61,11 +59,11 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-        updateMe: async (_, updateMe, { req }) => {
+        updateMe: async (_, { updateMe }, { req }) => {
             try {
                 const { id } = await checkUser({ req })
-                const updatedUser = await User.update(updateMe, { where: { id: user } })
-                return updatedUser
+                const updatedUser = await User.update(updateMe, { where: { id }, returning: true, plain: true })
+                return updatedUser[1].dataValues
             } catch (error) {
                 return new ApolloError(error.message)
             }
