@@ -2,12 +2,12 @@ const { ApolloError } = require('apollo-server-errors')
 const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 
-const authtorizated = async (req) => {
+const checkUser = async (req) => {
     try {
         let token
 
         // check having token
-        if (req.headers.authorization && req.headers.authorization.startWith('Bearer')) {
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1]
         } else throw new Error('You are not authtorizated')
 
@@ -23,4 +23,4 @@ const authtorizated = async (req) => {
     }
 }
 
-module.exports = authtorizated
+module.exports = checkUser

@@ -2,12 +2,20 @@ const User = require('../../models/userModel')
 const { ApolloError } = require('apollo-server-errors')
 const bcrypt = require('bcryptjs')
 const createJwt = require('../../utils/createJWT')
-const protect = require('../../utils/protect')
+const checkUser = require('../../utils/protect')
 
 module.exports = {
     Query: {
         users: () => {
             return []
+        },
+        checkMe: async (_, __, { req }) => {
+            try {
+                const user = await checkUser(req)
+                return user
+            } catch (error) {
+                return new ApolloError('')
+            }
         },
     },
 
@@ -61,14 +69,5 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-        // checkMe: async (_, _, { req }) => {
-        //     try {
-        //         let accessToken
-        //         if (req.headers.authorization && req.headers.authorization.startWith('Bearer'))
-        //             accessToken = req.headers.authorization.split(' ')[1]
-        //     } catch (error) {
-        //         return new ApolloError('')
-        //     }
-        // },
     },
 }
