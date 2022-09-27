@@ -2,25 +2,23 @@ const { ApolloError } = require('apollo-server-errors')
 const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 
-const authtorizated = async (req) => {
+const checkUser = async ({ req }) => {
     try {
         let token
 
         // check having token
-        if (req.headers.authorization && req.headers.authorization.startWith('Bearer')) {
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1]
         } else throw new Error('You are not authtorizated')
 
         // check valid token
         const accessToken = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        if (!accessToken) throw new Error('Expired token, please login ')
 
-        // finding user
-        const user = await User.findByPk(accessToken.id)
-        if (!user) throw new Error('This your is not exist')
-        return user
+        return accessToken
     } catch (error) {
         return new ApolloError(error.message)
     }
 }
 
-module.exports = authtorizated
+module.exports = checkUser

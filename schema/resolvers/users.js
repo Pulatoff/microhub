@@ -2,12 +2,22 @@ const User = require('../../models/userModel')
 const { ApolloError } = require('apollo-server-errors')
 const bcrypt = require('bcryptjs')
 const createJwt = require('../../utils/createJWT')
-const protect = require('../../utils/protect')
+const checkUser = require('../../utils/protect')
 
 module.exports = {
     Query: {
         users: () => {
             return []
+        },
+        checkMe: async (_, __, { req }) => {
+            try {
+                const { id } = await checkUser({ req })
+                const user = await User.findByPk(id)
+                if (user) throw new Error('this user not found, please register')
+                return user
+            } catch (error) {
+                return new ApolloError(error.message)
+            }
         },
     },
 
@@ -18,16 +28,10 @@ module.exports = {
             { req, res }
         ) => {
             try {
-                // checking email
-                if (!email) throw new Error("Email don't exist")
-                const existUser = await User.findOne({ where: { email } })
-                if (existUser) throw new Error('this email user exists,Please login')
-
                 // checking password
                 if (password !== passwordConfirm) throw new Error('passwords not the same, please try again')
-                const hash = await bcrypt.hash(password, 16)
 
-                const user = await User.create({ first_name, last_name, email, photo, phone, password: hash, role })
+                const user = await User.create({ first_name, last_name, email, photo, phone, password, role })
 
                 // creating jwt
                 const accessToken = createJwt(user.id)
@@ -55,12 +59,16 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-        updateMe: async (_, { updateMe }) => {
+        updateMe: async (_, { updateMe }, { req }) => {
             try {
+                const { id } = await checkUser({ req })
+                const updatedUser = await User.update(updateMe, { where: { id }, returning: true, plain: true })
+                return updatedUser[1].dataValues
             } catch (error) {
                 return new ApolloError(error.message)
             }
         },
+<<<<<<< HEAD
         // checkMe: async (_, {}, { req }) => {
         //     try {
         //         let accessToken
@@ -70,5 +78,7 @@ module.exports = {
         //         return new ApolloError('')
         //     }
         // },
+=======
+>>>>>>> 3c75c3480f351e58d7d38748f42cab88d54e7b16
     },
 }
