@@ -4,12 +4,14 @@ const typeDefs = gql`
     type Query {
         checkMe: User!
         users: [User!]!
+        consumer: Consumer!
     }
 
     type Mutation {
         login(login: Login): User!
         register(register: Register): User!
         updateMe(updateMe: UpdateMe): User!
+        createConsumer(createConsumer: CreateConsumer): Consumer!
     }
 
     input UpdateMe {
@@ -34,15 +36,15 @@ const typeDefs = gql`
         password: String!
     }
 
-    # input CreateConsumer {
-    #   weight: String!
-    #   height: String!
-    #   favorite_foods: [String]!
-    #   least_favorite_foods: [String]!
-    #   allergies: [String]!
-    #   user_id: ID!
-    #   status: ID!
-    # }
+    input CreateConsumer {
+        weight: Float!
+        height: Float!
+        favorite_foods: [String]
+        least_favorite_foods: [String]
+        allergies: [String]
+        preferences: String
+        gender: Gender!
+    }
 
     # input createGoal {
     #   user_id: ID!
@@ -126,26 +128,25 @@ const typeDefs = gql`
 
     type Consumer {
         id: ID!
-        body_fat: Body_fat!
+        body_fat: Body_fat
         weight: Float!
         height: Float!
-        allergies: [String]!
-        favorite_foods: [String]!
-        least_favorite_foods: [String]!
-        user: User!
-        dairy: [Dairy]!
-        goals: [Goals]!
-        activity_level: Activity_level!
-        status: Status!
-        bmi: Float!
-        tdee: Int!
-        daily_targets: Daily_targets!
+        allergies: [String]
+        favorite_foods: [String]
+        least_favorite_foods: [String]
+        user: User
+        dairy: [Dairy]
+        goals: [Goals]
+        activity_level: Activity_level
+        bmi: Float
+        tdee: Int
+        daily_targets: Daily_targets
         # body frame only enum fields
-        body_frame: Body_frame!
-        calories_burnt: Int!
-        healthy_weight: Float!
+        body_frame: Body_frame
+        calories_burnt: Int
+        healthy_weight: Float
         types_of_preferences: preferences!
-        createdAt: String!
+        createdAt: String
     }
 
     # food preferences consumers
