@@ -3,6 +3,7 @@ const { ApolloError } = require('apollo-server-errors')
 const bcrypt = require('bcryptjs')
 const createJwt = require('../../utils/createJWT')
 const checkUser = require('../../utils/protect')
+const Personal_Trainer = require('../../models/personalTrainerModel')
 
 module.exports = {
     Query: {
@@ -24,18 +25,20 @@ module.exports = {
     Mutation: {
         register: async (
             _,
-            { register: { first_name, last_name, email, password, passwordConfirm, phone, photo, role } },
-            { req, res }
+            { register: { first_name, last_name, email, password, passwordConfirm, phone, photo, role } }
         ) => {
             try {
                 // checking password
                 if (password !== passwordConfirm) throw new Error('passwords not the same, please try again')
 
                 const user = await User.create({ first_name, last_name, email, photo, phone, password, role })
-
+                if (role === 'personal_trainer' || role === 'nutritionist') {
+                    await Personal_Trainer.create({ userId: user.id })
+                }
                 // creating jwt
                 const accessToken = createJwt(user.id)
                 const newUser = Object.assign(user, { accessToken })
+
                 return newUser
             } catch (error) {
                 return new ApolloError(error.message)

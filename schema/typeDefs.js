@@ -249,9 +249,17 @@ const typeDefs = gql`
         id: ID!
         user: User!
         programs: [program]!
-        status: Boolean!
         consumer: [Consumer]!
-        link: String!
+        link: String
+        createdAt: String!
+    }
+
+    type Personal_Trainer {
+        id: ID!
+        user: User!
+        programs: [program]!
+        consumer: [Consumer]!
+        link: String
         createdAt: String!
     }
 `
