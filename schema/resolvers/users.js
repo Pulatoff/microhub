@@ -68,17 +68,5 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-<<<<<<< HEAD
-        // checkMe: async (_, {}, { req }) => {
-        //     try {
-        //         let accessToken
-        //         if (req.headers.authorization && req.headers.authorization.startWith('Bearer'))
-        //             accessToken = req.headers.authorization.split(' ')[1]
-        //     } catch (error) {
-        //         return new ApolloError('')
-        //     }
-        // },
-=======
->>>>>>> 3c75c3480f351e58d7d38748f42cab88d54e7b16
     },
 }
