@@ -4,12 +4,17 @@ const typeDefs = gql`
     type Query {
         checkMe: User!
         users: [User!]!
+        consumer: Consumer!
+        programs: program!
+        trainers: Personal_Trainer
     }
 
     type Mutation {
         login(login: Login): User!
         register(register: Register): User!
         updateMe(updateMe: UpdateMe): User!
+        createConsumer(createConsumer: CreateConsumer): Consumer!
+        createProgram(createProgram: CreateProgram): program!
     }
 
     input UpdateMe {
@@ -34,15 +39,15 @@ const typeDefs = gql`
         password: String!
     }
 
-    # input CreateConsumer {
-    #   weight: String!
-    #   height: String!
-    #   favorite_foods: [String]!
-    #   least_favorite_foods: [String]!
-    #   allergies: [String]!
-    #   user_id: ID!
-    #   status: ID!
-    # }
+    input CreateConsumer {
+        weight: Float!
+        height: Float!
+        favorite_foods: [String]
+        least_favorite_foods: [String]
+        allergies: [String]
+        preferences: String
+        gender: Gender!
+    }
 
     # input createGoal {
     #   user_id: ID!
@@ -54,12 +59,12 @@ const typeDefs = gql`
     #   end_date: String!
     # }
 
-    # input createprogram {
-    #   course: Course!
-    #   food_id: ID!
-    #   quantity_id: ID!
-    #   serving_id: ID!
-    # }
+    input CreateProgram {
+        course: Course!
+        food_id: ID!
+        quantity: Int!
+        serving: String!
+    }
 
     # input createDairy {
     #   program_id: ID!
@@ -105,9 +110,9 @@ const typeDefs = gql`
 
     # schema for consumer schema
     type Body_fat {
-        lean_body_mass: Float!
-        body_fat: Float!
-        body_fat_pct: Float!
+        LEAN_BODY_MASS: Float!
+        BODY_FAT: Float!
+        BODY_FAT_PCT: Float!
     }
 
     # consumer daily targets based on weight and tdee
@@ -126,26 +131,25 @@ const typeDefs = gql`
 
     type Consumer {
         id: ID!
-        body_fat: Body_fat!
+        body_fat: Body_fat
         weight: Float!
         height: Float!
-        allergies: [String]!
-        favorite_foods: [String]!
-        least_favorite_foods: [String]!
-        user: User!
-        dairy: [Dairy]!
-        goals: [Goals]!
-        activity_level: Activity_level!
-        status: Status!
-        bmi: Float!
-        tdee: Int!
-        daily_targets: Daily_targets!
+        allergies: [String]
+        favorite_foods: [String]
+        least_favorite_foods: [String]
+        user: User
+        dairy: [Dairy]
+        goals: [Goals]
+        activity_level: Activity_level
+        bmi: Float
+        tdee: Int
+        daily_targets: Daily_targets
         # body frame only enum fields
-        body_frame: Body_frame!
-        calories_burnt: Int!
-        healthy_weight: Float!
+        body_frame: Body_frame
+        calories_burnt: Int
+        healthy_weight: Float
         types_of_preferences: preferences!
-        createdAt: String!
+        createdAt: String
     }
 
     # food preferences consumers
@@ -225,12 +229,12 @@ const typeDefs = gql`
 
     type program {
         id: ID!
-        food_id: ID!
-        quantity_id: Int!
-        serving_id: Int!
-        nutritionist: Personal_Trainer!
+        food_id: ID
+        quantity: Int!
+        serving: String!
+        nutritionist: Personal_Trainer
         course: Course!
-        createdAt: String!
+        createdAt: String
     }
 
     # enum for programs schema course field
@@ -246,9 +250,17 @@ const typeDefs = gql`
         id: ID!
         user: User!
         programs: [program]!
-        status: Boolean!
         consumer: [Consumer]!
-        link: String!
+        link: String
+        createdAt: String!
+    }
+
+    type Personal_Trainer {
+        id: ID!
+        user: User!
+        programs: [program]!
+        consumer: [Consumer]!
+        link: String
         createdAt: String!
     }
 `

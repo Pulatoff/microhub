@@ -1,15 +1,18 @@
 const sequelize = require('../configs/db')
 const { DataTypes, Sequelize } = require('sequelize')
-const Consumer = require('../models/consumerModel')
+const User = require('../models/userModel')
 
-const Personal_treiners = sequelize.define('personal_trainers', {
+const Personal_treiner = sequelize.define('personal_trainers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    status: { type: DataTypes.BOOLEAN, allowNull: false },
+    status: { type: DataTypes.BOOLEAN },
     consumers: {
         type: DataTypes.INTEGER,
         references: { model: 'consumers', key: 'id' },
     },
-    credentials: { type: DataTypes.INTEGER, allowNull: false },
+    credentials: { type: DataTypes.INTEGER },
 })
 
-module.exports = Personal_treiners
+User.hasOne(Personal_treiner, { onDelete: 'CASCADE', as: 'user' })
+Personal_treiner.belongsTo(User, { onDelete: 'CASCADE', as: 'user' })
+
+module.exports = Personal_treiner
