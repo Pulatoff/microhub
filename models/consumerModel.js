@@ -20,25 +20,12 @@ const Consumer = sequlize.define('consumers', {
         type: DataTypes.INTEGER,
         references: { model: Goals, key: 'id' },
     },
-    gender: { type: Sequelize.ENUM('male', 'female', 'other'), allowNull: false },
+    gender: { type: DataTypes.STRING, allowNull: false },
     activity_level: {
-        type: Sequelize.ENUM('sendentary', 'lightly_active', 'moderate_active', 'very_active', 'extrmely_active'),
+        type: DataTypes.STRING,
         defaultValue: 'sendentary',
     },
-    preferences: Sequelize.ENUM(
-        'diet',
-        'standard',
-        'vegetarian',
-        'lacto_vegetarian',
-        'ovo_vegetarian',
-        'vegan',
-        'halal',
-        'gluten_free',
-        'kosher',
-        'meat',
-        'pescetarian',
-        'pollotarian'
-    ),
+    preferences: DataTypes.STRING,
     allergies: { type: DataTypes.ARRAY(DataTypes.STRING) },
     body_fat: {
         type: DataTypes.VIRTUAL,

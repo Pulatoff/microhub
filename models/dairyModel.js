@@ -4,7 +4,7 @@ const Program = require('../models/programModel')
 const Dairy = sequelize.define('dairies', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     course: {
-        type: Sequelize.ENUM('breakfast', 'brunch', 'lunch', 'snacks', 'dinner'),
+        type: DataTypes.STRING,
         allowNull: false,
     },
     quantity_id: {

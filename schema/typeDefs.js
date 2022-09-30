@@ -6,6 +6,7 @@ const typeDefs = gql`
         users: [User!]!
         consumer: Consumer!
         programs: program!
+        trainers: Personal_Trainer
     }
 
     type Mutation {

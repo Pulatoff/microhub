@@ -1,12 +1,12 @@
 const { DataTypes, Sequelize } = require('sequelize')
 const sequelize = require('../configs/db')
-
+const Personal_Trainer = require('./personalTrainerModel')
 const Program = sequelize.define(
     'programs',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         course: {
-            type: Sequelize.ENUM('breakfast', 'brunch', 'lunch', 'snacks', 'dinner'),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         quantity: {
@@ -19,10 +19,6 @@ const Program = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        nutrinionist_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
     },
     {
         timestamps: true,
@@ -30,5 +26,8 @@ const Program = sequelize.define(
         updatedAt: false,
     }
 )
+
+Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE', as: 'programs' })
+Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE', as: 'programs' })
 
 module.exports = Program
