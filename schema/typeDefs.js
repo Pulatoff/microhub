@@ -107,9 +107,9 @@ const typeDefs = gql`
 
     # schema for consumer schema
     type Body_fat {
-        lean_body_mass: Float!
-        body_fat: Float!
-        body_fat_pct: Float!
+        LEAN_BODY_MASS: Float!
+        BODY_FAT: Float!
+        BODY_FAT_PCT: Float!
     }
 
     # consumer daily targets based on weight and tdee

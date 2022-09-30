@@ -8,7 +8,11 @@ module.exports = {
         consumer: async (_, __, { req }) => {
             try {
                 const { id } = await protected({ req })
-                const consumer = Consumer.findOne({ where: { user_id: id }, include: [{ model: User }] })
+                const consumer = await Consumer.findOne({
+                    where: { userIdId: id },
+                    include: [{ model: User, as: 'user_id' }],
+                })
+                consumer.user = consumer.user_id.dataValues
                 return consumer
             } catch (error) {
                 return new ApolloError(error.message)
@@ -40,7 +44,7 @@ module.exports = {
                 allergies,
                 gender,
                 preferences,
-                user_id: id,
+                userIdId: id,
             })
 
             return consumer
