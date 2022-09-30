@@ -9,7 +9,7 @@ const Personal_treiners = sequelize.define('personal_trainers', {
         type: DataTypes.INTEGER,
         references: { model: 'consumers', key: 'id' },
     },
-    credentials: { type: DataTypes.INTEGER, allowNull: false },
+    credentials: { type: DataTypes.INTEGER },
 })
 
 module.exports = Personal_treiners

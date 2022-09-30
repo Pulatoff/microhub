@@ -3,15 +3,7 @@ const { DataTypes, Sequelize, STRING } = require('sequelize')
 const Dairy = require('../models/dairyModel')
 const Goals = require('../models/goalModel')
 const User = require('../models/userModel')
-const {
-    body_fat,
-    tdee,
-    find_body_frame,
-    healthy_weight,
-    bmi,
-    get_daily_targets,
-    caloriesBurnt,
-} = require('@presspage/fitnessjs')
+const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('@presspage/fitnessjs')
 const set_error = require('../utils/errorModel')
 
 const Consumer = sequlize.define('consumers', {

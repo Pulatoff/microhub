@@ -5,6 +5,7 @@ const typeDefs = gql`
         checkMe: User!
         users: [User!]!
         consumer: Consumer!
+        programs: program!
     }
 
     type Mutation {
@@ -12,6 +13,7 @@ const typeDefs = gql`
         register(register: Register): User!
         updateMe(updateMe: UpdateMe): User!
         createConsumer(createConsumer: CreateConsumer): Consumer!
+        createProgram(createProgram: CreateProgram): program!
     }
 
     input UpdateMe {
@@ -56,12 +58,12 @@ const typeDefs = gql`
     #   end_date: String!
     # }
 
-    # input createprogram {
-    #   course: Course!
-    #   food_id: ID!
-    #   quantity_id: ID!
-    #   serving_id: ID!
-    # }
+    input CreateProgram {
+        course: Course!
+        food_id: ID!
+        quantity: Int!
+        serving: String!
+    }
 
     # input createDairy {
     #   program_id: ID!
@@ -226,12 +228,12 @@ const typeDefs = gql`
 
     type program {
         id: ID!
-        food_id: ID!
-        quantity_id: Int!
-        serving_id: Int!
-        nutritionist: Personal_Trainer!
+        food_id: ID
+        quantity: Int!
+        serving: String!
+        nutritionist: Personal_Trainer
         course: Course!
-        createdAt: String!
+        createdAt: String
     }
 
     # enum for programs schema course field
