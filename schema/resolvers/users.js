@@ -10,16 +10,16 @@ module.exports = {
         users: () => {
             return []
         },
-        checkMe: async (_, __, { req }) => {
-            try {
-                const { id } = await checkUser({ req })
-                const user = await User.findByPk(id)
-                if (user) throw new Error('this user not found, please register')
-                return user
-            } catch (error) {
-                return new ApolloError(error.message)
-            }
-        },
+        // checkMe: async (_, __, { req }) => {
+        //     try {
+        //         const { id } = await checkUser({ req })
+        //         const user = await User.findByPk(id)
+        //         if (user) throw new Error('this user not found, please register')
+        //         return user
+        //     } catch (error) {
+        //         return new ApolloError(error.message)
+        //     }
+        // },
     },
 
     Mutation: {
@@ -62,14 +62,14 @@ module.exports = {
                 return new ApolloError(error.message)
             }
         },
-        updateMe: async (_, { updateMe }, { req }) => {
-            try {
-                const { id } = await checkUser({ req })
-                const updatedUser = await User.update(updateMe, { where: { id }, returning: true, plain: true })
-                return updatedUser[1].dataValues
-            } catch (error) {
-                return new ApolloError(error.message)
-            }
-        },
+        // updateMe: async (_, { updateMe }, { req }) => {
+        //     try {
+        //         const { id } = await checkUser({ req })
+        //         const updatedUser = await User.update(updateMe, { where: { id }, returning: true, plain: true })
+        //         return updatedUser[1].dataValues
+        //     } catch (error) {
+        //         return new ApolloError(error.message)
+        //     }
+        // },
     },
 }
