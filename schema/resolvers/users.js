@@ -10,18 +10,6 @@ module.exports = {
         users: () => {
             return []
         },
-<<<<<<< HEAD
-        checkMe: async (_, __, { req }) => {
-            try {
-                const { id } = await checkUser({ req })
-                const user = await User.findByPk(id)
-                if (!user) throw new Error('this user not found, please register')
-                return user
-            } catch (error) {
-                return new ApolloError(error.message)
-            }
-        },
-=======
         // checkMe: async (_, __, { req }) => {
         //     try {
         //         const { id } = await checkUser({ req })
@@ -32,7 +20,6 @@ module.exports = {
         //         return new ApolloError(error.message)
         //     }
         // },
->>>>>>> 3160ca55e71f01ea6e06119040489dda15341b93
     },
 
     Mutation: {
