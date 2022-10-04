@@ -14,7 +14,7 @@ module.exports = {
             try {
                 const { id } = await checkUser({ req })
                 const user = await User.findByPk(id)
-                if (user) throw new Error('this user not found, please register')
+                if (!user) throw new Error('this user not found, please register')
                 return user
             } catch (error) {
                 return new ApolloError(error.message)

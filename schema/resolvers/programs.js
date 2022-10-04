@@ -15,7 +15,7 @@ module.exports = {
                 const { id } = await protected({ req })
                 const { role } = await checkRole({ user_id: id })
                 if (role === 'consumer' || role === 'personal_trainer') throw new Error("You can't create program")
-                const program = await Program.create({ serving, quantity, food_id, course, personalTrainerId: id })
+                const program = await Program.create({ serving, quantity, food_id, course, personalTrainerId:1 })
                 return program
             } catch (error) {
                 return new ApolloError(error.message)
