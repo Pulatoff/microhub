@@ -16,7 +16,6 @@ const Dairy = sequelize.define('wp_dairies', {
     program_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { model: Program, key: 'id' },
     },
 })
 

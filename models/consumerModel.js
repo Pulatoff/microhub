@@ -14,11 +14,9 @@ const Consumer = sequlize.define('wp_consumers', {
     last_favourite_foods: { type: DataTypes.STRING },
     dairies: {
         type: DataTypes.INTEGER,
-        references: { model: Dairy, key: 'id' },
     },
     goals: {
         type: DataTypes.INTEGER,
-        references: { model: Goals, key: 'id' },
     },
     gender: { type: DataTypes.STRING, allowNull: false },
     activity_level: {

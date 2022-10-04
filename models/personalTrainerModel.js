@@ -7,7 +7,6 @@ const Personal_treiner = sequelize.define('wp_personal_trainers', {
     status: { type: DataTypes.BOOLEAN },
     consumers: {
         type: DataTypes.INTEGER,
-        references: { model: 'consumers', key: 'id' },
     },
     credentials: { type: DataTypes.INTEGER },
 })
