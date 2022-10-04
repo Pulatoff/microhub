@@ -6,12 +6,12 @@ const User = require('../models/userModel')
 const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('@presspage/fitnessjs')
 const set_error = require('../utils/errorModel')
 
-const Consumer = sequlize.define('consumers', {
+const Consumer = sequlize.define('wp_consumers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     weight: { type: DataTypes.FLOAT, allowNull: false },
     height: { type: DataTypes.FLOAT, allowNull: false },
-    favourite_foods: { type: DataTypes.ARRAY(DataTypes.STRING) },
-    last_favourite_foods: { type: DataTypes.ARRAY(DataTypes.STRING) },
+    favourite_foods: { type: DataTypes.STRING },
+    last_favourite_foods: { type: DataTypes.STRING },
     dairies: {
         type: DataTypes.INTEGER,
         references: { model: Dairy, key: 'id' },
@@ -26,7 +26,7 @@ const Consumer = sequlize.define('consumers', {
         defaultValue: 'sendentary',
     },
     preferences: DataTypes.STRING,
-    allergies: { type: DataTypes.ARRAY(DataTypes.STRING) },
+    allergies: { type: DataTypes.STRING },
     body_fat: {
         type: DataTypes.VIRTUAL,
         get() {

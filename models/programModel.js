@@ -2,7 +2,7 @@ const { DataTypes, Sequelize } = require('sequelize')
 const sequelize = require('../configs/db')
 const Personal_Trainer = require('./personalTrainerModel')
 const Program = sequelize.define(
-    'programs',
+    'wp_programs',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         course: {

@@ -1,7 +1,7 @@
 const sequelize = require("../configs/db");
 const { DataTypes } = require("sequelize");
 
-const Goals = sequelize.define("goals", {
+const Goals = sequelize.define("wp_goals", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   protein: { type: DataTypes.FLOAT },
   carbohydrates: { type: DataTypes.FLOAT },
