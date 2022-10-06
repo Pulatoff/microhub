@@ -7,3 +7,5 @@ class AppError extends Error {
         return this
     }
 }
+
+module.exports = AppError
