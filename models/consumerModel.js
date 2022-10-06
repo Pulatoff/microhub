@@ -10,8 +10,8 @@ const Consumer = sequlize.define('wp_consumers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     weight: { type: DataTypes.FLOAT, allowNull: false },
     height: { type: DataTypes.FLOAT, allowNull: false },
-    favourite_foods: { type: DataTypes.STRING },
-    last_favourite_foods: { type: DataTypes.STRING },
+    favourite_foods: { type: DataTypes.ARRAY(DataTypes.STRING) },
+    last_favourite_foods: { type: DataTypes.ARRAY(DataTypes.STRING) },
     dairies: {
         type: DataTypes.INTEGER,
     },
@@ -24,7 +24,7 @@ const Consumer = sequlize.define('wp_consumers', {
         defaultValue: 'sendentary',
     },
     preferences: DataTypes.STRING,
-    allergies: { type: DataTypes.STRING },
+    allergies: { type: DataTypes.ARRAY(DataTypes.STRING) },
     body_fat: {
         type: DataTypes.VIRTUAL,
         get() {
