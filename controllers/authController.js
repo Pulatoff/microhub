@@ -3,14 +3,18 @@ const createJwt = require('../utils/createJWT')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
+const Personal_Trainer = require('../models/personalTrainerModel')
 
 exports.signup = async (req, res, next) => {
     try {
-        const { first_name, last_name, email, password, passwordConfirm } = req.body
+        const { first_name, last_name, email, password, passwordConfirm, role } = req.body
         // checking the saming => password and passwordConfirm
         if (password !== passwordConfirm) throw new Error('password not the same')
         // checking user existing
-        const user = await User.create({ first_name, last_name, email, password })
+        const user = await User.create({ first_name, last_name, email, password, role })
+        if (role === 'personal_trainer' || role === 'nutritionist') {
+            await Personal_Trainer.create({ userId: user.id })
+        }
         const token = await createJwt(user.id)
         res.status(200).json({
             status: 'success',
@@ -47,11 +51,14 @@ exports.signin = async (req, res, next) => {
 exports.protect = async (req, res, next) => {
     try {
         let token
+
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1]
+            token = req.headers.authorization.slice(7)
+            console.log(token)
         } else {
             throw new Error('you are not authorizated')
         }
+
         if (!token) throw new Error('You not authorized')
 
         const tekshir = jwt.verify(token, process.env.JWT_SECRET_KEY)
@@ -72,10 +79,14 @@ exports.protect = async (req, res, next) => {
 
 exports.role = (roles) => {
     return async (req, res, next) => {
-        // 1) User ni roleni olamiz databasedan, tekshiramiz
-        if (!roles.includes(req.user.role)) {
-            return next(new AppError("You don't access this process", 401))
+        try {
+            // 1) User ni roleni olamiz databasedan, tekshiramiz
+            if (!roles.includes(req.user.role)) {
+                return next(new AppError("You don't access this process", 401))
+            }
+            next()
+        } catch (error) {
+            console.log(1111)
         }
-        next()
     }
 }
