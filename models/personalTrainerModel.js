@@ -2,7 +2,7 @@ const sequelize = require('../configs/db')
 const { DataTypes, Sequelize } = require('sequelize')
 const User = require('../models/userModel')
 
-const Personal_treiner = sequelize.define('wp_personal_trainers', {
+const Personal_treiner = sequelize.define('personal_trainers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     status: { type: DataTypes.BOOLEAN },
     consumers: {

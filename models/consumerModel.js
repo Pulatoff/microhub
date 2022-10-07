@@ -6,7 +6,7 @@ const User = require('../models/userModel')
 const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('@presspage/fitnessjs')
 const set_error = require('../utils/errorModel')
 
-const Consumer = sequlize.define('wp_consumers', {
+const Consumer = sequlize.define('consumers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     weight: { type: DataTypes.FLOAT, allowNull: false },
     height: { type: DataTypes.FLOAT, allowNull: false },

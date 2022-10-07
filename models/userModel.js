@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const { DataTypes, Sequelize } = require('sequelize')
 
 const User = sequelize.define(
-    'wp_clients',
+    'clients',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         first_name: { type: DataTypes.STRING, allowNull: false },
