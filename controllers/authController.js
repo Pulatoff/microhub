@@ -2,6 +2,7 @@ const User = require('../models/userModel')
 const createJwt = require('../utils/createJWT')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const AppError = require('../utils/AppError')
 
 exports.signup = async (req, res, next) => {
     try {
@@ -66,5 +67,15 @@ exports.protect = async (req, res, next) => {
             status: 'failed',
             message: error.message,
         })
+    }
+}
+
+exports.role = (roles) => {
+    return async (req, res, next) => {
+        // 1) User ni roleni olamiz databasedan, tekshiramiz
+        if (!roles.includes(req.user.role)) {
+            return next(new AppError("You don't access this process", 401))
+        }
+        next()
     }
 }
