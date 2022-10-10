@@ -2,7 +2,6 @@ const { gql } = require('apollo-server')
 
 const typeDefs = gql`
     type Query {
-        checkMe: User!
         users: [User!]!
         consumer: Consumer!
         programs: program!
@@ -12,7 +11,6 @@ const typeDefs = gql`
     type Mutation {
         login(login: Login): User!
         register(register: Register): User!
-        updateMe(updateMe: UpdateMe): User!
         createConsumer(createConsumer: CreateConsumer): Consumer!
         createProgram(createProgram: CreateProgram): program!
     }

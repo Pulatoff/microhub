@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const Personal_Trainer = require('../models/personalTrainerModel')
 
-exports.signup = async (req, res, next) => {
+exports.signupCLient = async (req, res, next) => {
     try {
         const { first_name, last_name, email, password, passwordConfirm, role } = req.body
         // checking the saming => password and passwordConfirm
@@ -28,6 +28,7 @@ exports.signup = async (req, res, next) => {
         res.status(404).json({ message: error.message })
     }
 }
+
 exports.signin = async (req, res, next) => {
     try {
         const { password, email } = req.body
@@ -89,4 +90,9 @@ exports.role = (roles) => {
             console.log(1111)
         }
     }
+}
+
+exports.signupNutritionist = (req, res, next) => {
+    const { first_name, last_name } = req.body
+    const nutritionist = await Nutrisionist.create()
 }
