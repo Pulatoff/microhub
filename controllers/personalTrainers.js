@@ -14,4 +14,8 @@ exports.getAllTrainers = async (req, res, next) => {
     })
 }
 
-exports.updateTrainer = async (req, res, next) => {}
+exports.updateTrainer = async (req, res, next) => {
+    const { id } = req.params
+    const updateTrainer = Trainer.update(req.body, { where: { id } })
+    res.status(200).json({ updateTrainer })
+}
