@@ -1,7 +1,5 @@
 const sequlize = require('../configs/db')
-const { DataTypes, Sequelize, STRING } = require('sequelize')
-const Dairy = require('../models/dairyModel')
-const Goals = require('../models/goalModel')
+const { DataTypes } = require('sequelize')
 const User = require('../models/userModel')
 const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('@presspage/fitnessjs')
 const set_error = require('../utils/errorModel')

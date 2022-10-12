@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const Personal_Trainer = require('../models/personalTrainerModel')
+const crypto = require('crypto')
 
 exports.signupCLient = async (req, res, next) => {
     try {
@@ -98,7 +99,6 @@ exports.signupNutritionist = async (req, res, next) => {
         const user = await User.create({ first_name, last_name, email, password, role: 'personal_trainer' })
         const nutrisionist = await Personal_Trainer.create({ userId: user.id })
         const token = await createJwt(user.id)
-        console.log(user, nutrisionist)
         const trainer = {
             id: nutrisionist.id,
             userId: user.id,
