@@ -96,12 +96,23 @@ exports.signupNutritionist = async (req, res, next) => {
         if (password !== passwordConfirm) throw new Error('password not the same')
         // checking user existing
         const user = await User.create({ first_name, last_name, email, password, role: 'personal_trainer' })
+        const nutrisionist = await Personal_Trainer.create({ userId: user.id })
         const token = await createJwt(user.id)
+        console.log(user, nutrisionist)
+        const trainer = {
+            id: nutrisionist.id,
+            userId: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            consumers: nutrisionist.consumers ? nutrisionist.consumers : [],
+            credentials: {},
+        }
         res.status(200).json({
             status: 'success',
             data: {
                 accessToken: `Bearer ${token}`,
-                user,
+                trainer,
             },
         })
     } catch (error) {

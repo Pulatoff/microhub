@@ -4,7 +4,6 @@ const User = require('../models/userModel')
 
 const Personal_treiner = sequelize.define('personal_trainers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    status: { type: DataTypes.BOOLEAN },
     consumers: {
         type: DataTypes.INTEGER,
     },
