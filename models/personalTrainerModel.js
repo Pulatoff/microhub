@@ -13,8 +13,8 @@ const Personal_treiner = sequelize.define('personal_trainers', {
 User.hasOne(Personal_treiner, { onDelete: 'CASCADE', as: 'user' })
 Personal_treiner.belongsTo(User, { onDelete: 'CASCADE', as: 'user' })
 
-Personal_treiner.hasMany(Consumer, { onDelete: 'CASCADE', as: 'consumers' })
-Consumer.belongsTo(Personal_treiner, { onDelete: 'CASCADE', as: 'consumers' })
+Personal_treiner.belongsToMany(Consumer, { through: 'TrainerConsumers' })
+Consumer.belongsToMany(Personal_treiner, { through: 'TrainerConsumers' })
 
 Personal_treiner.beforeCreate((user, options) => {
     const token = crypto.randomBytes(32).toString('hex')
