@@ -7,14 +7,11 @@ const Personal_Trainer = require('../models/personalTrainerModel')
 
 exports.signupCLient = async (req, res, next) => {
     try {
-        const { first_name, last_name, email, password, passwordConfirm, role } = req.body
+        const { first_name, last_name, email, password, passwordConfirm } = req.body
         // checking the saming => password and passwordConfirm
         if (password !== passwordConfirm) throw new Error('password not the same')
         // checking user existing
-        const user = await User.create({ first_name, last_name, email, password, role })
-        if (role === 'personal_trainer' || role === 'nutritionist') {
-            await Personal_Trainer.create({ userId: user.id })
-        }
+        const user = await User.create({ first_name, last_name, email, password, role: 'consumer' })
         const token = await createJwt(user.id)
         res.status(200).json({
             status: 'success',
@@ -87,12 +84,28 @@ exports.role = (roles) => {
             }
             next()
         } catch (error) {
-            console.log(1111)
+            next(new AppError(error.message, 404))
         }
     }
 }
 
-exports.signupNutritionist = (req, res, next) => {
-    const { first_name, last_name } = req.body
-    const nutritionist = await Nutrisionist.create()
+exports.signupNutritionist = async (req, res, next) => {
+    try {
+        const { first_name, last_name, email, password, passwordConfirm } = req.body
+        // checking the saming => password and passwordConfirm
+        if (password !== passwordConfirm) throw new Error('password not the same')
+        // checking user existing
+        const user = await User.create({ first_name, last_name, email, password, role: 'personal_trainer' })
+        const token = await createJwt(user.id)
+        res.status(200).json({
+            status: 'success',
+            data: {
+                accessToken: `Bearer ${token}`,
+                user,
+            },
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(404).json({ message: error.message })
+    }
 }
