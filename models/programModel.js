@@ -1,6 +1,7 @@
 const { DataTypes, Sequelize } = require('sequelize')
 const sequelize = require('../configs/db')
 const Personal_Trainer = require('./personalTrainerModel')
+const Consumers = require('./consumerModel')
 const Program = sequelize.define(
     'programs',
     {
@@ -29,5 +30,8 @@ const Program = sequelize.define(
 
 Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE', as: 'programs' })
 Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE', as: 'programs' })
+
+Program.hasMany(Consumers, { as: 'consumers' })
+Consumers.belongsTo(Program, { as: 'consumers' })
 
 module.exports = Program
