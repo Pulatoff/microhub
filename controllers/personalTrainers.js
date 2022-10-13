@@ -3,12 +3,13 @@ const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
 const sequelize = require('../configs/db')
 const trainerConsumer = sequelize.define('TrainerConsumers')
-
+const Program = require('../models/programModel')
 exports.getAllTrainers = async (req, res, next) => {
     const trainer = await Trainer.findAll({
         include: [
             { model: User, as: 'user' },
             { model: Consumer, as: 'consumers' },
+            { model: Program, as: 'programs' },
         ],
     })
     const nmadir = await trainerConsumer.create({
