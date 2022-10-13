@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const controller = require('../controllers/programController')
 const authController = require('../controllers/authController')
+const bindController = require('../controllers/programConsumer')
 
 router
     .route('/')
@@ -9,5 +10,7 @@ router
         authController.role(['admin', 'nutritionist', 'personal_trainer']),
         controller.addProgram
     )
+
+router.route('/consumers').post(bindController.bindConumer)
 
 module.exports = router

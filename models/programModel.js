@@ -31,7 +31,4 @@ const Program = sequelize.define(
 Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE', as: 'programs' })
 Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE', as: 'programs' })
 
-Program.hasMany(Consumers, { as: 'consumers' })
-Consumers.belongsTo(Program, { as: 'consumers' })
-
 module.exports = Program
