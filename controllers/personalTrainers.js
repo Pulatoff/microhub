@@ -8,7 +8,6 @@ exports.getAllTrainers = async (req, res, next) => {
     const trainer = await Trainer.findAll({
         include: [
             { model: User, as: 'user' },
-            { model: Consumer, as: 'consumers' },
             { model: Program, as: 'programs' },
         ],
     })
