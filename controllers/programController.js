@@ -25,9 +25,7 @@ exports.addProgram = async (req, res, next) => {
 
 exports.updatePrograms = async (req, res, next) => {
     try {
-        const userId = req.user.id
-        const trainer = await Trainer.findOne({ where: { userId } })
-        const program = await Program.update(req.body, { where: { programId: trainer.id, id: req.params.id } })
+        const program = await Program.update(req.body, { where: { id: req.params.id } })
         res.status(200).json({
             status: 'success',
             data: { program },
@@ -50,5 +48,14 @@ exports.getAllPrograms = async (req, res, next) => {
     res.json({
         status: 'success',
         data: { programs },
+    })
+}
+
+exports.getProgram = async (req, res, next) => {
+    const { id } = req.params
+    const program = await Program.findByPk(id)
+    res.status(200).json({
+        status: 'success',
+        data: { program },
     })
 }
