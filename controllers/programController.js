@@ -7,7 +7,7 @@ exports.addProgram = async (req, res, next) => {
         const userId = req.user.id
         const trainer = await Trainer.findOne({ where: { userId } })
         console.log(trainer)
-        const { course, serving, food_id, quantity, consumers } = req.body
+        const { course, serving, food_id, quantity, name, description } = req.body
         const program = await Program.create({
             course,
             serving,
@@ -15,6 +15,8 @@ exports.addProgram = async (req, res, next) => {
             quantity,
             programsId: trainer.id,
             personalTrainerId: trainer.id,
+            name,
+            description,
         })
         res.status(200).json({ status: 'success', data: { program } })
     } catch (error) {

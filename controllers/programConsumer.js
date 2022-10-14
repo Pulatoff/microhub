@@ -5,13 +5,13 @@ const Consumer = require('../models/consumerModel')
 exports.bindConumer = async (req, res, next) => {
     try {
         const { programId, consumers } = req.body
-        consumers.map(async (val) => {
-            const consumer = await Consumer.findByPk(val)
-            const programs = consumer.programs ? [...consumer.programs, programId] : [programId]
-            consumer.update({ programs })
-            consumer.save()
-        })
-        const bindConsumers = await ProgramConsumer.create({ programId, consumers })
+
+        const consumer = await Consumer.findByPk(val)
+        const programs = consumer.programs ? [...consumer.programs, programId] : [programId]
+        consumer.update({ programs })
+        consumer.save()
+
+        await ProgramConsumer.create({ programId, consumers })
         res.json({
             data: {},
             status: 'success',
