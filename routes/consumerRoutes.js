@@ -7,4 +7,6 @@ router
     .post(authController.protect, controller.addConsumer)
     .get(authController.protect, controller.getConsumer)
 
+router.route('/').get(controller.getConsumer)
+
 module.exports = router

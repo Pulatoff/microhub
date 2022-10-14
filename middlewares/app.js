@@ -6,14 +6,14 @@ const programRouter = require('../routes/programRouter')
 const errorController = require('../controllers/errorController')
 const AppError = require('../utils/AppError')
 const TrainerRouter = require('../routes/trainerRouter')
-
+const DairyController = require('../routes/dairyRouter')
 app.use(express.json())
 
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/consumers', consumerRouter)
 app.use('/api/v1/programs', programRouter)
 app.use('/api/v1/trainers', TrainerRouter)
-
+app.use('/api/v1/daires', DairyController)
 app.all('*', (req, res, next) => {
     next(new AppError('Page not Found', 404))
 })

@@ -1,6 +1,7 @@
 const { DataTypes, Sequelize } = require('sequelize')
 const sequelize = require('../configs/db')
 const Personal_Trainer = require('./personalTrainerModel')
+const Consumers = require('./consumerModel')
 const Program = sequelize.define(
     'programs',
     {
