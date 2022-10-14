@@ -7,8 +7,8 @@ const Program = sequelize.define(
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         name: { type: DataTypes.STRING },
-
-        meals: {
+        description: { type: DataTypes.STRING },
+        meals: DataTypes.ARRAY({
             course: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -23,7 +23,7 @@ const Program = sequelize.define(
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-        },
+        }),
     },
     {
         timestamps: true,
