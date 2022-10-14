@@ -19,4 +19,7 @@ const Dairy = sequelize.define('dairies', {
 Program.hasOne(Dairy, { as: 'program' })
 Dairy.belongsTo(Program, { as: 'program' })
 
+Consumer.hasOne(Dairy, { as: 'consumer' })
+Dairy.belongsTo(Consumer, { as: 'consumer' })
+
 module.exports = Dairy
