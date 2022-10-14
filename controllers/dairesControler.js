@@ -33,3 +33,8 @@ exports.getOneDairy = async (req, res, next) => {
     const dairies = await Dairy.findByPk(req.params.id)
     res.status(200).json({ status: 'success', data: { dairies } })
 }
+
+exports.updateDairy = async(req,res,next)=>{
+    const dairy = await Dairy.update(req.body,{where:{id:req.params.id}})
+    res.status(200).json({ status: 'success', data: { dairy } })
+}
