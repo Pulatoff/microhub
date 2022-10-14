@@ -6,19 +6,23 @@ const Program = sequelize.define(
     'programs',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        course: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        quantity: {
-            type: DataTypes.INTEGER,
-        },
-        serving: {
-            type: DataTypes.STRING,
-        },
-        food_id: {
-            type: DataTypes.STRING,
-            allowNull: false,
+        name: { type: DataTypes.STRING },
+
+        meals: {
+            course: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            quantity: {
+                type: DataTypes.INTEGER,
+            },
+            serving: {
+                type: DataTypes.STRING,
+            },
+            food_id: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
         },
     },
     {
