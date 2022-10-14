@@ -1,7 +1,7 @@
 const Program = require('../models/programModel')
 const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
-
+const Consumer = require('../models/consumerModel')
 exports.addProgram = async (req, res, next) => {
     try {
         const userId = req.user.id
@@ -36,4 +36,19 @@ exports.updatePrograms = async (req, res, next) => {
         console.log(error)
         next(AppError(error.message, 404))
     }
+}
+
+exports.getAllPrograms = async (req, res, next) => {
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userIdId: userId } })
+    const programs = []
+    for (let i = 0; i < 1; i++) {
+        const program = await Program.findByPk(consumer.programs[i])
+        console.log(program)
+        programs.push(program)
+    }
+    res.json({
+        status: 'success',
+        data: { programs },
+    })
 }

@@ -1,5 +1,5 @@
 const Consumer = require('../models/consumerModel')
-
+const Program = require('../models/programModel')
 exports.addConsumer = async (req, res, next) => {
     try {
         const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
@@ -30,6 +30,14 @@ exports.addConsumer = async (req, res, next) => {
 
 exports.getConsumer = async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userIdId: req.user.id } })
+    const newPrograms = []
+    if (consumer.programs) {
+        const newArray = consumer.programs.map(async (val) => {
+            const program = await Program.findByPk(val)
+            return program
+        })
+    }
+    consumer.programs = []
     res.status(200).json({
         status: 'success',
         data: {

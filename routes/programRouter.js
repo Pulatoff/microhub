@@ -10,6 +10,7 @@ router
         authController.role(['admin', 'nutritionist', 'personal_trainer']),
         controller.addProgram
     )
+    .get(authController.protect, controller.getAllPrograms)
 
 router.route('/consumers').post(bindController.bindConumer)
 

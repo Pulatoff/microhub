@@ -7,7 +7,7 @@ exports.bindConumer = async (req, res, next) => {
         const { programId, consumers } = req.body
         consumers.map(async (val) => {
             const consumer = await Consumer.findByPk(val)
-            const programs = consumer.programs ? [...consumer.programs, val] : [val]
+            const programs = consumer.programs ? [...consumer.programs, programId] : [programId]
             consumer.update({ programs })
             consumer.save()
         })
