@@ -14,6 +14,7 @@ const Dairy = sequelize.define('dairies', {
     serving: {
         type: DataTypes.STRING,
     },
+    date:{type:DataTypes.STRING}
 })
 
 Program.hasOne(Dairy, { as: 'program' })
