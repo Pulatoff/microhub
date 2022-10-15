@@ -13,6 +13,6 @@ const Goals = sequelize.define('goals', {
 })
 
 Consumer.hasMany(Goals, { as: 'consumer' })
-Goals.hasMany(Consumer, { as: 'consumer' })
+Goals.belongsTo(Consumer, { as: 'consumer' })
 
 module.exports = Goals
