@@ -3,6 +3,7 @@ const Program = require('../models/programModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const AppError = require('../utils/AppError')
+const User = require('../models/userModel')
 exports.addConsumer = async (req, res, next) => {
     try {
         const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
@@ -73,7 +74,7 @@ exports.getTrainers = async (req, res, next) => {
         const trainers = await ConsumerTrainer.findAll({ where: { consumer: consumer.id } })
         const newTrainers = []
         for (let i = 0; i < trainers.length; i++) {
-            const trainer = await Trainer.findByPk(trainers[i].trainer)
+            const trainer = await Trainer.findByPk(trainers[i].trainer, { include: [{ model: User, as: 'user' }] })
             newTrainers.push(trainer)
         }
         res.status(200).json({
