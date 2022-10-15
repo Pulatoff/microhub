@@ -57,7 +57,7 @@ exports.getOneDairy = async (req, res, next) => {
 
 exports.updateDairy = async (req, res, next) => {
     try {
-        const dairy = await Dairy.update(req.body, { where: { id: req.params.id } })
+        const dairy = await Dairy.update(req.body, { where: { id: req.params.id }, returning: true, plain: true })
         res.status(200).json({ status: 'success', data: { dairy } })
     } catch (error) {
         console.log(error)

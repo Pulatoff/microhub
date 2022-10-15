@@ -28,7 +28,7 @@ exports.addProgram = async (req, res, next) => {
 
 exports.updatePrograms = async (req, res, next) => {
     try {
-        const program = await Program.update(req.body, { where: { id: req.params.id } })
+        const program = await Program.update(req.body, { where: { id: req.params.id }, returning: true, plain: true })
         res.status(200).json({
             status: 'success',
             data: { program },
@@ -65,12 +65,14 @@ exports.getAllPrograms = async (req, res, next) => {
 
 exports.getProgram = async (req, res, next) => {
     const { id } = req.params
-    const program = await Program.findByPk(id,{include: [
-        {
-            model: Meal,
-            as: 'meals',
-        },
-    ],})
+    const program = await Program.findByPk(id, {
+        include: [
+            {
+                model: Meal,
+                as: 'meals',
+            },
+        ],
+    })
     res.status(200).json({
         status: 'success',
         data: { program },
