@@ -4,8 +4,8 @@ const Consumer = require('../models/consumerModel')
 
 exports.bindConumer = async (req, res, next) => {
     try {
-        const { programId, consumers } = req.body
-
+        const { programId } = req.body
+        const consumers = req.body.consumer
         const consumer = await Consumer.findByPk(consumers)
         const programs = consumer.programs ? [...consumer.programs, programId] : [programId]
         consumer.update({ programs })
