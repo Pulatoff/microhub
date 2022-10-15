@@ -17,7 +17,7 @@ exports.addProgram = async (req, res, next) => {
             description,
         })
         for (let i = 0; i < meals.length; i++) {
-            await Meal.create({ ...meals[0], mealsId: program.id })
+            await Meal.create({ ...meals[0], programId: program.id, mealsId: program.id })
         }
         res.status(200).json({ status: 'success', data: { program } })
     } catch (error) {
@@ -41,11 +41,20 @@ exports.updatePrograms = async (req, res, next) => {
 
 exports.getAllPrograms = async (req, res, next) => {
     const userId = req.user.id
-    const consumer = await Consumer.findOne({ where: { userIdId: userId } })
+    const consumer = await Consumer.findOne({
+        where: { userIdId: userId },
+    })
     const programs = []
-    for (let i = 0; i < 1; i++) {
-        const program = await Program.findByPk(consumer.programs[i])
-        console.log(program)
+
+    for (let i = 0; i < consumer.programs.length; i++) {
+        const program = await Program.findByPk(consumer.programs[i], {
+            include: [
+                {
+                    model: Meal,
+                    as: 'meals',
+                },
+            ],
+        })
         programs.push(program)
     }
     res.json({
