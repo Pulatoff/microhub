@@ -13,6 +13,6 @@ router
     .get(authController.protect, controller.getAllPrograms)
 
 router.route('/:id').get(controller.getProgram).patch(controller.updatePrograms)
-router.route('/consumers').post(bindController.bindConumer)
+router.route('/consumer').post(bindController.bindConumer)
 
 module.exports = router
