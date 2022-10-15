@@ -1,5 +1,8 @@
 const Consumer = require('../models/consumerModel')
 const Program = require('../models/programModel')
+const ConsumerTrainer = require('../models/consumerTrainer')
+const Trainer = require('../models/personalTrainerModel')
+const AppError = require('../utils/AppError')
 exports.addConsumer = async (req, res, next) => {
     try {
         const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
@@ -60,5 +63,25 @@ exports.updateConsumer = async (req, res, next) => {
             status: 'failed',
             message: error.message,
         })
+    }
+}
+
+exports.getTrainers = async (req, res, next) => {
+    try {
+        const userIdId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userIdId } })
+        const trainers = await ConsumerTrainer.findAll({ where: { consumer: consumer.id } })
+        const newTrainers = []
+        for (let i = 0; i < trainers.length; i++) {
+            const trainer = await Trainer.findByPk(trainers[i].trainer)
+            newTrainers.push(trainer)
+        }
+        res.status(200).json({
+            status: 'success',
+            data: { trainers: newTrainers },
+        })
+    } catch (error) {
+        console.log(error)
+        next(new AppError(error.message, 404))
     }
 }
