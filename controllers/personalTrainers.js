@@ -33,7 +33,7 @@ exports.updateTrainer = async (req, res, next) => {
 exports.getConsumers = async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-    const consumers = await ConsumerTrainer.findAll({ where: { trainer: trainer.id } })
+    const consumers = await ConsumerTrainer.findAll({ where: { trainer: `${trainer.id}` } })
     const newConsumers = []
     for (let i = 0; i < consumers.length; i++) {
         const consumer = await Consumer.findByPk(consumers[i].consumer)
