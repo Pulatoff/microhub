@@ -1,6 +1,7 @@
 const Program = require('../models/programModel')
 const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
+const Meal = require('../models/mealModel')
 const Consumer = require('../models/consumerModel')
 
 exports.addProgram = async (req, res, next) => {
@@ -8,17 +9,16 @@ exports.addProgram = async (req, res, next) => {
         const userId = req.user.id
         const trainer = await Trainer.findOne({ where: { userId } })
         console.log(trainer)
-        const { course, serving, food_id, quantity, name, description } = req.body
+        const { meals, name, description } = req.body
         const program = await Program.create({
-            course,
-            serving,
-            food_id,
-            quantity,
             programsId: trainer.id,
             personalTrainerId: trainer.id,
             name,
             description,
         })
+        for (let i = 0; i < meals.length; i++) {
+            await Meal.create({ ...meals[0], mealsId: program.id })
+        }
         res.status(200).json({ status: 'success', data: { program } })
     } catch (error) {
         console.log(error)
