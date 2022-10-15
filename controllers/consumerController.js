@@ -71,10 +71,10 @@ exports.getTrainers = async (req, res, next) => {
     try {
         const userIdId = req.user.id
         const consumer = await Consumer.findOne({ where: { userIdId } })
-        const trainers = await ConsumerTrainer.findAll({ where: { consumer: consumer.id } })
+        const trainers = await ConsumerTrainer.findAll({ where: { consumer: `${consumer.id}` } })
         const newTrainers = []
         for (let i = 0; i < trainers.length; i++) {
-            const trainer = await Trainer.findByPk(+trainers[i].trainer, { include: [{ model: User, as: 'user' }] })
+            const trainer = await Trainer.findByPk(trainers[i].trainer, { include: [{ model: User, as: 'user' }] })
             newTrainers.push(trainer)
         }
         res.status(200).json({
