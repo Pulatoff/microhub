@@ -2,6 +2,7 @@ const Program = require('../models/programModel')
 const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
+
 exports.addProgram = async (req, res, next) => {
     try {
         const userId = req.user.id
