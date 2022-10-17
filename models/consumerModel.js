@@ -32,9 +32,9 @@ const Consumer = sequlize.define('consumers', {
     goals: {
         type: DataTypes.INTEGER,
     },
-    gender: { type: DataTypes.STRING, allowNull: false },
+    gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
     activity_level: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('sendentary', 'lightly_active', 'moderate_active', 'very_active', 'extrmely_active'),
         defaultValue: 'sendentary',
     },
     preferences: DataTypes.STRING,
