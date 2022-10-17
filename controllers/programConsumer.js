@@ -9,7 +9,8 @@ exports.bindConumer = async (req, res, next) => {
         const consumer = await Consumer.findByPk(consumerId)
 
         if (!consumer) next(new AppError('This consumer is not exist'))
-        const bindProgram = await ProgramConsumer.create({ programId, consumerId })
+        await ProgramConsumer.create({ programId, consumerId })
+
         res.json({
             data: '',
             status: 'success',
