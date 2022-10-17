@@ -18,7 +18,7 @@ exports.bindConumer = async (req, res, next) => {
         })
     } catch (error) {
         console.log(error)
-        next(new AppError(error.message, 404))
+        next(new AppError(error.message, 403))
     }
 }
 
