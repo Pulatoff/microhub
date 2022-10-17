@@ -8,22 +8,22 @@ const Consumer = sequlize.define('consumers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     weight: { type: DataTypes.FLOAT, allowNull: false },
     height: { type: DataTypes.FLOAT, allowNull: false },
-    favourite_foods: {
+    favorite_foods: {
         type: DataTypes.STRING,
-        get() {
-            return this.getDataValue('favourite_foods').split(';')
+        get(val) {
+            return this.getDataValue('favorite_foods').split(';')
         },
         set(val) {
-            this.setDataValue('favourite_foods', val.join(';'))
+            this.setDataValue('favorite_foods', val.join(';'))
         },
     },
-    last_favourite_foods: {
+    least_favorite_foods: {
         type: DataTypes.STRING,
         get() {
-            return this.getDataValue('last_favourite_foods').split(';')
+            return this.getDataValue('least_favorite_foods').split(';')
         },
         set(val) {
-            this.setDataValue('last_favourite_foods', val.join(';'))
+            this.setDataValue('least_favorite_foods', val.join(';'))
         },
     },
     dairies: {
