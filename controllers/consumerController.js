@@ -1,9 +1,9 @@
 const Consumer = require('../models/consumerModel')
 const Program = require('../models/programModel')
-const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const AppError = require('../utils/AppError')
 const User = require('../models/userModel')
+const ConsumerTrainer = require('../models/consumerTrainer')
 exports.addConsumer = async (req, res, next) => {
     try {
         const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
@@ -34,14 +34,6 @@ exports.addConsumer = async (req, res, next) => {
 
 exports.getConsumer = async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userIdId: req.user.id } })
-    const newPrograms = []
-    if (consumer.programs) {
-        const newArray = consumer.programs.map(async (val) => {
-            const program = await Program.findByPk(val)
-            return program
-        })
-    }
-    consumer.programs = []
     res.status(200).json({
         status: 'success',
         data: {
@@ -70,19 +62,12 @@ exports.updateConsumer = async (req, res, next) => {
 exports.getTrainers = async (req, res, next) => {
     try {
         const userIdId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userIdId } })
-        const trainers = await ConsumerTrainer.findAll({ where: { consumer: `${consumer.id}` } })
-        const newTrainers = []
-        for (let i = 0; i < trainers.length; i++) {
-            const trainer = await Trainer.findByPk(trainers[i].trainer, { include: [{ model: User, as: 'user' }] })
-            newTrainers.push(trainer)
-        }
+        const consumer = await Consumer.findOne({ where: { userIdId }, include: Trainer })
         res.status(200).json({
             status: 'success',
-            data: { trainers: newTrainers },
+            data: { trainers: consumer.personal_trainers },
         })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }

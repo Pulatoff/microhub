@@ -10,7 +10,7 @@ exports.bindConsumer = async (req, res, next) => {
         const consumer = await Consumer.findOne({ where: { userIdId } })
         const trainer = await Trainer.findByPk(trainerId)
 
-        if (trainer) next(new AppError('This trainer is not exist', 404))
+        if (!trainer) next(new AppError('This trainer is not exist', 404))
 
         await ConsumerTrainer.create({ consumerId: consumer.id, personalTrainerId: trainer.id })
 
@@ -19,7 +19,6 @@ exports.bindConsumer = async (req, res, next) => {
             data: '',
         })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }
