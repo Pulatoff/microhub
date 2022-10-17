@@ -1,16 +1,21 @@
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Consumer = require('../models/consumerModel')
 const AppError = require('../utils/AppError')
+const Trainer = require('../models/personalTrainerModel')
 
 exports.bindConsumer = async (req, res, next) => {
     try {
-        const { trainerId } = req.body
-        const userIdId = req.user.id
+        const { trainerId, userId: userIdId } = req.body
+        console.log(userIdId)
         const consumer = await Consumer.findOne({ where: { userIdId } })
-        await ConsumerTrainer.create({ consumer: consumer.id, trainer: trainerId })
+        const trainer = await Trainer.findByPk(trainerId)
+        await ConsumerTrainer.create({ consumerId: consumer.id, personalTrainerId: trainer.id })
+        const bindConsumer = await Consumer.findByPk(consumer.id, {
+            include: Trainer,
+        })
         res.status(200).json({
             status: 'success',
-            data: {},
+            data: bindConsumer,
         })
     } catch (error) {
         console.log(error)
