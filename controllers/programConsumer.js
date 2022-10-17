@@ -1,27 +1,20 @@
 const ProgramConsumer = require('../models/ProgramConsumer')
 const AppError = require('../utils/AppError')
 const Consumer = require('../models/consumerModel')
+const Program = require('../models/programModel')
 
 exports.bindConumer = async (req, res, next) => {
     try {
-        const { programId } = req.body
-        const consumers = req.body.consumer
-        const consumer = await Consumer.findByPk(consumers)
-        const programs = consumer.programs ? [...consumer.programs, programId] : [programId]
-        consumer.update({ programs })
-        consumer.save()
+        const { programId, consumerId } = req.body
+        const consumer = await Consumer.findByPk(consumerId)
 
-        await ProgramConsumer.create({ programId, consumers })
+        if (!consumer) next(new AppError('This consumer is not exist'))
+        const bindProgram = await ProgramConsumer.create({ programId, consumerId })
         res.json({
-            data: {},
+            data: '',
             status: 'success',
         })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 403))
     }
-}
-
-exports.updateProgramBind = (req, res, next) => {
-    const { id } = req.body
 }

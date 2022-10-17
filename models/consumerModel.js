@@ -73,7 +73,6 @@ const Consumer = sequlize.define('consumers', {
         },
         set: set_error,
     },
-    programs: { type: DataTypes.ARRAY(DataTypes.STRING) },
 })
 
 // referencing

@@ -2,8 +2,7 @@ const Consumer = require('../models/consumerModel')
 const Program = require('../models/programModel')
 const Trainer = require('../models/personalTrainerModel')
 const AppError = require('../utils/AppError')
-const User = require('../models/userModel')
-const ConsumerTrainer = require('../models/consumerTrainer')
+
 exports.addConsumer = async (req, res, next) => {
     try {
         const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
