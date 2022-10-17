@@ -8,8 +8,24 @@ const Consumer = sequlize.define('consumers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     weight: { type: DataTypes.FLOAT, allowNull: false },
     height: { type: DataTypes.FLOAT, allowNull: false },
-    favourite_foods: { type: DataTypes.ARRAY(DataTypes.STRING) },
-    last_favourite_foods: { type: DataTypes.ARRAY(DataTypes.STRING) },
+    favourite_foods: {
+        type: DataTypes.STRING,
+        get() {
+            return this.getDataValue('favourite_foods').split(';')
+        },
+        set(val) {
+            this.setDataValue('favourite_foods', val.join(';'))
+        },
+    },
+    last_favourite_foods: {
+        type: DataTypes.STRING,
+        get() {
+            return this.getDataValue('last_favourite_foods').split(';')
+        },
+        set(val) {
+            this.setDataValue('last_favourite_foods', val.join(';'))
+        },
+    },
     dairies: {
         type: DataTypes.INTEGER,
     },
@@ -22,7 +38,15 @@ const Consumer = sequlize.define('consumers', {
         defaultValue: 'sendentary',
     },
     preferences: DataTypes.STRING,
-    allergies: { type: DataTypes.ARRAY(DataTypes.STRING) },
+    allergies: {
+        type: DataTypes.STRING,
+        get() {
+            return this.getDataValue('allergies').split(';')
+        },
+        set(val) {
+            this.setDataValue('allergies', val.join(';'))
+        },
+    },
     body_fat: {
         type: DataTypes.VIRTUAL,
         get() {
