@@ -3,6 +3,7 @@ const app = express()
 const AppError = require('../utils/AppError')
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
+
 const userRouter = require('../routes/authRouter')
 const consumerRouter = require('../routes/consumerRoutes')
 const programRouter = require('../routes/programRouter')
@@ -31,6 +32,12 @@ app.use('/api/v1/programs', programRouter)
 app.use('/api/v1/trainers', TrainerRouter)
 app.use('/api/v1/diaries', DairyController)
 app.use('/api/v1/goals', GoalsRouter)
+
+if (process.env.NODE_ENV === 'development') {
+    app.use('/test', (req, res, next) => {
+        res.status(200).json({ isOk: true, data: { message: 'all good' } })
+    })
+}
 
 app.all('*', (req, res, next) => {
     next(new AppError('Page not Found', 404))
