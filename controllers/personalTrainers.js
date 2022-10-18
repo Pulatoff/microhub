@@ -1,8 +1,7 @@
 const Trainer = require('../models/personalTrainerModel')
-const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
-const Program = require('../models/programModel')
 const AppError = require('../utils/AppError')
+const crypto = require('crypto')
 
 exports.updateTrainer = async (req, res, next) => {
     try {
@@ -23,6 +22,17 @@ exports.getConsumers = async (req, res, next) => {
             status: 'success',
             data: { consumers: trainer.consumers },
         })
+    } catch (error) {
+        next(new AppError(error.message, 404))
+    }
+}
+
+exports.bindConsumer = async (req, res, next) => {
+    try {
+        const { linkToken } = req.body
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
+        const hashToken = crypto.createHash('sha256').update(linkToken).digest('hex')
     } catch (error) {
         next(new AppError(error.message, 404))
     }
