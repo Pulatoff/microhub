@@ -21,7 +21,6 @@ exports.addGoal = async (req, res, next) => {
             data: { goal },
         })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }
@@ -51,7 +50,6 @@ exports.getOneGoal = async (req, res, next) => {
             data: { goal },
         })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }
@@ -70,7 +68,6 @@ exports.updateGoal = async (req, res, next) => {
             data: { goal },
         })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }
