@@ -1,9 +1,9 @@
 const sequelize = require('../configs/db')
 const bcrypt = require('bcryptjs')
-const { DataTypes, Sequelize } = require('sequelize')
+const { DataTypes } = require('sequelize')
 
 const User = sequelize.define(
-    'clients',
+    'users',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         first_name: { type: DataTypes.STRING, allowNull: false },
@@ -52,6 +52,9 @@ const User = sequelize.define(
                 fields: ['email'],
             },
         ],
+        timestamps: true,
+        createdAt: true,
+        updatedAt: false,
     }
 )
 
