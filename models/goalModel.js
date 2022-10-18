@@ -12,7 +12,7 @@ const Goals = sequelize.define('goals', {
     end_date: { type: DataTypes.STRING, allowNull: false },
 })
 
-Consumer.hasMany(Goals, { as: 'goal' })
-Goals.belongsTo(Consumer, { as: 'goal' })
+Consumer.hasMany(Goals)
+Goals.belongsTo(Consumer)
 
 module.exports = Goals

@@ -9,8 +9,8 @@ const Personal_treiner = sequelize.define('nutritionist', {
     credentials: { type: DataTypes.INTEGER },
 })
 
-User.hasOne(Personal_treiner, { onDelete: 'CASCADE', as: 'user' })
-Personal_treiner.belongsTo(User, { onDelete: 'CASCADE', as: 'user' })
+User.hasOne(Personal_treiner, { onDelete: 'CASCADE' })
+Personal_treiner.belongsTo(User, { onDelete: 'CASCADE' })
 
 Personal_treiner.beforeCreate((user, options) => {
     const token = crypto.randomBytes(32).toString('hex')

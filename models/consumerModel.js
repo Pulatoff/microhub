@@ -118,7 +118,7 @@ const Consumer = sequlize.define(
 )
 
 // referencing
-User.hasOne(Consumer, { onDelete: 'CASCADE', as: 'user' })
-Consumer.belongsTo(User, { onDelete: 'CASCADE', as: 'user' })
+User.hasOne(Consumer, { onDelete: 'CASCADE' })
+Consumer.belongsTo(User, { onDelete: 'CASCADE' })
 
 module.exports = Consumer

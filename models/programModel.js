@@ -17,10 +17,10 @@ const Program = sequelize.define(
     }
 )
 
-Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE', as: 'nutritionist' })
-Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE', as: 'nutritionist' })
+Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE' })
+Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE' })
 
-Program.hasMany(Meal, { as: 'program' })
-Meal.belongsTo(Program, { as: 'program' })
+Program.hasMany(Meal)
+Meal.belongsTo(Program)
 
 module.exports = Program
