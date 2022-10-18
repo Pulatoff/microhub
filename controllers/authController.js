@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const Personal_Trainer = require('../models/personalTrainerModel')
-const crypto = require('crypto')
 
 exports.signupCLient = async (req, res, next) => {
     try {
@@ -18,11 +17,16 @@ exports.signupCLient = async (req, res, next) => {
             status: 'success',
             data: {
                 accessToken: `Bearer ${token}`,
-                user,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    photo: user.photo,
+                },
             },
         })
     } catch (error) {
-        console.log(error)
         res.status(404).json({ message: error.message })
     }
 }
@@ -31,7 +35,7 @@ exports.signin = async (req, res, next) => {
     try {
         const { password, email } = req.body
         if (!password || !email) throw new Error('field could not be pustim')
-        const user = await User.findOne({ where: { email } })
+        const user = await User.findOne({ where: { email, isActive: 1 } })
         if (!user) throw new Error('Wrong password or email, Please try again')
         // comparing passwords
         const compare = await bcrypt.compare(password, user.password)
@@ -39,40 +43,40 @@ exports.signin = async (req, res, next) => {
         const token = createJwt(user.id)
         res.status(200).json({ status: 'succes', data: { user, accessToken: `Bearer ${token}` } })
     } catch (error) {
-        console.log(error.message)
-        res.status(404).json({
-            status: 'failed',
-            message: error.message,
-        })
+        next(new AppError(error.message, 404))
+    }
+}
+
+exports.logout = async (req, res, next) => {
+    try {
+        const id = req.user.id
+        const user = await User.findByPk(id)
+        user.isActive = 0
+        user.save()
+        res.status(200).json({ status: 'success', data: '' })
+    } catch (error) {
+        next(new AppError(error.message, 404))
     }
 }
 
 exports.protect = async (req, res, next) => {
     try {
         let token
-
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.slice(7)
             console.log(token)
         } else {
             throw new Error('you are not authorizated')
         }
-
         if (!token) throw new Error('You not authorized')
-
         const tekshir = jwt.verify(token, process.env.JWT_SECRET_KEY)
         if (!tekshir) throw new Error('Your token expired')
-
         const user = await User.findByPk(tekshir.id)
         if (!user) throw new Error('This user not exist')
         req.user = user
         next()
     } catch (error) {
-        console.log(error.message)
-        res.status(404).json({
-            status: 'failed',
-            message: error.message,
-        })
+        next(new AppError(error.message))
     }
 }
 
@@ -116,7 +120,6 @@ exports.signupNutritionist = async (req, res, next) => {
             },
         })
     } catch (error) {
-        console.log(error)
-        res.status(404).json({ message: error.message })
+        next(new AppError(error.message, 404))
     }
 }

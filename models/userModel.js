@@ -44,6 +44,7 @@ const User = sequelize.define(
             allowNull: false,
             defaultValue: 'consumer',
         },
+        isActive: { type: DataTypes.INTEGER, defaultValue: 1 },
     },
     {
         indexes: [
@@ -59,7 +60,7 @@ const User = sequelize.define(
 )
 
 // hashing password before create
-User.beforeCreate(async (user, options) => {
+User.addHook('beforeSave', async (user, options) => {
     const hashedPassword = await bcrypt.hash(user.password, 12)
     user.password = hashedPassword
 })
