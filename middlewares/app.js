@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 const AppError = require('../utils/AppError')
+const morgan = require('morgan')
+const rateLimit = require('express-rate-limit')
 const userRouter = require('../routes/authRouter')
 const consumerRouter = require('../routes/consumerRoutes')
 const programRouter = require('../routes/programRouter')
@@ -9,7 +11,18 @@ const TrainerRouter = require('../routes/trainerRouter')
 const DairyController = require('../routes/dairyRouter')
 const GoalsRouter = require('../routes/goalRoutes')
 
-app.use(express.json())
+app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
+
+// for fetching request body
+app.use(express.json({ limit: '10kb' }))
+
+const limit = rateLimit({
+    max: 10,
+    windowMs: 1 * 60 * 60 * 1000,
+    message: 'Too many requests from this IP, Please try again later',
+})
+
+app.use('/api', limit)
 
 // main routes
 app.use('/api/v1/users', userRouter)
