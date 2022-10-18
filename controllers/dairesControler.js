@@ -28,7 +28,6 @@ exports.getDairy = async (req, res, next) => {
         const diaries = await Dairy.findAll({ where: { consumerId: consumer.id } })
         res.status(200).json({ status: 'success', data: { diaries } })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }
