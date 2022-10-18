@@ -7,7 +7,7 @@ const Program = sequelize.define(
     'programs',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        name: { type: DataTypes.STRING },
+        name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
     },
     {
@@ -17,10 +17,10 @@ const Program = sequelize.define(
     }
 )
 
-Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE', as: 'programs' })
-Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE', as: 'programs' })
+Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE', as: 'nutritionist' })
+Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE', as: 'nutritionist' })
 
-Program.hasMany(Meal, { as: 'meals' })
-Meal.belongsTo(Program, { as: 'meals' })
+Program.hasMany(Meal, { as: 'program' })
+Meal.belongsTo(Program, { as: 'program' })
 
 module.exports = Program
