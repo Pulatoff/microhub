@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.all('*', (req, res, next) => {
-    next(new AppError('Page not Found', 404))
+    next(new AppError(`this url has not found: ${req.originalUrl}`, 404))
 })
 
 app.use(errorController)
