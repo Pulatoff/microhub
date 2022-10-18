@@ -1,5 +1,4 @@
 const sequelize = require('../configs/db')
-const { DataTypes } = require('sequelize')
 const Consumer = require('./consumerModel')
 const Trainer = require('./personalTrainerModel')
 

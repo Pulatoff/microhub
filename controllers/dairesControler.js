@@ -4,16 +4,15 @@ const AppError = require('../utils/AppError')
 exports.addDairy = async (req, res, next) => {
     try {
         const { course, serving, food_id, quantity, programId } = req.body
-        const dairy = await Dairy.create({
+        const diary = await Dairy.create({
             course,
             serving,
             food_id,
             quantity,
             programId,
         })
-        res.status(200).json({ status: 'success', data: { dairy } })
+        res.status(200).json({ status: 'success', data: { diary } })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }

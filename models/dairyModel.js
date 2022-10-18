@@ -13,10 +13,10 @@ const Dairy = sequelize.define('diaries', {
     date: { type: DataTypes.STRING },
 })
 
-Program.hasOne(Dairy, { as: 'diary' })
+Program.hasOne(Dairy, { as: 'program' })
 Dairy.belongsTo(Program, { as: 'program' })
 
-Consumer.hasOne(Dairy, { as: 'diary' })
-Dairy.belongsTo(Consumer, { as: 'diary' })
+Consumer.hasMany(Dairy, { as: 'consumer' })
+Dairy.belongsTo(Consumer, { as: 'consumer' })
 
 module.exports = Dairy
