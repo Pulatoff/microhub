@@ -4,8 +4,8 @@ const Consumer = require('../models/consumerModel')
 
 exports.addGoal = async (req, res, next) => {
     try {
-        const userIdId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userIdId } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
         const { protein, carbohydrates, fats, calories, start_date, end_date } = req.body
         const goal = await Goals.create({
             protein,
@@ -28,8 +28,8 @@ exports.addGoal = async (req, res, next) => {
 
 exports.getAllGoals = async (req, res, next) => {
     try {
-        const userIdId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userIdId } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
         const goals = await Goals.findAll({ where: { consumerId: consumer.id } })
         res.status(200).json({
             status: 'success',
@@ -43,8 +43,8 @@ exports.getAllGoals = async (req, res, next) => {
 
 exports.getOneGoal = async (req, res, next) => {
     try {
-        const userIdId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userIdId } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
         const goal = await Goals.findOne({ where: { consumerId: consumer.id, id: req.params.id } })
         res.status(200).json({
             status: 'success',
@@ -58,8 +58,8 @@ exports.getOneGoal = async (req, res, next) => {
 
 exports.updateGoal = async (req, res, next) => {
     try {
-        const userIdId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userIdId } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
         const goal = await Goals.update(req.body, {
             where: { consumerId: consumer.id, id: req.params.id },
             returning: true,

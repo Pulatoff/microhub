@@ -14,7 +14,7 @@ exports.addConsumer = async (req, res, next) => {
             allergies,
             preferences,
             gender,
-            userIdId: req.user.id,
+            userId: req.user.id,
         })
         res.status(200).json({
             status: 'success',
