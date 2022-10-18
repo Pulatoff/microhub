@@ -5,14 +5,14 @@ const Trainer = require('../models/personalTrainerModel')
 
 exports.bindConsumer = async (req, res, next) => {
     try {
-        const { trainerId } = req.body
-        const userIdId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userIdId } })
-        const trainer = await Trainer.findByPk(trainerId)
+        const { nutritionistId } = req.body
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
+        const trainer = await Trainer.findByPk(nutritionistId)
 
         if (!trainer) next(new AppError('This trainer is not exist', 404))
 
-        await ConsumerTrainer.create({ consumerId: consumer.id, personalTrainerId: trainer.id })
+        await ConsumerTrainer.create({ consumerId: consumer.id, nutritionistId: trainer.id })
 
         res.status(200).json({
             status: 'success',
