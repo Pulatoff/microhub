@@ -3,6 +3,7 @@ const { DataTypes } = require('sequelize')
 const User = require('../models/userModel')
 const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('@presspage/fitnessjs')
 const set_error = require('../utils/errorModel')
+const activ_level_num = require('../utils/activLevelNum')
 
 const Consumer = sequlize.define('consumers', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -25,12 +26,6 @@ const Consumer = sequlize.define('consumers', {
         set(val) {
             this.setDataValue('least_favorite_foods', val.join(';'))
         },
-    },
-    dairies: {
-        type: DataTypes.INTEGER,
-    },
-    goals: {
-        type: DataTypes.INTEGER,
     },
     gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
     activity_level: {
@@ -107,7 +102,6 @@ const Consumer = sequlize.define('consumers', {
     daily_targets: {
         type: DataTypes.VIRTUAL,
         get() {
-            console.log(this.tdee)
             const daily = get_daily_targets(this.weight, this.tdee)
             return daily
         },
@@ -118,20 +112,5 @@ const Consumer = sequlize.define('consumers', {
 // referencing
 User.hasOne(Consumer, { onDelete: 'CASCADE', as: 'user_id' })
 Consumer.belongsTo(User, { onDelete: 'CASCADE', as: 'user_id' })
-
-function activ_level_num(value) {
-    switch (value) {
-        case 'extrmely_active':
-            return 1.9
-        case 'very_active':
-            return 1.725
-        case 'moderate_active':
-            return 1.55
-        case 'lightly_active':
-            return 1.375
-        default:
-            return 1.2
-    }
-}
 
 module.exports = Consumer
