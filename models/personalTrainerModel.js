@@ -4,7 +4,7 @@ const User = require('../models/userModel')
 const crypto = require('crypto')
 const Consumer = require('../models/consumerModel')
 
-const Personal_treiner = sequelize.define('personal_trainers', {
+const Personal_treiner = sequelize.define('nutritionist', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     link: { type: DataTypes.STRING },
     credentials: { type: DataTypes.INTEGER },
