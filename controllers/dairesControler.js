@@ -1,15 +1,19 @@
+const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
 const AppError = require('../utils/AppError')
 
 exports.addDairy = async (req, res, next) => {
     try {
         const { course, serving, food_id, quantity, programId } = req.body
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
         const diary = await Dairy.create({
             course,
             serving,
             food_id,
             quantity,
             programId,
+            consumerId: consumer.id,
         })
         res.status(200).json({ status: 'success', data: { diary } })
     } catch (error) {
@@ -17,27 +21,12 @@ exports.addDairy = async (req, res, next) => {
     }
 }
 
-exports.getDairies = async (req, res, next) => {
-    try {
-        const { course, serving, food_id, quantity, programId } = req.body
-        const dairies = await Dairy.create({
-            course,
-            serving,
-            food_id,
-            quantity,
-            programId,
-        })
-        res.status(200).json({ status: 'success', data: { dairies } })
-    } catch (error) {
-        console.log(error)
-        next(new AppError(error.message, 404))
-    }
-}
-
 exports.getDairy = async (req, res, next) => {
     try {
-        const dairies = await Dairy.findAll()
-        res.status(200).json({ status: 'success', data: { dairies } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
+        const diaries = await Dairy.findAll({ where: { consumerId: consumer.id } })
+        res.status(200).json({ status: 'success', data: { diaries } })
     } catch (error) {
         console.log(error)
         next(new AppError(error.message, 404))
@@ -46,20 +35,27 @@ exports.getDairy = async (req, res, next) => {
 
 exports.getOneDairy = async (req, res, next) => {
     try {
-        const dairies = await Dairy.findByPk(req.params.id)
-        res.status(200).json({ status: 'success', data: { dairies } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
+        const diary = await Dairy.findByPk(req.params.id, { where: { consumerId: consumer.id } })
+        if (!diary) next("This diary don't belongs to you")
+        res.status(200).json({ status: 'success', data: { diary } })
     } catch (error) {
-        console.log(error.message)
         next(new AppError(error.message, 404))
     }
 }
 
 exports.updateDairy = async (req, res, next) => {
     try {
-        const dairy = await Dairy.update(req.body, { where: { id: req.params.id }, returning: true, plain: true })
-        res.status(200).json({ status: 'success', data: { dairy } })
+        const userId = req.user.id
+        const consumer = await Consumer.findOne({ where: { userId } })
+        const diary = await Dairy.update(req.body, {
+            where: { id: req.params.id, consumerId: consumer.id },
+            returning: true,
+            plain: true,
+        })
+        res.status(200).json({ status: 'success', data: { diary } })
     } catch (error) {
-        console.log(error)
         next(new AppError(error.message, 404))
     }
 }
