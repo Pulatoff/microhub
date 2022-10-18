@@ -37,7 +37,23 @@ const Consumer = sequlize.define('consumers', {
         type: DataTypes.ENUM('sendentary', 'lightly_active', 'moderate_active', 'very_active', 'extrmely_active'),
         defaultValue: 'sendentary',
     },
-    preferences: DataTypes.STRING,
+    preferences: {
+        type: DataTypes.ENUM(
+            'diet',
+            'standart',
+            'vegetarian',
+            'lacto_vegetarian',
+            'ovo_vegetarian',
+            'vegan',
+            'gluten_free',
+            'halal',
+            'kosher',
+            'meat',
+            'pescetarian',
+            'polltarian'
+        ),
+        allowNull: false,
+    },
     allergies: {
         type: DataTypes.STRING,
         get() {

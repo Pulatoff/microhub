@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize')
 
 const Meals = sequelize.define('meals', {
     course: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('breakfast', 'brunch', 'lunch', 'snacks', 'dinner'),
         allowNull: false,
     },
     quantity: {
