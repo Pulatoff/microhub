@@ -9,16 +9,9 @@ const Meals = sequelize.define(
             type: DataTypes.ENUM('breakfast', 'brunch', 'lunch', 'snacks', 'dinner'),
             allowNull: false,
         },
-        quantity: {
-            type: DataTypes.INTEGER,
-        },
-        serving: {
-            type: DataTypes.STRING,
-        },
-        food_id: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+        quantity: { type: DataTypes.INTEGER },
+        serving: { type: DataTypes.STRING },
+        food_id: { type: DataTypes.STRING, allowNull: false },
     },
     {
         timestamps: false,
