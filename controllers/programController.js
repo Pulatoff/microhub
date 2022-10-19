@@ -40,15 +40,6 @@ exports.addProgram = async (req, res, next) => {
     }
 }
 
-exports.updatePrograms = async (req, res, next) => {
-    try {
-        const program = await Program.update(req.body, { where: { id: req.params.id }, returning: true, plain: true })
-        res.status(200).json({ status: 'success', data: { program } })
-    } catch (error) {
-        next(AppError(error.message, 404))
-    }
-}
-
 exports.getAllPrograms = async (req, res, next) => {
     try {
         const userId = req.user.id
@@ -83,6 +74,28 @@ exports.getProgram = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             data: { program },
+        })
+    } catch (error) {
+        next(new AppError(error.message, 404))
+    }
+}
+
+exports.updatePrograms = async (req, res, next) => {
+    try {
+        const { name, description } = req.body
+        const userId = req.user.id
+        const trainer = await Trainer.findOne({ where: { userId } })
+        if (!trainer) next(new AppError("Tou don't access this query"))
+        const program = await Program.findByPk(req.params.id, { where: { nutritionistId: trainer.id } })
+
+        if (!program) next(new AppError('Program not found', 404))
+
+        program.name = name || program.name
+        program.description = description || program.description
+        await program.save()
+        res.status(200).json({
+            status: 'success',
+            data: { program: { name: program.name, description: program.description } },
         })
     } catch (error) {
         next(new AppError(error.message, 404))
