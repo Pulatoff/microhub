@@ -119,10 +119,11 @@ exports.signupNutritionist = async (req, res, next) => {
         const token = await createJwt(user.id)
         const trainer = {
             id: nutrisionist.id,
-            userId: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
             email: user.email,
+            photo: 'default.jpg',
+            linkToken: nutrisionist.linkToken,
             credentials: {},
         }
         res.status(200).json({
