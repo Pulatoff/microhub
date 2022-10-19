@@ -53,7 +53,7 @@ exports.getAllPrograms = async (req, res, next) => {
     try {
         const userId = req.user.id
 
-        const consumer = await Consumer.findAll({
+        const consumer = await Consumer.findOne({
             where: { userId },
             include: [
                 {
@@ -63,7 +63,6 @@ exports.getAllPrograms = async (req, res, next) => {
                 },
             ],
         })
-        console.log(consumer)
         res.json({ status: 'success', data: { programs: consumer.programs } })
     } catch (error) {
         next(new AppError(error.message, 404))
