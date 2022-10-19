@@ -5,12 +5,13 @@ const AppError = require('../utils/AppError')
 
 exports.addDairy = async (req, res, next) => {
     try {
-        const { course, serving, food_id, quantity, programId } = req.body
+        const { course, serving, food_id, date, quantity, programId } = req.body
         const userId = req.user.id
         const consumer = await Consumer.findOne({ where: { userId } })
         const diary = await Dairy.create({
             course,
             serving,
+            date,
             food_id,
             quantity,
             programId,
@@ -24,14 +25,7 @@ exports.addDairy = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             data: {
-                diary: {
-                    id: diary.id,
-                    serving: diary.serving,
-                    food_id: diary.food_id,
-                    quantity: diary.quantity,
-                    course: diary.course,
-                    createdAt: diary.createdAt,
-                },
+                diary: newDiary,
             },
         })
     } catch (error) {
