@@ -54,7 +54,11 @@ exports.getOneDairy = async (req, res, next) => {
     try {
         const userId = req.user.id
         const consumer = await Consumer.findOne({ where: { userId } })
-        const diary = await Dairy.findByPk(req.params.id, { where: { consumerId: consumer.id } })
+        const diary = await Dairy.findByPk(req.params.id, {
+            where: { consumerId: consumer.id },
+            attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
+            include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
+        })
         if (!diary) next("This diary don't belongs to you")
         res.status(200).json({ status: 'success', data: { diary } })
     } catch (error) {
@@ -65,12 +69,19 @@ exports.getOneDairy = async (req, res, next) => {
 exports.updateDairy = async (req, res, next) => {
     try {
         const userId = req.user.id
+        const { date, course, food_id, quantity, serving } = req.body
         const consumer = await Consumer.findOne({ where: { userId } })
-        const diary = await Dairy.update(req.body, {
+        const diary = await Dairy.findOne({
             where: { id: req.params.id, consumerId: consumer.id },
-            returning: true,
-            plain: true,
+            attributes: ['date', 'course', 'food_id', 'quantity', 'serving'],
         })
+
+        diary.date = date || diary.date
+        diary.course = course || diary.course
+        diary.food_id = food_id || diary.food_id
+        diary.quantity = quantity || diary.quantity
+        diary.serving = serving || diary.serving
+        await diary.save()
         res.status(200).json({ status: 'success', data: { diary } })
     } catch (error) {
         next(new AppError(error.message, 404))
