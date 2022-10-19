@@ -8,18 +8,19 @@ exports.addDairy = async (req, res, next) => {
         const { course, serving, food_id, quantity, programId } = req.body
         const userId = req.user.id
         const consumer = await Consumer.findOne({ where: { userId } })
-        const diary = await Dairy.create(
-            {
-                course,
-                serving,
-                food_id,
-                quantity,
-                programId,
-                consumerId: consumer.id,
-            },
-            { include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }] }
-        )
-        console.log(diary)
+        const diary = await Dairy.create({
+            course,
+            serving,
+            food_id,
+            quantity,
+            programId,
+            consumerId: consumer.id,
+        })
+        const newDiary = await Dairy.findByPk(diary.id, {
+            attributes: ['id', 'serving', 'food_id', 'quantity', 'course', 'program'],
+            include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
+        })
+        console.log(newDiary)
         res.status(200).json({
             status: 'success',
             data: {
