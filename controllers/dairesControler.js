@@ -75,7 +75,7 @@ exports.updateDairy = async (req, res, next) => {
             where: { id: req.params.id, consumerId: consumer.id },
             attributes: ['date', 'course', 'food_id', 'quantity', 'serving'],
         })
-
+        if (!diary) next(new AppError('this diary not found,please try again'))
         diary.date = date || diary.date
         diary.course = course || diary.course
         diary.food_id = food_id || diary.food_id
