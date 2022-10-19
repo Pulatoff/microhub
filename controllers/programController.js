@@ -10,14 +10,13 @@ exports.addProgram = async (req, res, next) => {
         const trainer = await Trainer.findOne({ where: { userId } })
         const { meals, name, description } = req.body
         const program = await Program.create({
-            programsId: trainer.id,
-            personalTrainerId: trainer.id,
+            nutritionistId: trainer.id,
             name,
             description,
         })
-        for (let i = 0; i < meals.length; i++) {
-            await Meal.create({ ...meals[0], programId: program.id, mealsId: program.id })
-        }
+
+        const meal = await Meal.create(meals)
+        console.log(meal)
         res.status(200).json({ status: 'success', data: { program } })
     } catch (error) {
         next(AppError(error.message, 404))
