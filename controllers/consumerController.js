@@ -1,6 +1,7 @@
 const Consumer = require('../models/consumerModel')
 const Trainer = require('../models/personalTrainerModel')
 const AppError = require('../utils/AppError')
+const User = require('../models/userModel')
 
 exports.addConsumer = async (req, res, next) => {
     try {
@@ -59,8 +60,10 @@ exports.updateConsumer = async (req, res, next) => {
 exports.getTrainers = async (req, res, next) => {
     try {
         const userId = req.user.id
-        const consumer = await Consumer.findOne({ where: { userId }, include: Trainer })
+        const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
+
         const nutrisionists = consumer.nutritionists.map((val, key) => {
+            console.log(val)
             return {
                 id: val.id,
                 linkToken: val.linkToken,
