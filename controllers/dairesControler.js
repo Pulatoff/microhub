@@ -1,5 +1,6 @@
 const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
+const Program = require('../models/programModel')
 const AppError = require('../utils/AppError')
 
 exports.addDairy = async (req, res, next) => {
@@ -7,14 +8,18 @@ exports.addDairy = async (req, res, next) => {
         const { course, serving, food_id, quantity, mealId } = req.body
         const userId = req.user.id
         const consumer = await Consumer.findOne({ where: { userId } })
-        const diary = await Dairy.create({
-            course,
-            serving,
-            food_id,
-            quantity,
-            mealId,
-            consumerId: consumer.id,
-        })
+        const diary = await Dairy.create(
+            {
+                course,
+                serving,
+                food_id,
+                quantity,
+                mealId,
+                consumerId: consumer.id,
+            },
+            { include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }] }
+        )
+        console.log(diary)
         res.status(200).json({
             status: 'success',
             data: {
