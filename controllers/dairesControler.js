@@ -37,7 +37,13 @@ exports.getDairy = async (req, res, next) => {
     try {
         const userId = req.user.id
         const consumer = await Consumer.findOne({ where: { userId } })
-        const diaries = await Dairy.findAll({ where: { consumerId: consumer.id } })
+
+        const diaries = await Dairy.findAll({
+            where: { consumerId: consumer.id },
+            attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
+            include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
+        })
+
         res.status(200).json({ status: 'success', data: { diaries } })
     } catch (error) {
         next(new AppError(error.message, 404))
