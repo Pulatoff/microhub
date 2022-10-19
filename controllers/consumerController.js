@@ -60,9 +60,17 @@ exports.getTrainers = async (req, res, next) => {
     try {
         const userId = req.user.id
         const consumer = await Consumer.findOne({ where: { userId }, include: Trainer })
+        const nutrisionists = consumer.nutritionists.map((val, key) => {
+            return {
+                id: val.id,
+                linkToken: val.linkToken,
+                createdAt: val.createdAt,
+                userId: val.userId,
+            }
+        })
         res.status(200).json({
             status: 'success',
-            data: { trainers: consumer.nutritionists },
+            data: { trainers: nutrisionists },
         })
     } catch (error) {
         next(new AppError(error.message, 404))
