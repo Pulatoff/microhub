@@ -19,7 +19,7 @@ exports.addProgram = async (req, res, next) => {
         console.log(meal)
         res.status(200).json({ status: 'success', data: { program } })
     } catch (error) {
-        next(AppError(error.message, 404))
+        next(new AppError(error.message, 404))
     }
 }
 
