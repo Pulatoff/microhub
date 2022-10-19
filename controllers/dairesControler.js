@@ -15,7 +15,19 @@ exports.addDairy = async (req, res, next) => {
             mealId,
             consumerId: consumer.id,
         })
-        res.status(200).json({ status: 'success', data: { diary } })
+        res.status(200).json({
+            status: 'success',
+            data: {
+                diary: {
+                    id: diary.id,
+                    serving: diary.serving,
+                    food_id: diary.food_id,
+                    quantity: diary.quantity,
+                    course: diary.course,
+                    createdAt: diary.createdAt,
+                },
+            },
+        })
     } catch (error) {
         next(new AppError(error.message, 404))
     }
