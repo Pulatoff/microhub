@@ -11,6 +11,7 @@ const Dairy = sequelize.define(
             allowNull: false,
         },
         quantity: { type: DataTypes.STRING },
+        food_id: { type: DataTypes.STRING, allowNull: false },
         serving: { type: DataTypes.STRING },
         date: { type: DataTypes.STRING },
     },
