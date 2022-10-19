@@ -34,9 +34,9 @@ const limit = rateLimit({
 
 app.use('/api', limit)
 
-app.get('/', (req, res, next) => {
-    res.send('This is development api for Microhub app')
-})
+// app.get('/', (req, res, next) => {
+//     res.send('This is development api for Microhub app')
+// })
 
 // main routes
 app.use('/api/v1/users', userRouter)
