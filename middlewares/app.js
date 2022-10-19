@@ -3,6 +3,10 @@ const app = express()
 const AppError = require('../utils/AppError')
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
+const xss = require('xss-clean')
+const hpp = require('hpp')
+const hemlet = require('helmet')
+const { urlencoded } = require('express')
 
 const userRouter = require('../routes/authRouter')
 const consumerRouter = require('../routes/consumerRoutes')
@@ -14,8 +18,13 @@ const GoalsRouter = require('../routes/goalRoutes')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
+app.use(hemlet())
+
 // for fetching request body
 app.use(express.json({ limit: '10kb' }))
+app.use(urlencoded({ limit: '10kb' }))
+app.use(xss())
+app.use(express.static('public'))
 
 const limit = rateLimit({
     max: 10,
@@ -24,6 +33,10 @@ const limit = rateLimit({
 })
 
 app.use('/api', limit)
+
+app.get('/', (req, res, next) => {
+    res.send('This is development api for Microhub app')
+})
 
 // main routes
 app.use('/api/v1/users', userRouter)
