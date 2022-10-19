@@ -14,9 +14,9 @@ exports.addProgram = async (req, res, next) => {
             name,
             description,
         })
-
-        const meal = await Meal.create(meals)
-        console.log(meal)
+        for (let i = 0; i < meals.length; i++) {
+            await Meal.create({ ...meals[i], programId: program.id })
+        }
         res.status(200).json({ status: 'success', data: { program } })
     } catch (error) {
         next(new AppError(error.message, 404))
