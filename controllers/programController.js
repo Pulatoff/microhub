@@ -17,7 +17,24 @@ exports.addProgram = async (req, res, next) => {
         for (let i = 0; i < meals.length; i++) {
             await Meal.create({ ...meals[i], programId: program.id })
         }
-        res.status(200).json({ status: 'success', data: { program } })
+
+        const createdMeals = await Meal.findAll({
+            where: { programId: program.id },
+            attributes: ['course', 'quantity', 'serving', 'food_id'],
+        })
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                program: {
+                    id: program.id,
+                    name: program.name,
+                    description: program.description,
+                    meals: createdMeals,
+                    createdAt: program.createdAt,
+                },
+            },
+        })
     } catch (error) {
         next(new AppError(error.message, 404))
     }
