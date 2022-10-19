@@ -17,7 +17,7 @@ exports.addDairy = async (req, res, next) => {
             consumerId: consumer.id,
         })
         const newDiary = await Dairy.findByPk(diary.id, {
-            attributes: ['id', 'serving', 'food_id', 'quantity', 'course', 'program'],
+            attributes: ['id', 'serving', 'food_id', 'quantity', 'course', 'date'],
             include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
         })
         console.log(newDiary)
