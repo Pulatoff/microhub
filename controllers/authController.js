@@ -23,6 +23,7 @@ exports.signupCLient = async (req, res, next) => {
                     first_name: user.first_name,
                     last_name: user.last_name,
                     photo: user.photo,
+                    createdAt: user.createdAt,
                 },
             },
         })
@@ -50,6 +51,7 @@ exports.signin = async (req, res, next) => {
                     first_name: user.first_name,
                     last_name: user.last_name,
                     photo: user.photo,
+                    createdAt: user.createdAt,
                 },
                 accessToken: `Bearer ${token}`,
             },
