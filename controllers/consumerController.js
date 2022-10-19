@@ -66,9 +66,12 @@ exports.getTrainers = async (req, res, next) => {
             console.log(val)
             return {
                 id: val.id,
+                first_name: val.user.first_name,
+                last_name: val.user.last_name,
+                photo: val.user.photo,
+                email: val.user.email,
                 linkToken: val.linkToken,
                 createdAt: val.createdAt,
-                userId: val.userId,
             }
         })
         res.status(200).json({
