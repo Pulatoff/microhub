@@ -41,7 +41,19 @@ exports.signin = async (req, res, next) => {
         const compare = await bcrypt.compare(password, user.password)
         if (!compare) throw new Error('Wrong password or email, Please try again')
         const token = createJwt(user.id)
-        res.status(200).json({ status: 'succes', data: { user, accessToken: `Bearer ${token}` } })
+        res.status(200).json({
+            status: 'succes',
+            data: {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    photo: user.photo,
+                },
+                accessToken: `Bearer ${token}`,
+            },
+        })
     } catch (error) {
         next(new AppError(error.message, 404))
     }
@@ -100,7 +112,7 @@ exports.signupNutritionist = async (req, res, next) => {
         // checking the saming => password and passwordConfirm
         if (password !== passwordConfirm) throw new Error('password not the same')
         // checking user existing
-        const user = await User.create({ first_name, last_name, email, password, role: 'personal_trainer' })
+        const user = await User.create({ first_name, last_name, email, password, role: 'nutritionist' })
         const nutrisionist = await Personal_Trainer.create({ userId: user.id })
         const token = await createJwt(user.id)
         const trainer = {
@@ -109,7 +121,6 @@ exports.signupNutritionist = async (req, res, next) => {
             first_name: user.first_name,
             last_name: user.last_name,
             email: user.email,
-            consumers: nutrisionist.consumers ? nutrisionist.consumers : [],
             credentials: {},
         }
         res.status(200).json({
