@@ -1,5 +1,4 @@
 const Consumer = require('../models/consumerModel')
-const Program = require('../models/programModel')
 const Trainer = require('../models/personalTrainerModel')
 const AppError = require('../utils/AppError')
 
@@ -63,7 +62,7 @@ exports.getTrainers = async (req, res, next) => {
         const consumer = await Consumer.findOne({ where: { userId }, include: Trainer })
         res.status(200).json({
             status: 'success',
-            data: { trainers: consumer.personal_trainers },
+            data: { trainers: consumer.nutritionists },
         })
     } catch (error) {
         next(new AppError(error.message, 404))
