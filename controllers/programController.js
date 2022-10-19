@@ -63,7 +63,7 @@ exports.getAllPrograms = async (req, res, next) => {
                 },
             ],
         })
-
+        console.log(consumer)
         res.json({ status: 'success', data: { programs: consumer.programs } })
     } catch (error) {
         next(new AppError(error.message, 404))
