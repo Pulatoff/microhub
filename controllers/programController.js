@@ -53,7 +53,16 @@ exports.getAllPrograms = async (req, res, next) => {
     try {
         const userId = req.user.id
 
-        const consumer = await Consumer.findOne({ where: { userId }, include: Program })
+        const consumer = await Consumer.findAll({
+            where: { userId },
+            include: [
+                {
+                    model: Program,
+                    attributes: ['name', 'id', 'description', 'createdAt'],
+                    include: [{ model: Meal, attributes: ['food_id', 'serving', 'quantity', 'course'] }],
+                },
+            ],
+        })
 
         res.json({ status: 'success', data: { programs: consumer.programs } })
     } catch (error) {
