@@ -73,7 +73,7 @@ exports.updateDairy = async (req, res, next) => {
         const consumer = await Consumer.findOne({ where: { userId } })
         const diary = await Dairy.findOne({
             where: { id: req.params.id, consumerId: consumer.id },
-            attributes: ['date', 'course', 'food_id', 'quantity', 'serving'],
+            attributes: ['id', 'date', 'course', 'food_id', 'quantity', 'serving'],
         })
         if (!diary) next(new AppError('this diary not found,please try again'))
         diary.date = date || diary.date
