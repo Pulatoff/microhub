@@ -47,16 +47,44 @@ exports.getAllGroups = async (req, res, next) => {
         const trainer = await Trainer.findOne({ where: { userId } })
         const groups = await Group.findAll({
             where: { nutritionistId: trainer.id },
+            attributes: ['id', 'name', 'created'],
             include: [
                 {
                     model: Consumer,
-                    include: [{ model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'photo'] }],
+                    include: [
+                        { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'] },
+                    ],
                 },
             ],
         })
         res.status(200).json({
             status: 'success',
             data: { groups },
+        })
+    } catch (error) {
+        next(new AppError(error.message, 404))
+    }
+}
+
+exports.getOneGroup = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const userId = req.user.id
+        const trainer = await Trainer.findOne({ where: { userId } })
+        const group = await Group.findByPk(id, {
+            where: { nutritionistId: trainer.id },
+            include: [
+                {
+                    model: Consumer,
+                    include: [
+                        { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'] },
+                    ],
+                },
+            ],
+        })
+        res.status(200).json({
+            status: 'success',
+            data: { group },
         })
     } catch (error) {
         next(new AppError(error.message, 404))
