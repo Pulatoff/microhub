@@ -13,8 +13,9 @@ const consumerRouter = require('../routes/consumerRoutes')
 const programRouter = require('../routes/programRouter')
 const errorController = require('../controllers/errorController')
 const TrainerRouter = require('../routes/trainerRouter')
-const DairyController = require('../routes/dairyRouter')
+const DairyRouter = require('../routes/dairyRouter')
 const GoalsRouter = require('../routes/goalRoutes')
+const GroupRouter = require('../routes/groupRouter')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
@@ -39,8 +40,9 @@ app.use('/api/v1/users', userRouter)
 app.use('/api/v1/consumers', consumerRouter)
 app.use('/api/v1/programs', programRouter)
 app.use('/api/v1/trainers', TrainerRouter)
-app.use('/api/v1/diaries', DairyController)
+app.use('/api/v1/diaries', DairyRouter)
 app.use('/api/v1/goals', GoalsRouter)
+app.use('/api/v1/groups', GroupRouter)
 
 if (process.env.NODE_ENV === 'development') {
     app.use('/test', (req, res, next) => {
