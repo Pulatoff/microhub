@@ -3,6 +3,8 @@ const GroupConsumer = require('../models/groupConsumerModel')
 const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
+const Consumer = require('../models/consumerModel')
+const User = require('../models/userModel')
 
 exports.addGroup = async (req, res, next) => {
     try {
@@ -33,6 +35,24 @@ exports.bindGroup = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             data: '',
+        })
+    } catch (error) {
+        next(new AppError(error.message, 404))
+    }
+}
+
+exports.getAllGroups = async (req, res, next) => {
+    try {
+        const userId = req.user.id
+        const trainer = await Trainer.findOne({ where: { userId } })
+        const groups = await Group.findAll({
+            where: { nutritionistId: trainer.id },
+            include: [
+                {
+                    model: Consumer,
+                    include: [{ model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'photo'] }],
+                },
+            ],
         })
     } catch (error) {
         next(new AppError(error.message, 404))
