@@ -54,6 +54,10 @@ exports.getAllGroups = async (req, res, next) => {
                 },
             ],
         })
+        res.status(200).json({
+            status: 'success',
+            data: { groups },
+        })
     } catch (error) {
         next(new AppError(error.message, 404))
     }
