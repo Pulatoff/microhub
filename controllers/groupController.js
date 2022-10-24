@@ -90,3 +90,25 @@ exports.getOneGroup = async (req, res, next) => {
         next(new AppError(error.message, 404))
     }
 }
+
+exports.updateGroup = async (req, res, next) => {
+    try {
+        const { name } = req.body
+        const { id } = req.params
+        const userId = req.user.id
+        const trainer = await Trainer.findOne({ where: { userId } })
+        const group = await Group.findByPk(id, {
+            where: { nutritionistId: trainer.id },
+            attributes: ['id', 'name', 'createdAt'],
+        })
+        if (group) next(new AppError('Not found this group', 404))
+        group.name = name || group.name
+        await group.save()
+        res.status(200).json({
+            status: 'success',
+            data: { group },
+        })
+    } catch (error) {
+        next(new AppError(error.message, 404))
+    }
+}
