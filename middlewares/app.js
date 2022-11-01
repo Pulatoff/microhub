@@ -22,11 +22,7 @@ const domainList = ['http://localhost:3000']
 var corsOptions = {
     credentials: true,
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true)
-        } else {
-            callback(new AppError('Not allowed by CORS', 404))
-        }
+        callback(null, true)
     },
 }
 app.use(cors(corsOptions))
