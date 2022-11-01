@@ -25,7 +25,7 @@ const User = sequelize.define(
             allowNull: false,
             unique: {
                 args: true,
-                message: 'Oops. Looks like you already have an account with this email address. Please try to login.',
+                msg: 'Oops. Looks like you already have an account with this email address. Please try to login.',
                 fields: [sequelize.fn('lower', sequelize.col('email'))],
             },
             validate: {

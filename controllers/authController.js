@@ -100,7 +100,9 @@ exports.usersSelf = CatchError(async (req, res, next) => {
     if (req.user.role === 'consumer') {
         user = await User.findByPk(user.id, { include: [{ model: Consumer }] })
     } else if (req.user.role === 'nutritionist') {
+        user = await User.findByPk(user.id, { include: [{ model: Personal_Trainer }] })
     }
+    res.status(200).json({ data: { user }, status: 'success' })
 })
 
 exports.role = (roles) => {
