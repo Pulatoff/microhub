@@ -18,8 +18,22 @@ const GoalsRouter = require('../routes/goalRoutes')
 const GroupRouter = require('../routes/groupRouter')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
+const domainList = ['http://localhost:3000']
+var corsOptions = {
+    credentials: true,
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new AppError('Not allowed by CORS', 404))
+        }
+    },
+}
+app.use(cors(corsOptions))
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Credentials', true)
+})
 
-app.use(cors({ origin: '*', credentials: true }))
 app.use(hemlet())
 
 // for fetching request body
