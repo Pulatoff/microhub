@@ -4,9 +4,9 @@ const AppError = require('../utils/AppError')
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
 const xss = require('xss-clean')
-const hpp = require('hpp')
 const hemlet = require('helmet')
 const { urlencoded } = require('express')
+const cors = require('cors')
 
 const userRouter = require('../routes/authRouter')
 const consumerRouter = require('../routes/consumerRoutes')
@@ -19,6 +19,7 @@ const GroupRouter = require('../routes/groupRouter')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
+app.use(cors({ origin: '*' }))
 app.use(hemlet())
 
 // for fetching request body

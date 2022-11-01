@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const Personal_Trainer = require('../models/personalTrainerModel')
+const CatchError = require('../utils/catchErrorAsyncFunc')
 
 exports.signupCLient = async (req, res, next) => {
     try {
@@ -93,6 +94,14 @@ exports.protect = async (req, res, next) => {
         next(new AppError(error.message))
     }
 }
+
+exports.usersSelf = CatchError(async (req, res, next) => {
+    let user
+    if (req.user.role === 'consumer') {
+        user = await User.findByPk(user.id, { include: [{ model: Consumer }] })
+    } else if (req.user.role === 'nutritionist') {
+    }
+})
 
 exports.role = (roles) => {
     return async (req, res, next) => {
