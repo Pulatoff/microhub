@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const Personal_Trainer = require('../models/personalTrainerModel')
 const CatchError = require('../utils/catchErrorAsyncFunc')
+const Consumer = require('../models/consumerModel')
 
 exports.signupCLient = async (req, res, next) => {
     try {
@@ -98,9 +99,12 @@ exports.protect = async (req, res, next) => {
 exports.usersSelf = CatchError(async (req, res, next) => {
     let user
     if (req.user.role === 'consumer') {
-        user = await User.findByPk(user.id, { include: [{ model: Consumer }] })
+        user = await User.findByPk(req.user.id, {
+            include: [{ model: Consumer }],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
+        })
     } else if (req.user.role === 'nutritionist') {
-        user = await User.findByPk(user.id, { include: [{ model: Personal_Trainer }] })
+        user = await User.findByPk(req.user.id, { include: [{ model: Personal_Trainer }] })
     }
     res.status(200).json({ data: { user }, status: 'success' })
 })
