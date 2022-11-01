@@ -18,7 +18,7 @@ const GoalsRouter = require('../routes/goalRoutes')
 const GroupRouter = require('../routes/groupRouter')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
-const domainList = ['http://localhost:3000']
+
 var corsOptions = {
     credentials: true,
     origin: function (origin, callback) {

@@ -87,7 +87,10 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
         })
     } else if (req.user.role === 'nutritionist') {
-        user = await User.findByPk(req.user.id, { include: [{ model: Personal_Trainer }] })
+        user = await User.findByPk(req.user.id, {
+            include: [{ model: Personal_Trainer }],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
+        })
     }
     res.status(200).json({ data: { user }, status: 'success' })
 })
