@@ -19,7 +19,7 @@ const GroupRouter = require('../routes/groupRouter')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
-app.use(cors({ origin: '*' }))
+app.use(cors({ origin: '*', credentials: true }))
 app.use(hemlet())
 
 // for fetching request body
