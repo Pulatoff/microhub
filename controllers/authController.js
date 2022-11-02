@@ -1,12 +1,15 @@
-const User = require('../models/userModel')
-const createJwt = require('../utils/createJWT')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const AppError = require('../utils/AppError')
-const Personal_Trainer = require('../models/personalTrainerModel')
-const CatchError = require('../utils/catchErrorAsyncFunc')
+
+// models
+const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
+const Personal_Trainer = require('../models/personalTrainerModel')
+// utils
+const AppError = require('../utils/AppError')
+const CatchError = require('../utils/catchErrorAsyncFunc')
 const saveCookie = require('../utils/sendCookieJWT')
+const createJwt = require('../utils/createJWT')
 
 exports.signupCLient = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
