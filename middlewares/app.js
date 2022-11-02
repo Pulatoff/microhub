@@ -7,6 +7,7 @@ const xss = require('xss-clean')
 const hemlet = require('helmet')
 const { urlencoded } = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 const userRouter = require('../routes/authRouter')
 const consumerRouter = require('../routes/consumerRoutes')
@@ -26,6 +27,7 @@ var corsOptions = {
     },
 }
 app.use(cors(corsOptions))
+app.use(cookieParser())
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true)
     next()
@@ -58,6 +60,8 @@ app.use('/api/v1/groups', GroupRouter)
 
 if (process.env.NODE_ENV === 'development') {
     app.use('/test', (req, res, next) => {
+        console.log(req.cookies)
+        res.cookie('jwt', 'Bearer sdsfsdfadgfadgadgafdg', { maxAge: 24 * 60 * 60 * 1000, httpOnly: true })
         res.status(200).json({ isOk: true, data: { message: 'all good' } })
     })
 }

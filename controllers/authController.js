@@ -67,6 +67,8 @@ exports.protect = CatchError(async (req, res, next) => {
     let token
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.slice(7)
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt
     } else {
         throw new Error('you are not authorizated')
     }
