@@ -6,6 +6,7 @@ const AppError = require('../utils/AppError')
 const Personal_Trainer = require('../models/personalTrainerModel')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const Consumer = require('../models/consumerModel')
+const saveCookie = require('../utils/sendCookieJWT')
 
 exports.signupCLient = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
@@ -14,10 +15,10 @@ exports.signupCLient = CatchError(async (req, res, next) => {
     // checking user existing
     const user = await User.create({ first_name, last_name, email, password, role: 'consumer' })
     const token = await createJwt(user.id)
+    saveCookie(token, res)
     res.status(200).json({
         status: 'success',
         data: {
-            accessToken: `Bearer ${token}`,
             user: {
                 id: user.id,
                 email: user.email,
@@ -39,6 +40,7 @@ exports.signin = CatchError(async (req, res, next) => {
     const compare = await bcrypt.compare(password, user.password)
     if (!compare) throw new Error('Wrong password or email, Please try again')
     const token = createJwt(user.id)
+    saveCookie(token, res)
     res.status(200).json({
         status: 'succes',
         data: {
@@ -50,7 +52,6 @@ exports.signin = CatchError(async (req, res, next) => {
                 photo: user.photo,
                 createdAt: user.createdAt,
             },
-            accessToken: `Bearer ${token}`,
         },
     })
 })
@@ -128,11 +129,11 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
         linkToken: nutrisionist.linkToken,
         credentials: {},
     }
+    saveCookie(token, res)
     res.status(200).json({
         status: 'success',
         data: {
-            accessToken: `Bearer ${token}`,
-            trainer,
+            nutritionist: trainer,
         },
     })
 })

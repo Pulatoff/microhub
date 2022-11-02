@@ -26,6 +26,7 @@ var corsOptions = {
         callback(null, true)
     },
 }
+
 app.use(cors(corsOptions))
 app.use(cookieParser())
 app.use(function (req, res, next) {
