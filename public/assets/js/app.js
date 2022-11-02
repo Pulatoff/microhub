@@ -19,6 +19,12 @@ async function register(body) {
     return data
 }
 
+async function checkUser() {
+    const response = await fetch('http://localhost:8000/api/v1/users/self')
+    const data = await response.json()
+    renderHtml(data)
+}
+
 button.addEventListener('click', async function (e) {
     const { data, status } = await register({
         email: email.value,
@@ -27,13 +33,19 @@ button.addEventListener('click', async function (e) {
         first_name: first_name.value,
         last_name: last_name.value,
     })
+    renderHtml({ data, status })
+})
+
+function renderHtml({ data, status }) {
     const html = `
         <div>
             <h1 style="color:${status === 'success' ? 'green' : 'red'};">${status}<h1>
         </div>
         <div>
-            <h2>NAME: ${data?.user?.first_name} ${data?.user?.last_name}</h2>
+            <h2>FULL NAME: ${data?.user?.first_name} ${data?.user?.last_name}</h2>
         </div>
     `
     document.querySelector('#root').innerHTML = html
-})
+}
+
+checkUser()
