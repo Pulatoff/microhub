@@ -48,9 +48,8 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
 exports.getTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
-
+    console.log(consumer.nutrisionists)
     const nutrisionists = consumer.nutritionists.map((val, key) => {
-        console.log(val)
         return {
             id: val.id,
             first_name: val.user.first_name,
@@ -63,12 +62,13 @@ exports.getTrainers = CatchError(async (req, res, next) => {
     })
     res.status(200).json({
         status: 'success',
-        data: { trainers: nutrisionists },
+        data: { nutrisionists },
     })
 })
 
 exports.protectConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ userId: req.user.id })
     if (!consumer) next(new AppError('You need enter some options for doing this work'))
+    req.consumer = consumer
     next()
 })

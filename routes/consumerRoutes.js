@@ -10,8 +10,7 @@ router
 
 router
     .route('/trainer')
-    .post(authController.protect, bindConsumer.bindConsumer)
+    .post(authController.protect, controller.protectConsumer, bindConsumer.bindConsumer)
     .get(authController.protect, controller.getTrainers)
-router.route('/').get(controller.getConsumer)
 
 module.exports = router
