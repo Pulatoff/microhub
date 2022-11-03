@@ -2,6 +2,7 @@
 const Consumer = require('../models/consumerModel')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
+const AppError = require('../utils/AppError')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 
@@ -64,4 +65,10 @@ exports.getTrainers = CatchError(async (req, res, next) => {
         status: 'success',
         data: { trainers: nutrisionists },
     })
+})
+
+exports.protectConsumer = CatchError(async (req, res, next) => {
+    const consumer = await Consumer.findOne({ userId: req.user.id })
+    if (!consumer) next(new AppError('You need enter some options for doing this work'))
+    next()
 })
