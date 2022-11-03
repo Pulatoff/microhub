@@ -3,7 +3,6 @@ const Consumer = require('../models/consumerModel')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
 // utils
-const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 
 exports.addConsumer = CatchError(async (req, res, next) => {

@@ -1,5 +1,6 @@
 const AppError = require('./AppError')
 
-module.exports = (func) => {
+const CatchError = (func) => {
     return (req, res, next) => func(req, res, next).catch((error) => next(new AppError(error.message)))
 }
+module.exports = CatchError
