@@ -47,7 +47,8 @@ exports.getTrainers = CatchError(async (req, res) => {
             createdAt: val.createdAt,
         }
     })
-    res.status(200).json({ status: 'success', data: { nutrisionists } })
+    console.log(nutrisionists)
+    res.status(200).json({ status: 'success', data: { nutritionists } })
 })
 
 exports.protectConsumer = CatchError(async (req, res, next) => {

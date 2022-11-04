@@ -50,6 +50,7 @@ exports.getAcceptConsumer = CatchError(async (req, res) => {
             { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'createdAt'] },
         ],
     })
+
     if (consumers) {
         consumers = consumers.map((val) => {
             if (val.nutritionists[0].consumer_trainers.status === 0) {
