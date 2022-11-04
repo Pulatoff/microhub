@@ -2,6 +2,7 @@
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
+const ConsumerTrainer = require('../models/consumerTrainer')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -59,4 +60,10 @@ exports.getAcceptConsumer = CatchError(async (req, res) => {
         consumers = []
     }
     response(200, 'successful get consumers', true, { consumers }, res)
+})
+
+exports.acceptConsumer = CatchError(async (req, res) => {
+    const { consumerId } = req.body
+    await ConsumerTrainer.findOne({ where: { consumerId } })
+    response(200, 'consumer accepted', true, '', res)
 })
