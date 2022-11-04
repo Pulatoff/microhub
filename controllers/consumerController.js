@@ -36,7 +36,7 @@ exports.getTrainers = CatchError(async (req, res) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 
-    const nutrisionists = consumer.nutritionists.map((val) => {
+    const nutritionists = consumer.nutritionists.map((val) => {
         return {
             id: val.id,
             first_name: val.user.first_name,
@@ -44,10 +44,11 @@ exports.getTrainers = CatchError(async (req, res) => {
             photo: val.user.photo,
             email: val.user.email,
             linkToken: val.linkToken,
+            status: val.consumer_trainers.status,
             createdAt: val.createdAt,
         }
     })
-    console.log(nutrisionists)
+
     res.status(200).json({ status: 'success', data: { nutritionists } })
 })
 
