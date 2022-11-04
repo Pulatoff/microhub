@@ -65,7 +65,9 @@ exports.getAcceptConsumer = CatchError(async (req, res) => {
 exports.acceptConsumer = CatchError(async (req, res) => {
     const { consumerId } = req.body
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
-    const consumerTrainer = await ConsumerTrainer.findOne({ where: { consumerId, trainerId: trainer.id, status: 0 } })
+    const consumerTrainer = await ConsumerTrainer.findOne({
+        where: { consumerId, nutritionistId: trainer.id, status: 0 },
+    })
     if (!consumerTrainer) {
         next('request went wrong', 404)
     }
