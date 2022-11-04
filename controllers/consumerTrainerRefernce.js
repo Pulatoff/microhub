@@ -4,6 +4,7 @@ const Trainer = require('../models/personalTrainerModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
+const response = require('../utils/response')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -11,6 +12,5 @@ exports.bindConsumer = CatchError(async (req, res, next) => {
     if (!trainer) next(new AppError('This trainer is not exist', 404))
 
     await ConsumerTrainer.create({ consumerId: req.consumer.id, nutritionistId: trainer.id })
-
-    res.status(200).json({ status: 'success', data: '' })
+    response(200, 'consumer successfuly requested binding to nutritioinst', true, '', res)
 })

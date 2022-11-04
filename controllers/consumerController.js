@@ -5,8 +5,9 @@ const User = require('../models/userModel')
 const AppError = require('../utils/AppError')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
+const response = require('../utils/response')
 
-exports.addConsumer = CatchError(async (req, res, next) => {
+exports.addConsumer = CatchError(async (req, res) => {
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
     const consumer = await Consumer.create({
         weight,
@@ -18,38 +19,24 @@ exports.addConsumer = CatchError(async (req, res, next) => {
         gender,
         userId: req.user.id,
     })
-    res.status(200).json({
-        status: 'success',
-        data: {
-            consumer,
-        },
-    })
+
+    response(200, 'adding consumer successfuly', true, { consumer }, res)
 })
 
-exports.getConsumer = CatchError(async (req, res, next) => {
-    res.status(200).json({
-        status: 'success',
-        data: {
-            consumer: req.consumer,
-        },
-    })
+exports.getConsumer = CatchError(async (req, res) => {
+    res.status(200).json({ status: 'success', data: { consumer: req.consumer } })
 })
 
-exports.updateConsumer = CatchError(async (req, res, next) => {
+exports.updateConsumer = CatchError(async (req, res) => {
     const consumer = await Consumer.update(req.body, { where: { userId: req.user.id }, returning: true })
-    res.status(200).json({
-        status: 'success',
-        data: {
-            consumer,
-        },
-    })
+    res.status(200).json({ status: 'success', data: { consumer } })
 })
 
-exports.getTrainers = CatchError(async (req, res, next) => {
+exports.getTrainers = CatchError(async (req, res) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 
-    const nutrisionists = consumer.nutritionists.map((val, key) => {
+    const nutrisionists = consumer.nutritionists.map((val) => {
         return {
             id: val.id,
             first_name: val.user.first_name,
@@ -60,10 +47,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
             createdAt: val.createdAt,
         }
     })
-    res.status(200).json({
-        status: 'success',
-        data: { nutrisionists },
-    })
+    res.status(200).json({ status: 'success', data: { nutrisionists } })
 })
 
 exports.protectConsumer = CatchError(async (req, res, next) => {
