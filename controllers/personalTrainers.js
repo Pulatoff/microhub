@@ -64,6 +64,12 @@ exports.getAcceptConsumer = CatchError(async (req, res) => {
 
 exports.acceptConsumer = CatchError(async (req, res) => {
     const { consumerId } = req.body
-    await ConsumerTrainer.findOne({ where: { consumerId } })
+    const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
+    const consumerTrainer = await ConsumerTrainer.findOne({ where: { consumerId, trainerId: trainer.id, status: 0 } })
+    if (!consumerTrainer) {
+        next('request went wrong', 404)
+    }
+    consumerTrainer.status = 1
+    await consumerTrainer.save()
     response(200, 'consumer accepted', true, '', res)
 })
