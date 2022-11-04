@@ -21,7 +21,6 @@ exports.addDairy = async (req, res, next) => {
             attributes: ['id', 'serving', 'food_id', 'quantity', 'course', 'date'],
             include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
         })
-        console.log(newDiary)
         res.status(200).json({
             status: 'success',
             data: {

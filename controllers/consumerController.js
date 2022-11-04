@@ -48,7 +48,7 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
 exports.getTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
-    console.log(consumer.nutrisionists)
+
     const nutrisionists = consumer.nutritionists.map((val, key) => {
         return {
             id: val.id,

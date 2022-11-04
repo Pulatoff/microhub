@@ -362,15 +362,12 @@ function get_daily_targets(weight, tdee) {
 function macros(weight, height, age) {
     //lb to kg conversion
     if (isNaN(weight)) {
-        console.log(`No Weight Value`)
         process.exit()
     }
     if (isNaN(height)) {
-        console.log(`No Height Values`)
         process.exit()
     }
     if (isNaN(age)) {
-        console.log(`No Age Value`)
         process.exit()
     }
     var nearExact = weight * 0.45359237

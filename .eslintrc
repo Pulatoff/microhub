@@ -1,11 +1,16 @@
 {
     "extends": ["prettier"],
-    "rules": {},
+    "rules": {
+        "no-console": "warn",
+        "no-debugger": "error"
+    },
     "plugins": ["prettier", "eslint-plugin-prettier"],
     "parserOptions": {
         "ecmaVersion": "latest"
     },
     "env": {
-        "es6": true
+        "commonjs": true,
+        "node": true,
+        "browser": true
     }
 }
