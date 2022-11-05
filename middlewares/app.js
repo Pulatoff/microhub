@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const AppError = require('../utils/AppError')
 const morgan = require('morgan')
-const rateLimit = require('express-rate-limit')
+// const rateLimit = require('express-rate-limit')
 const xss = require('xss-clean')
 const hemlet = require('helmet')
 const { urlencoded } = require('express')
@@ -42,13 +42,13 @@ app.use(urlencoded({ limit: '10kb' }))
 app.use(xss())
 app.use(express.static('public'))
 
-const limit = rateLimit({
-    max: 10,
-    windowMs: 1 * 60 * 60 * 1000,
-    message: 'Too many requests from this IP, Please try again later',
-})
+// const limit = rateLimit({
+//     max: 10,
+//     windowMs: 1 * 60 * 60 * 1000,
+//     message: 'Too many requests from this IP, Please try again later',
+// })
 
-app.use('/api', limit)
+// app.use('/api', limit)
 
 // main routes
 app.use('/api/v1/users', userRouter)
