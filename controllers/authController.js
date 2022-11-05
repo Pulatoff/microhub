@@ -11,7 +11,7 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const saveCookie = require('../utils/sendCookieJWT')
 const createJwt = require('../utils/createJWT')
 
-exports.signupCLient = CatchError(async (req, res, next) => {
+exports.signupCLient = CatchError(async (req, res) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
     // checking the saming => password and passwordConfirm
     if (password !== passwordConfirm) throw new Error('password not the same')
@@ -34,7 +34,7 @@ exports.signupCLient = CatchError(async (req, res, next) => {
     })
 })
 
-exports.signin = CatchError(async (req, res, next) => {
+exports.signin = CatchError(async (req, res) => {
     const { password, email } = req.body
     if (!password || !email) throw new Error('field could not be pustim')
     const user = await User.findOne({ where: { email, isActive: 1 } })
@@ -59,7 +59,7 @@ exports.signin = CatchError(async (req, res, next) => {
     })
 })
 
-exports.logout = CatchError(async (req, res, next) => {
+exports.logout = CatchError(async (req, res) => {
     const id = req.user.id
     const user = await User.findByPk(id)
     user.isActive = 0
@@ -97,8 +97,6 @@ exports.usersSelf = CatchError(async (req, res) => {
             include: [{ model: Personal_Trainer }],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
         })
-    } else {
-        user = req.user
     }
 
     res.status(200).json({ data: { user }, status: 'success' })
@@ -118,7 +116,7 @@ exports.role = (roles) => {
     }
 }
 
-exports.signupNutritionist = CatchError(async (req, res, next) => {
+exports.signupNutritionist = CatchError(async (req, res) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
     // checking the saming => password and passwordConfirm
     if (password !== passwordConfirm) throw new Error('password not the same')
