@@ -2,9 +2,6 @@ const express = require('express')
 const app = express()
 const AppError = require('../utils/AppError')
 const morgan = require('morgan')
-// const rateLimit = require('express-rate-limit')
-const xss = require('xss-clean')
-const hemlet = require('helmet')
 const { urlencoded } = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -34,12 +31,9 @@ app.use(function (req, res, next) {
     next()
 })
 
-app.use(hemlet())
-
 // for fetching request body
-app.use(express.json({ limit: '10kb' }))
-app.use(urlencoded({ limit: '10kb' }))
-app.use(xss())
+app.use(express.json({ limit: '1000kb' }))
+app.use(urlencoded({ limit: '1000kb' }))
 app.use(express.static('public'))
 
 // const limit = rateLimit({
