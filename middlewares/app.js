@@ -55,7 +55,11 @@ app.use('/api/v1/groups', GroupRouter)
 
 if (process.env.NODE_ENV === 'development') {
     app.use('/test', (req, res) => {
-        res.cookie('jwt', 'Bearer sdsfsdfadgfadgadgafdg', { maxAge: 24 * 60 * 60 * 1000, httpOnly: true })
+        res.cookie('jwt', 'Bearer sdsfsdfadgfadgadgafdg', {
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'none',
+        })
         res.status(200).json({ isOk: true, data: { message: 'all good' } })
     })
 }
