@@ -85,7 +85,7 @@ exports.protect = CatchError(async (req, res, next) => {
     next()
 })
 
-exports.usersSelf = CatchError(async (req, res, next) => {
+exports.usersSelf = CatchError(async (req, res) => {
     let user
     if (req.user.role === 'consumer') {
         user = await User.findByPk(req.user.id, {
@@ -97,7 +97,10 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             include: [{ model: Personal_Trainer }],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
         })
+    } else {
+        user = req.user
     }
+
     res.status(200).json({ data: { user }, status: 'success' })
 })
 
