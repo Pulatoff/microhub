@@ -18,19 +18,11 @@ exports.updateTrainer = async (req, res, next) => {
     }
 }
 
-exports.getConsumers = async (req, res, next) => {
-    try {
-        const userId = req.user.id
-        const trainer = await Trainer.findOne({ where: { userId }, include: Consumer })
-
-        res.status(200).json({
-            status: 'success',
-            data: { consumers: trainer.consumers },
-        })
-    } catch (error) {
-        next(new AppError(error.message, 404))
-    }
-}
+exports.getConsumers = CatchError(async (req, res) => {
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId }, include: Consumer })
+    response(200, 'consumers already geted', true, { consumers: trainer.consumers }, res)
+})
 
 exports.inviteConsumer = CatchError(async (req, res, next) => {
     const { linkToken } = req.params
@@ -42,7 +34,7 @@ exports.inviteConsumer = CatchError(async (req, res, next) => {
         sameSite: 'none',
         secure: true,
     })
-    response(200, 'you invited by nutritionist', true, '', res)
+    response(200, 'you invited by nutritionist', true, { nutritionist: trainer }, res)
 })
 
 exports.getAcceptConsumer = CatchError(async (req, res) => {

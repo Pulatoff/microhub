@@ -1,7 +1,7 @@
 const ProgramConsumer = require('../models/ProgramConsumer')
 const AppError = require('../utils/AppError')
 const Consumer = require('../models/consumerModel')
-const Program = require('../models/programModel')
+const CatchError = require('../utils/catchErrorAsyncFunc')
 
 exports.bindConumer = async (req, res, next) => {
     try {
