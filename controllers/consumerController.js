@@ -1,5 +1,6 @@
 //models
 const Consumer = require('../models/consumerModel')
+const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
 const AppError = require('../utils/AppError')
@@ -53,8 +54,21 @@ exports.getTrainers = CatchError(async (req, res) => {
 })
 
 exports.protectConsumer = CatchError(async (req, res, next) => {
-    const consumer = await Consumer.findOne({ userId: req.user.id })
+    const consumer = await Consumer.findOne({ where: { userId: req.user.id } })
     if (!consumer) next(new AppError('You need enter some options for doing this work'))
     req.consumer = consumer
     next()
+})
+
+exports.acceptNutritioinst = CatchError(async (req, res, next) => {
+    const { nutritionistId } = req.body
+    const nutritionist = await Trainer.findByPk(nutritionistId)
+    if (!nutritionist) next(new AppError('This nutritionist is not exist!', 404))
+    const updateModel = await ConsumerTrainer.findOne({
+        where: { nutritionistId, consumerId: req.consumer.id, status: 0 },
+    })
+    if (!updateModel) next(new AppError('this requested nutritionist not found', 404))
+    updateModel.status = 1
+    await updateModel.save()
+    response(200, 'Nutritioinst successfully binded to consumer', true.valueOf, '', res)
 })

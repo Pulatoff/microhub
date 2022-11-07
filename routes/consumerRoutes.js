@@ -8,6 +8,8 @@ router
     .post(authController.protect, controller.addConsumer)
     .get(authController.protect, controller.getConsumer)
 
+router.route('/trainer/accept').post(authController.protect, controller.protectConsumer, controller.acceptNutritioinst)
+
 router
     .route('/trainer')
     .post(authController.protect, controller.protectConsumer, bindConsumer.bindConsumer)
