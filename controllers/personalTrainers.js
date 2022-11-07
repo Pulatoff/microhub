@@ -32,16 +32,18 @@ exports.getConsumers = async (req, res, next) => {
     }
 }
 
-exports.bindConsumer = async (req, res, next) => {
-    try {
-        // const { linkToken } = req.body
-        // const userId = req.user.id
-        // const consumer = await Consumer.findOne({ where: { userId } })
-        // const hashToken = crypto.createHash('sha256').update(linkToken).digest('hex')
-    } catch (error) {
-        next(new AppError(error.message, 404))
-    }
-}
+exports.inviteConsumer = CatchError(async (req, res, next) => {
+    const { linkToken } = req.params
+    const trainer = await Trainer.findOne({ where: { linkToken } })
+    if (!trainer) next(new AppError('this url is not found', 404))
+    res.cookie('invitationToken', linkToken, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+    })
+    response(200, 'you invited by nutritionist', true, '', res)
+})
 
 exports.getAcceptConsumer = CatchError(async (req, res) => {
     let consumers = await Consumer.findAll({
