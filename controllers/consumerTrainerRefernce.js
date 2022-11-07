@@ -1,6 +1,7 @@
 // models
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
+const Consumer = require('../models/consumerModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -12,5 +13,13 @@ exports.bindConsumer = CatchError(async (req, res, next) => {
     if (!trainer) next(new AppError('This trainer is not exist', 404))
 
     await ConsumerTrainer.create({ consumerId: req.consumer.id, nutritionistId: trainer.id })
-    response(200, 'consumer successfuly requested binding to nutritioinst', true, '', res)
+    response(200, 'you successfuly requested binding to nutritioinst', true, '', res)
+})
+
+exports.bindNutritionist = CatchError(async (req, res, next) => {
+    const { consumerId } = req.body
+    const consumer = await Consumer.findByPk(consumerId)
+    if (!consumer) next(new AppError('This consumer is not exist', 404))
+    await ConsumerTrainer.create({ consumerId, nutritionistId: req.nutritionist.id })
+    response(200, 'you successfuly requested binding to consumer', true, '', res)
 })
