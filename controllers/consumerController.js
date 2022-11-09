@@ -9,7 +9,7 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const checkInvate = require('../utils/checkInvate')
 
-exports.addConsumer = CatchError(async (req, res) => {
+exports.addConsumer = CatchError(async (req, res, next) => {
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
     const consumer = await Consumer.create({
         weight,
@@ -21,10 +21,10 @@ exports.addConsumer = CatchError(async (req, res) => {
         gender,
         userId: req.user.id,
     })
-    const { invintationToken } = req.cookies
-
-    if (invintationToken) {
-        checkInvate({ consumerId: consumer.id, invintationToken: req.cookies.invintationToken })
+    const { invitationToken } = req.cookies
+    console.log(invitationToken)
+    if (invitationToken) {
+        await checkInvate({ consumerId: consumer.id, invitationToken })
     }
 
     response(200, 'adding consumer successfuly', true, { consumer }, res)
