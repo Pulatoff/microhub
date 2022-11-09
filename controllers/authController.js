@@ -11,7 +11,7 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const saveCookie = require('../utils/sendCookieJWT')
 const createJwt = require('../utils/createJWT')
 
-exports.signupCLient = CatchError(async (req, res, next) => {
+exports.signupCLient = CatchError(async (req, res) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
     // checking the saming => password and passwordConfirm
     if (password !== passwordConfirm) throw new Error('password not the same')
