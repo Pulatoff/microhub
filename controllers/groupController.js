@@ -1,11 +1,14 @@
+// models
 const Group = require('../models/groupModel')
 const GroupConsumer = require('../models/groupConsumerModel')
-const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
+// utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
+const AppError = require('../utils/AppError')
+const response = require('../utils/response')
 
 exports.addGroup = CatchError(async (req, res, next) => {
     const userId = req.user.id
@@ -13,10 +16,7 @@ exports.addGroup = CatchError(async (req, res, next) => {
     const { name } = req.body
     if (!name) next(new AppError('Name is not be empty'))
     const group = await Group.create({ name, nutritionistId: trainer.id })
-    res.status(200).json({
-        status: 'success',
-        data: { group: { id: group.id, name: group.name } },
-    })
+    response(200, 'Group successfully added', true, { group: { id: group.id, name: group.name } }, res)
 })
 
 exports.bindGroup = CatchError(async (req, res, next) => {
@@ -29,10 +29,7 @@ exports.bindGroup = CatchError(async (req, res, next) => {
     const consumer = await ConsumerTrainer.findOne({ where: { nutritionistId: trainer.id, consumerId } })
     if (!consumer) next(new AppError('This consumer binding to you', 404))
     await GroupConsumer.create({ groupId, consumerId })
-    res.status(200).json({
-        status: 'success',
-        data: '',
-    })
+    res.status(200).json({ status: 'success', data: '' })
 })
 
 exports.getAllGroups = CatchError(async (req, res) => {

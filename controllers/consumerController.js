@@ -7,6 +7,7 @@ const AppError = require('../utils/AppError')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
+const checkInvate = require('../utils/checkInvate')
 
 exports.addConsumer = CatchError(async (req, res) => {
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
@@ -20,6 +21,11 @@ exports.addConsumer = CatchError(async (req, res) => {
         gender,
         userId: req.user.id,
     })
+    const { invintationToken } = req.cookies
+
+    if (invintationToken) {
+        checkInvate({ consumerId: consumer.id, invintationToken: req.cookies.invintationToken })
+    }
 
     response(200, 'adding consumer successfuly', true, { consumer }, res)
 })
