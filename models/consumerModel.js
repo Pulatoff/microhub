@@ -13,7 +13,7 @@ const Consumer = sequlize.define(
         height: { type: DataTypes.FLOAT, allowNull: false },
         favorite_foods: {
             type: DataTypes.STRING,
-            get(val) {
+            get() {
                 return this.getDataValue('favorite_foods').split(';')
             },
             set(val) {

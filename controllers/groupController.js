@@ -35,7 +35,7 @@ exports.bindGroup = CatchError(async (req, res, next) => {
     })
 })
 
-exports.getAllGroups = CatchError(async (req, res, next) => {
+exports.getAllGroups = CatchError(async (req, res) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
     const groups = await Group.findAll({

@@ -1,21 +1,17 @@
+// models
 const ProgramConsumer = require('../models/ProgramConsumer')
-const AppError = require('../utils/AppError')
 const Consumer = require('../models/consumerModel')
+// utils
+const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
+const response = require('../utils/response')
 
-exports.bindConumer = async (req, res, next) => {
-    try {
-        const { programId, consumerId } = req.body
-        const consumer = await Consumer.findByPk(consumerId)
+exports.bindConumer = CatchError(async (req, res, next) => {
+    const { programId, consumerId } = req.body
+    const consumer = await Consumer.findByPk(consumerId)
 
-        if (!consumer) next(new AppError('This consumer is not exist'))
-        await ProgramConsumer.create({ programId, consumerId })
+    if (!consumer) next(new AppError('This consumer is not exist'))
+    await ProgramConsumer.create({ programId, consumerId })
 
-        res.json({
-            data: '',
-            status: 'success',
-        })
-    } catch (error) {
-        next(new AppError(error.message, 403))
-    }
-}
+    response(200, 'You are successfuly binded to program', true, '', res)
+})
