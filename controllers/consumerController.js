@@ -12,6 +12,10 @@ const AppError = require('../utils/AppError')
 exports.addConsumer = CatchError(async (req, res, next) => {
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
+
+    const oldConsumer = await Consumer.findOne({ where: { userId: req.user.id } })
+    if (oldConsumer) next(new AppError('This consumer options already exists', 403))
+
     const consumer = await Consumer.create({
         weight,
         height,
@@ -85,6 +89,7 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
     const nutritionist = await Trainer.findByPk(nutritionistId)
     if (!nutritionist) next(new AppError('This nutritionist is not exist!', 404))
+
     const updateModel = await ConsumerTrainer.findOne({
         where: { nutritionistId, consumerId: req.consumer.id, status: 0 },
     })

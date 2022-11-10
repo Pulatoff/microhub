@@ -5,11 +5,18 @@ const bindConsumer = require('../controllers/consumerTrainerRefernce')
 
 router
     .route('/')
-    .post(authController.protect, controller.addConsumer)
-    .get(authController.protect, controller.getConsumer)
+    .post(authController.protect, authController.role(['consumer']), controller.addConsumer)
+    .get(authController.protect, authController.role(['consumer']), controller.getConsumer)
     .patch(authController.protect, controller.protectConsumer, controller.updateConsumer)
 
-router.route('/trainer/accept').post(authController.protect, controller.protectConsumer, controller.acceptNutritioinst)
+router
+    .route('/trainer/accept')
+    .post(
+        authController.protect,
+        authController.role(['consumer']),
+        controller.protectConsumer,
+        controller.acceptNutritioinst
+    )
 
 router
     .route('/trainer')
