@@ -31,11 +31,11 @@ exports.addConsumer = CatchError(async (req, res, next) => {
     response(200, 'adding consumer successfuly', true, { consumer }, res)
 })
 
-exports.getConsumer = CatchError(async (req, res) => {
+exports.getConsumer = CatchError(async (req, res, next) => {
     res.status(200).json({ status: 'success', data: { consumer: req.consumer } })
 })
 
-exports.updateConsumer = CatchError(async (req, res) => {
+exports.updateConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findByPk(req.consumer.id)
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
@@ -53,7 +53,7 @@ exports.updateConsumer = CatchError(async (req, res) => {
     response(203, 'You are successfully update data', true, { consumer }, res)
 })
 
-exports.getTrainers = CatchError(async (req, res) => {
+exports.getTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 

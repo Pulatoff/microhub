@@ -10,18 +10,24 @@ const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const saveCookie = require('../utils/sendCookieJWT')
 const createJwt = require('../utils/createJWT')
+const response = require('../utils/response')
 
-exports.signupCLient = CatchError(async (req, res) => {
+exports.signupCLient = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
-    // checking the saming => password and passwordConfirm
-    if (password !== passwordConfirm) throw new Error('password not the same')
-    // checking user existing
+    if (!first_name || !last_name || !email || !password || !passwordConfirm)
+        next(new AppError('You need to enter all required fields', 401))
+
+    if (password !== passwordConfirm) next(new AppError('password not the same', 401))
+
     const user = await User.create({ first_name, last_name, email, password, role: 'consumer' })
+
     const token = await createJwt(user.id)
     saveCookie(token, res)
-    res.status(200).json({
-        status: 'success',
-        data: {
+    response(
+        200,
+        'You are successfully authorization',
+        true,
+        {
             user: {
                 id: user.id,
                 email: user.email,
@@ -31,12 +37,13 @@ exports.signupCLient = CatchError(async (req, res) => {
                 createdAt: user.createdAt,
             },
         },
-    })
+        res
+    )
 })
 
-exports.signin = CatchError(async (req, res) => {
+exports.signin = CatchError(async (req, res, next) => {
     const { password, email } = req.body
-    if (!password || !email) throw new Error('field could not be pustim')
+    if (!password || !email) throw new Error('Email or Password could not be empty')
     const user = await User.findOne({ where: { email, isActive: 1 } })
     if (!user) throw new Error('Wrong password or email, Please try again')
     // comparing passwords
@@ -44,9 +51,11 @@ exports.signin = CatchError(async (req, res) => {
     if (!compare) throw new Error('Wrong password or email, Please try again')
     const token = createJwt(user.id)
     saveCookie(token, res)
-    res.status(200).json({
-        status: 'succes',
-        data: {
+    response(
+        200,
+        'You are successfully logged in',
+        true,
+        {
             user: {
                 id: user.id,
                 email: user.email,
@@ -56,7 +65,8 @@ exports.signin = CatchError(async (req, res) => {
                 createdAt: user.createdAt,
             },
         },
-    })
+        res
+    )
 })
 
 exports.logout = CatchError(async (req, res) => {
@@ -85,7 +95,7 @@ exports.protect = CatchError(async (req, res, next) => {
     next()
 })
 
-exports.usersSelf = CatchError(async (req, res) => {
+exports.usersSelf = CatchError(async (req, res, next) => {
     let user
     if (req.user.role === 'consumer') {
         user = await User.findByPk(req.user.id, {
@@ -99,7 +109,7 @@ exports.usersSelf = CatchError(async (req, res) => {
         })
     }
 
-    res.status(200).json({ data: { user }, status: 'success' })
+    response(200, 'user data', true, { user }, res)
 })
 
 exports.role = (roles) => {
@@ -116,8 +126,12 @@ exports.role = (roles) => {
     }
 }
 
-exports.signupNutritionist = CatchError(async (req, res) => {
+exports.signupNutritionist = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
+
+    if (!first_name || !last_name || !email || !password || !passwordConfirm)
+        next(new AppError('You need to enter all required fields', 401))
+
     // checking the saming => password and passwordConfirm
     if (password !== passwordConfirm) throw new Error('password not the same')
     // checking user existing
@@ -134,10 +148,13 @@ exports.signupNutritionist = CatchError(async (req, res) => {
         credentials: {},
     }
     saveCookie(token, res)
-    res.status(200).json({
-        status: 'success',
-        data: {
+    response(
+        200,
+        'You are successfully authorizated',
+        true,
+        {
             nutritionist: trainer,
         },
-    })
+        res
+    )
 })
