@@ -23,6 +23,7 @@ exports.addConsumer = CatchError(async (req, res, next) => {
         userId: req.user.id,
         activity_level,
     })
+
     const { invitationToken } = req.cookies
     if (invitationToken) {
         await checkInvate({ consumerId: consumer.id, invitationToken })
@@ -32,7 +33,7 @@ exports.addConsumer = CatchError(async (req, res, next) => {
 })
 
 exports.getConsumer = CatchError(async (req, res, next) => {
-    res.status(200).json({ status: 'success', data: { consumer: req.consumer } })
+    response(200, 'Successfuly geting consumer', true, { consumer: req.consumer }, res)
 })
 
 exports.updateConsumer = CatchError(async (req, res, next) => {
@@ -70,7 +71,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
         }
     })
 
-    res.status(200).json({ status: 'success', data: { nutritionists } })
+    response(200, 'Successfully geting own nutritionists', true, { nutritionists }, res)
 })
 
 exports.protectConsumer = CatchError(async (req, res, next) => {
