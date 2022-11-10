@@ -3,14 +3,15 @@ const Consumer = require('../models/consumerModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
-const AppError = require('../utils/AppError')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const checkInvate = require('../utils/checkInvate')
+const AppError = require('../utils/AppError')
 
-exports.addConsumer = CatchError(async (req, res) => {
-    const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender } = req.body
+exports.addConsumer = CatchError(async (req, res, next) => {
+    const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
+        req.body
     const consumer = await Consumer.create({
         weight,
         height,
@@ -20,6 +21,7 @@ exports.addConsumer = CatchError(async (req, res) => {
         preferences,
         gender,
         userId: req.user.id,
+        activity_level,
     })
     const { invitationToken } = req.cookies
     if (invitationToken) {
@@ -34,8 +36,21 @@ exports.getConsumer = CatchError(async (req, res) => {
 })
 
 exports.updateConsumer = CatchError(async (req, res) => {
-    const consumer = await Consumer.update(req.body, { where: { userId: req.user.id }, returning: true })
-    res.status(200).json({ status: 'success', data: { consumer } })
+    const consumer = await Consumer.findByPk(req.consumer.id)
+    const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
+        req.body
+
+    consumer.height = height || consumer.height
+    consumer.weight = weight || consumer.weight
+    consumer.favorite_foods = favorite_foods || consumer.favorite_foods
+    consumer.least_favorite_foods = least_favorite_foods || consumer.least_favorite_foods
+    consumer.allergies = allergies || consumer.allergies
+    consumer.preferences = preferences || consumer.preferences
+    consumer.gender = gender || consumer.gender
+    consumer.activity_level = activity_level || consumer.activity_level
+    await consumer.save({ validate: true })
+
+    response(203, 'You are successfully update data', true, { consumer }, res)
 })
 
 exports.getTrainers = CatchError(async (req, res) => {
@@ -60,7 +75,7 @@ exports.getTrainers = CatchError(async (req, res) => {
 
 exports.protectConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId: req.user.id } })
-    if (!consumer) next(new AppError('You need enter some options for doing this work'))
+    if (!consumer) next(new AppError('You need enter some options for doing this work!'))
     req.consumer = consumer
     next()
 })

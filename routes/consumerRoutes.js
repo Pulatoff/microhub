@@ -7,6 +7,7 @@ router
     .route('/')
     .post(authController.protect, controller.addConsumer)
     .get(authController.protect, controller.getConsumer)
+    .patch(authController.protect, controller.protectConsumer, controller.updateConsumer)
 
 router.route('/trainer/accept').post(authController.protect, controller.protectConsumer, controller.acceptNutritioinst)
 
