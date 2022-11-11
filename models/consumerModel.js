@@ -1,8 +1,11 @@
-const sequlize = require('../configs/db')
 const { DataTypes } = require('sequelize')
+// configs
+const sequlize = require('../configs/db')
+// models
 const User = require('../models/userModel')
-const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('../utils/FitnessPage')
+// utils
 const set_error = require('../utils/errorModel')
+const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('../utils/FitnessPage')
 const activ_level_num = require('../utils/activLevelNum')
 
 const Consumer = sequlize.define(
