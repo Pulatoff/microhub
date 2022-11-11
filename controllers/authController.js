@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
 // models
 const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
@@ -25,7 +24,7 @@ exports.signupCLient = CatchError(async (req, res, next) => {
     saveCookie(token, res)
     response(
         200,
-        'You are successfully authorization',
+        'You are successfully authorizated',
         true,
         {
             user: {
@@ -79,18 +78,19 @@ exports.logout = CatchError(async (req, res) => {
 
 exports.protect = CatchError(async (req, res, next) => {
     let token
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.slice(7)
-    } else if (req.cookies.jwt) {
+    if (req.cookies.jwt) {
         token = req.cookies.jwt
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.slice(7)
     } else {
-        throw new Error('you are not authorizated')
+        next(new AppError('you are not authorizated', 401))
     }
-    if (!token) throw new Error('You not authorized')
+
+    if (!token) next(('You are not authorized', 401))
     const tekshir = jwt.verify(token, process.env.JWT_SECRET_KEY)
-    if (!tekshir) throw new Error('Your token expired')
+    if (!tekshir) next(new AppError('Your token expired', 401))
     const user = await User.findByPk(tekshir.id)
-    if (!user) throw new Error('This user not exist')
+    if (!user) next(new AppError('This user not exist', 401))
     req.user = user
     next()
 })
