@@ -31,7 +31,7 @@ const Consumer = sequlize.define(
         },
         gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
         activity_level: {
-            type: DataTypes.ENUM('sendentary', 'lightly_active', 'moderate_active', 'very_active', 'extrmely_active'),
+            type: DataTypes.ENUM('sendentary', 'lightly active', 'moderate active', 'very active', 'extrmely active'),
             defaultValue: 'sendentary',
         },
         preferences: {
@@ -39,10 +39,10 @@ const Consumer = sequlize.define(
                 'diet',
                 'standart',
                 'vegetarian',
-                'lacto_vegetarian',
-                'ovo_vegetarian',
+                'lacto vegetarian',
+                'ovo vegetarian',
                 'vegan',
-                'gluten_free',
+                'gluten free',
                 'halal',
                 'kosher',
                 'meat',
