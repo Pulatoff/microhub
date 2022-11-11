@@ -1,18 +1,14 @@
 const router = require('express').Router()
 const controller = require('../controllers/programController')
-const authController = require('../controllers/authController')
+const auth = require('../controllers/authController')
 const bindController = require('../controllers/programConsumer')
 
 router
     .route('/')
-    .post(
-        authController.protect,
-        authController.role(['admin', 'nutritionist', 'personal_trainer']),
-        controller.addProgram
-    )
-    .get(authController.protect, controller.getAllPrograms)
+    .post(auth.protect, auth.role(['admin', 'nutritionist']), controller.addProgram)
+    .get(auth.protect, controller.getAllPrograms)
 
 router.route('/:id').get(controller.getProgram).patch(controller.updatePrograms)
-router.route('/consumer').post(bindController.bindConumer)
+router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']), bindController.bindConumer)
 
 module.exports = router

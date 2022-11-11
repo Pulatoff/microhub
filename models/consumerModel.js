@@ -7,7 +7,8 @@ const User = require('../models/userModel')
 const set_error = require('../utils/errorModel')
 const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('../utils/FitnessPage')
 const activ_level_num = require('../utils/activLevelNum')
-
+// configs
+const METRIC = +process.env.HEALTH_METRIC || 1
 const Consumer = sequlize.define(
     'consumers',
     {
@@ -75,7 +76,7 @@ const Consumer = sequlize.define(
             type: DataTypes.VIRTUAL,
             get() {
                 const activ_level = activ_level_num(this.activ_level)
-                const tdee_result = tdee(1, this.gender, activ_level, this.height, this.weight, 24)
+                const tdee_result = tdee(METRIC, this.gender, activ_level, this.height, this.weight, 24)
                 return tdee_result
             },
             set: set_error,
@@ -83,7 +84,7 @@ const Consumer = sequlize.define(
         body_frame: {
             type: DataTypes.VIRTUAL,
             get() {
-                const body_frame = find_body_frame(1, this.gender, 10)
+                const body_frame = find_body_frame(METRIC, this.gender, 10)
                 return body_frame
             },
             set: set_error,
@@ -91,7 +92,7 @@ const Consumer = sequlize.define(
         healthy_weight: {
             type: DataTypes.VIRTUAL,
             get() {
-                const weight_healthy = healthy_weight(1, this.gender, this.height, this.body_frame)
+                const weight_healthy = healthy_weight(METRIC, this.gender, this.height, this.body_frame)
                 return weight_healthy
             },
             set: set_error,
@@ -99,7 +100,7 @@ const Consumer = sequlize.define(
         bmi: {
             type: DataTypes.VIRTUAL,
             get() {
-                const bmi_results = bmi(1, this.weight, this.height)
+                const bmi_results = bmi(METRIC, this.weight, this.height)
                 return bmi_results
             },
             set: set_error,
