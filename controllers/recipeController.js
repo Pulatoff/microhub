@@ -7,7 +7,7 @@ const response = require('../utils/response')
 const AppError = require('../utils/AppError')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
-    const { search } = req.params
+    const { search } = req.query
     const results = await axios.get(
         SPOONACULAR_API_URL + '/recipes/complexSearch?apiKey=' + SPOONACULAR_API_KEY + '&query=' + search
     )
