@@ -8,7 +8,9 @@ const AppError = require('../utils/AppError')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     const { search } = req.params
-    const results = await axios.get(SPOONACULAR_API_URL + '/recipes/complexSearch?apiKey=' + SPOONACULAR_API_KEY)
-    console.log(results)
+    const results = await axios.get(
+        SPOONACULAR_API_URL + '/recipes/complexSearch?apiKey=' + SPOONACULAR_API_KEY + '&query=' + search
+    )
+    if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
     response(200, 'You successfuly recieved recipes', true, results?.data, res)
 })
