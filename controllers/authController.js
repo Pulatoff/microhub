@@ -23,7 +23,7 @@ exports.signupCLient = CatchError(async (req, res, next) => {
     const token = await createJwt(user.id)
     saveCookie(token, res)
     response(
-        200,
+        201,
         'You are successfully authorizated',
         true,
         {
@@ -42,16 +42,16 @@ exports.signupCLient = CatchError(async (req, res, next) => {
 
 exports.signin = CatchError(async (req, res, next) => {
     const { password, email } = req.body
-    if (!password || !email) throw new Error('Email or Password could not be empty')
+    if (!password || !email) next(AppError('Email or Password could not be empty', 404))
     const user = await User.findOne({ where: { email, isActive: 1 } })
-    if (!user) throw new Error('Wrong password or email, Please try again')
+    if (!user) next(AppError('Wrong password or email, Please try again', 404))
     // comparing passwords
     const compare = await bcrypt.compare(password, user.password)
-    if (!compare) throw new Error('Wrong password or email, Please try again')
+    if (!compare) next(AppError('Wrong password or email, Please try again', 401))
     const token = createJwt(user.id)
     saveCookie(token, res)
     response(
-        200,
+        201,
         'You are successfully logged in',
         true,
         {
@@ -69,11 +69,8 @@ exports.signin = CatchError(async (req, res, next) => {
 })
 
 exports.logout = CatchError(async (req, res) => {
-    const id = req.user.id
-    const user = await User.findByPk(id)
-    user.isActive = 0
-    user.save()
-    res.status(200).json({ status: 'success', data: '' })
+    saveCookie('loggedOut', res)
+    response(206, 'You are successfuly logout')
 })
 
 exports.protect = CatchError(async (req, res, next) => {
@@ -117,7 +114,7 @@ exports.role = (roles) => {
         try {
             // 1) User ni roleni olamiz databasedan, tekshiramiz
             if (!roles.includes(req.user.role)) {
-                return next(new AppError("You don't access this process", 401))
+                return next(new AppError("You don't access this process", 405))
             }
             next()
         } catch (error) {
@@ -130,14 +127,18 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
 
     if (!first_name || !last_name || !email || !password || !passwordConfirm)
-        next(new AppError('You need to enter all required fields', 401))
+        next(new AppError('You need to enter all required fields', 404))
 
     // checking the saming => password and passwordConfirm
     if (password !== passwordConfirm) throw new Error('password not the same')
     // checking user existing
+    const oldUser = await User.findOne({ where: { email } })
+    if (oldUser?.role === 'consumer') next(new AppError('This method is not allowed to you', 405))
     const user = await User.create({ first_name, last_name, email, password, role: 'nutritionist' })
     const nutrisionist = await Personal_Trainer.create({ userId: user.id })
     const token = await createJwt(user.id)
+
+    // transformation to new object
     const trainer = {
         id: nutrisionist.id,
         first_name: user.first_name,
@@ -147,9 +148,10 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
         linkToken: nutrisionist.linkToken,
         credentials: {},
     }
+    // sending cookies
     saveCookie(token, res)
     response(
-        200,
+        201,
         'You are successfully authorizated',
         true,
         {
