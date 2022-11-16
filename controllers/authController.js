@@ -42,12 +42,12 @@ exports.signupCLient = CatchError(async (req, res, next) => {
 
 exports.signin = CatchError(async (req, res, next) => {
     const { password, email } = req.body
-    if (!password || !email) next(AppError('Email or Password could not be empty', 404))
+    if (!password || !email) next(new AppError('Email or Password could not be empty', 404))
     const user = await User.findOne({ where: { email, isActive: 1 } })
-    if (!user) next(AppError('Wrong password or email, Please try again', 404))
+    if (!user) next(new AppError('Wrong password or email, Please try again', 404))
     // comparing passwords
     const compare = await bcrypt.compare(password, user.password)
-    if (!compare) next(AppError('Wrong password or email, Please try again', 401))
+    if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
     const token = createJwt(user.id)
     saveCookie(token, res)
     response(

@@ -25,15 +25,7 @@ exports.addDairy = CatchError(async (req, res, next) => {
         attributes: ['id', 'serving', 'food_id', 'quantity', 'course', 'date'],
         include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
     })
-    response(
-        200,
-        'you successfully get your diaries',
-        true,
-        {
-            diary: newDiary,
-        },
-        res
-    )
+    response(201, 'you successfully get your diaries', true, { diary: newDiary }, res)
 })
 
 exports.getDairy = CatchError(async (req, res, next) => {
@@ -75,5 +67,5 @@ exports.updateDairy = CatchError(async (req, res, next) => {
     diary.quantity = quantity || diary.quantity
     diary.serving = serving || diary.serving
     await diary.save()
-    response(200, 'You are successfully update your diary', true, { diary }, res)
+    response(203, 'You are successfully update your diary', true, { diary }, res)
 })

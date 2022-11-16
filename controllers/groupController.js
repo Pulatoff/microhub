@@ -14,9 +14,9 @@ exports.addGroup = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
     const { name } = req.body
-    if (!name) next(new AppError('Name is not be empty'))
+    if (!name) next(new AppError('Name is not be empty', 404))
     const group = await Group.create({ name, nutritionistId: trainer.id })
-    response(200, 'Group successfully added', true, { group: { id: group.id, name: group.name } }, res)
+    response(201, 'Group successfully added', true, { group: { id: group.id, name: group.name } }, res)
 })
 
 exports.bindGroup = CatchError(async (req, res, next) => {
@@ -29,7 +29,7 @@ exports.bindGroup = CatchError(async (req, res, next) => {
     const consumer = await ConsumerTrainer.findOne({ where: { nutritionistId: trainer.id, consumerId } })
     if (!consumer) next(new AppError('This consumer binding to you', 404))
     await GroupConsumer.create({ groupId, consumerId })
-    res.status(200).json({ status: 'success', data: '' })
+    response(206, 'You are successfully bind consumer to program', true, '', res)
 })
 
 exports.getAllGroups = CatchError(async (req, res) => {

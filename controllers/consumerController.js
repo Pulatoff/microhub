@@ -33,7 +33,7 @@ exports.addConsumer = CatchError(async (req, res, next) => {
         await checkInvate({ consumerId: consumer.id, invitationToken })
     }
 
-    response(200, 'adding consumer successfuly', true, { consumer }, res)
+    response(201, 'adding consumer successfuly', true, { consumer }, res)
 })
 
 exports.getConsumer = CatchError(async (req, res, next) => {
@@ -80,7 +80,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
 
 exports.protectConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId: req.user.id } })
-    if (!consumer) next(new AppError('You need enter some options for doing this work!'))
+    if (!consumer) next(new AppError('You need enter some options for doing this work!', 404))
     req.consumer = consumer
     next()
 })
@@ -96,5 +96,5 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     if (!updateModel) next(new AppError('this requested nutritionist not found', 404))
     updateModel.status = 1
     await updateModel.save()
-    response(200, 'Nutritioinst successfully binded to consumer', true.valueOf, '', res)
+    response(206, 'Nutritioinst successfully binded to consumer', true, '', res)
 })

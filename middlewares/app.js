@@ -5,7 +5,7 @@ const morgan = require('morgan')
 const { urlencoded } = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
-
+// app routes
 const userRouter = require('../routes/authRouter')
 const consumerRouter = require('../routes/consumerRoutes')
 const programRouter = require('../routes/programRouter')

@@ -62,12 +62,7 @@ exports.getAllPrograms = CatchError(async (req, res, next) => {
 exports.getProgram = CatchError(async (req, res, next) => {
     const { id } = req.params
     const program = await Program.findByPk(id, {
-        include: [
-            {
-                model: Meal,
-                as: 'meals',
-            },
-        ],
+        include: [{ model: Meal, as: 'meals' }],
     })
     response(200, 'You are successfully geted one program', true, { program }, res)
 })
@@ -85,12 +80,10 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
     program.description = description || program.description
     await program.save()
     response(
-        200,
+        203,
         'You are successfuly update program',
         true,
-        {
-            program: { name: program.name, description: program.description },
-        },
+        { program: { name: program.name, description: program.description } },
         res
     )
 })

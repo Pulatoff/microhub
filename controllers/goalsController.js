@@ -19,7 +19,7 @@ exports.addGoal = CatchError(async (req, res, next) => {
         consumerId: consumer.id,
     })
     response(
-        200,
+        201,
         'You are successfully added your program',
         true,
         {

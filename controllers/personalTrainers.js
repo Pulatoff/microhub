@@ -68,5 +68,5 @@ exports.acceptConsumer = CatchError(async (req, res) => {
     }
     consumerTrainer.status = 1
     await consumerTrainer.save()
-    response(200, 'consumer accepted', true, '', res)
+    response(206, 'consumer accepted', true, '', res)
 })
