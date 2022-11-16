@@ -13,8 +13,8 @@ const Consumer = sequlize.define(
     'consumers',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        weight: { type: DataTypes.FLOAT, allowNull: false },
-        height: { type: DataTypes.FLOAT, allowNull: false },
+        weight: { type: DataTypes.FLOAT, allowNull: false }, // unit in kg
+        height: { type: DataTypes.FLOAT, allowNull: false }, // unit in cm
         favorite_foods: {
             type: DataTypes.STRING,
             get() {
@@ -122,7 +122,7 @@ const Consumer = sequlize.define(
 )
 
 // referencing
-User.hasOne(Consumer, { onDelete: 'CASCADE' })
-Consumer.belongsTo(User, { onDelete: 'CASCADE' })
+User.hasOne(Consumer)
+Consumer.belongsTo(User)
 
 module.exports = Consumer

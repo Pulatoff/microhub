@@ -17,8 +17,8 @@ const Program = sequelize.define(
     }
 )
 
-Personal_Trainer.hasMany(Program, { onDelete: 'CASCADE' })
-Program.belongsTo(Personal_Trainer, { onDelete: 'CASCADE' })
+Personal_Trainer.hasMany(Program)
+Program.belongsTo(Personal_Trainer)
 
 Program.hasMany(Meal)
 Meal.belongsTo(Program)
