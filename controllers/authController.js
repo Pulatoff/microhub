@@ -68,9 +68,9 @@ exports.signin = CatchError(async (req, res, next) => {
     )
 })
 
-exports.logout = CatchError(async (req, res) => {
+exports.logout = CatchError(async (req, res, next) => {
     saveCookie('loggedOut', res)
-    response(206, 'You are successfuly logout')
+    response(206, 'You are successfuly logout', true, '', res)
 })
 
 exports.protect = CatchError(async (req, res, next) => {
@@ -83,7 +83,7 @@ exports.protect = CatchError(async (req, res, next) => {
         next(new AppError('you are not authorized', 401))
     }
 
-    if (!token) next(('You are not authorized', 401))
+    if (!token) next(new AppError('You are not authorized', 401))
     const tekshir = jwt.verify(token, process.env.JWT_SECRET_KEY)
     if (!tekshir) next(new AppError('Your token expired', 401))
     const user = await User.findByPk(tekshir.id)

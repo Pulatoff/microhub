@@ -5,5 +5,6 @@ route.route('/signup/client').post(authController.signupCLient)
 route.route('/signup/nutritionist').post(authController.signupNutritionist)
 route.route('/self').get(authController.protect, authController.usersSelf)
 route.route('/signin').post(authController.signin)
+route.route('/logout').get(authController.logout)
 
 module.exports = route
