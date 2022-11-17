@@ -80,7 +80,7 @@ exports.protect = CatchError(async (req, res, next) => {
     } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.slice(7)
     } else {
-        next(new AppError('you are not authorizated', 401))
+        next(new AppError('you are not authorized', 401))
     }
 
     if (!token) next(('You are not authorized', 401))
