@@ -14,3 +14,11 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
     if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
     response(200, 'You successfuly recieved recipes', true, results?.data, res)
 })
+
+exports.getOneRecipe = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    const result = await axios.get(
+        SPOONACULAR_API_URL + '/recipes/' + id + '/nutritionWidget.json?apiKey=' + SPOONACULAR_API_KEY
+    )
+    response(200, 'You successfully get recipe', true, { result }, res)
+})
