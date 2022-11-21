@@ -5,7 +5,10 @@ const Trainer = require('./personalTrainerModel')
 
 const ConsumerTrainer = sequelize.define(
     'consumer_trainers',
-    { status: { type: DataTypes.INTEGER, defaultValue: 0 } },
+    {
+        status: { type: DataTypes.INTEGER, defaultValue: 0 },
+        statusClient: { type: DataTypes.ENUM('active', 'inactive', 'awaiting meals'), defaultValue: 'awaiting meals' },
+    },
     { timestamps: false }
 )
 

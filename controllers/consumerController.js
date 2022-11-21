@@ -3,6 +3,7 @@ const Consumer = require('../models/consumerModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
+const Program = require('../models/programModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
@@ -97,4 +98,9 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     updateModel.status = 1
     await updateModel.save()
     response(206, 'Nutritioinst successfully binded to consumer', true, '', res)
+})
+
+exports.acceptProgram = CatchError(async (req, res, next) => {
+    const { programId } = req.body
+    const program = await Program.findByPk(programId)
 })
