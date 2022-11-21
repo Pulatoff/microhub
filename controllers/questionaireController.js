@@ -11,7 +11,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         questions,
         name,
         date,
-        birth_of_date,
+        date_of_birth,
         weight,
         height,
         email,
@@ -24,7 +24,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         !questions ||
         !name ||
         !date ||
-        !birth_of_date ||
+        !date_of_birth ||
         !weight ||
         !height ||
         !email ||
@@ -41,13 +41,13 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         lowest_weight,
         home_number,
         work_phone_number,
-        birth_of_date,
+        date_of_birth,
         weight,
         height,
         name,
         date,
     })
-    for (let i = 0; i < questions.lenght; i++) {
+    for (let i = 0; i < questions.length; i++) {
         if (questions[i].question && questions[i].answer) {
             const quesetions = await QuestionnaireQuestion.create({
                 question: questions[i].question,
@@ -57,7 +57,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
                 details: questions[i].details,
             })
         } else {
-            next(new AppError('You must enter question and Answer'))
+            next(new AppError('You must enter question and Answer', 404))
         }
     }
     response(201, 'You are successfully sended your questionaire', true, '', res)

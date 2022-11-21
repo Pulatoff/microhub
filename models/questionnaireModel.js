@@ -1,9 +1,12 @@
 const { DataTypes } = require('sequelize')
 // configs
 const sequelize = require('../configs/db')
+// models
+const Consumer = require('./consumerModel')
+const Trainer = require('./personalTrainerModel')
 
 const Questionnaire = sequelize.define(
-    'questionnaries',
+    'questionnairies',
     {
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
         name: { type: DataTypes.STRING, allowNull: false },
@@ -23,5 +26,11 @@ const Questionnaire = sequelize.define(
         updatedAt: false,
     }
 )
+
+Consumer.hasMany(Questionnaire)
+Questionnaire.belongsTo(Consumer)
+
+Trainer.hasMany(Questionnaire)
+Questionnaire.belongsTo(Trainer)
 
 module.exports = Questionnaire

@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize')
 // configs
 const sequelize = require('../configs/db')
+//models
+const Questionnaire = require('./questionnaireModel')
 
 const QuestionnaireQuestion = sequelize.define(
     'questionnaire_options',
@@ -17,5 +19,8 @@ const QuestionnaireQuestion = sequelize.define(
         updatedAt: false,
     }
 )
+
+Questionnaire.hasMany(QuestionnaireQuestion)
+QuestionnaireQuestion.belongsTo(Questionnaire)
 
 module.exports = QuestionnaireQuestion
