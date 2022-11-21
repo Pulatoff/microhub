@@ -17,8 +17,10 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
 
 exports.getOneRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    const result = await axios.get(
-        SPOONACULAR_API_URL + '/recipes/' + id + '/nutritionWidget.json?apiKey=' + SPOONACULAR_API_KEY
-    )
-    response(200, 'You successfully get recipe', true, { result }, res)
+    axios
+        .get(SPOONACULAR_API_URL + '/recipes/' + id + '/nutritionWidget.json?apiKey=' + SPOONACULAR_API_KEY)
+        .then((respone) => {
+            const result = respone.data
+            response(200, 'You successfully get recipe', true, { result }, res)
+        })
 })
