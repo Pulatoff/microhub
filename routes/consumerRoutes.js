@@ -1,7 +1,9 @@
 const router = require('express').Router()
+// controllers
 const controller = require('../controllers/consumerController')
 const authController = require('../controllers/authController')
 const bindConsumer = require('../controllers/consumerTrainerRefernce')
+const questionaire = require('../controllers/questionaireController')
 
 router
     .route('/')
@@ -17,6 +19,10 @@ router
         controller.protectConsumer,
         controller.acceptNutritioinst
     )
+
+router
+    .route('/questionnaire')
+    .post(authController.protect, authController.role(['consumer']), questionaire.sendQuestionnaire)
 
 router
     .route('/trainer')

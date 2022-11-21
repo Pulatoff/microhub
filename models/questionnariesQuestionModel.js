@@ -9,6 +9,7 @@ const QuestionnaireQuestion = sequelize.define(
         answer: { type: DataTypes.STRING, allowNull: false },
         additional_question: { type: DataTypes.STRING },
         additional_answer: { type: DataTypes.STRING },
+        details: { type: DataTypes.STRING },
     },
     {
         timestamps: true,

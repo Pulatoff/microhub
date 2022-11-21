@@ -18,6 +18,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         lowest_height,
         lowest_weight,
         work_phone_number,
+        home_number,
     } = req.body
     if (
         !questions ||
@@ -28,7 +29,36 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         !height ||
         !email ||
         !lowest_height ||
-        !lowest_weight
+        !lowest_weight ||
+        !work_phone_number ||
+        !home_number
     )
         next(new AppError('You must enter all fields', 404))
+
+    const questionnaire = await Questionnaire.create({
+        email,
+        lowest_height,
+        lowest_weight,
+        home_number,
+        work_phone_number,
+        birth_of_date,
+        weight,
+        height,
+        name,
+        date,
+    })
+    for (let i = 0; i < questions.lenght; i++) {
+        if (questions[i].question && questions[i].answer) {
+            const quesetions = await QuestionnaireQuestion.create({
+                question: questions[i].question,
+                answer: questions[i].answer,
+                additional_question: questions[i].additional_question,
+                additional_answer: questions[i].additional_answer,
+                details: questions[i].details,
+            })
+        } else {
+            next(new AppError('You must enter question and Answer'))
+        }
+    }
+    response(201, 'You are successfully sended your questionaire', true, '', res)
 })
