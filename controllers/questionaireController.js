@@ -7,6 +7,7 @@ const Questionnaire = require('../models/questionnaireModel')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 const Consumer = require('../models/consumerModel')
 const Trainer = require('../models/personalTrainerModel')
+const ConsumerTrainer = require('../models/consumerTrainer')
 
 exports.sendQuestionnaire = CatchError(async (req, res, next) => {
     const {
@@ -69,6 +70,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
             next(new AppError('You must enter question and Answer', 404))
         }
     }
+    await ConsumerTrainer.create({ nutritionistId, consumerId: consumer.id })
     response(201, 'You are successfully sended your questionaire', true, '', res)
 })
 
