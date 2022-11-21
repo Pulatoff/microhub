@@ -20,7 +20,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         lowest_height,
         lowest_weight,
         work_phone_number,
-        home_number,
+        home_phone_number,
         nutritionistId,
     } = req.body
     const userId = req.user.id
@@ -35,7 +35,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         !lowest_height ||
         !lowest_weight ||
         !work_phone_number ||
-        !home_number
+        !home_phone_number
     )
         next(new AppError('You must enter all fields', 404))
 
@@ -45,7 +45,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         email,
         lowest_height,
         lowest_weight,
-        home_number,
+        home_phone_number,
         work_phone_number,
         date_of_birth,
         weight,
@@ -77,7 +77,20 @@ exports.getSendingQuestionnaire = CatchError(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId } })
     const questionaire = await Questionnaire.findAll({
         where: { nutritionistId: trainer.id },
-        attributes: ['id', 'name', 'date', 'date_of_birth', 'home_number'],
+        attributes: [
+            'id',
+            'name',
+            'date',
+            'date_of_birth',
+            'home_phone_number',
+            'work_phone_number',
+            'weight',
+            'height',
+            'email',
+            'lowest_height',
+            'lowest_weight',
+            'createdAt',
+        ],
         include: [
             {
                 model: QuestionnaireQuestion,
