@@ -6,6 +6,7 @@ const Consumer = require('../models/consumerModel')
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
+const countClientStats = require('../utils/clientStats')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -29,24 +30,5 @@ exports.getAllConsumerStats = CatchError(async (req, res, next) => {
     const nutritionist = await Trainer.findOne({ where: { userId } })
     const ref = await ConsumerTrainer.findAll({ where: { nutritionistId: nutritionist.id } })
     const stats = countClientStats(ref)
-    console.log(stats)
     response(200, 'You are successfuly geting stats', true, { stats }, res)
 })
-
-function countClientStats(array) {
-    let await_meals = 0
-    let active = 0
-    let inactive = 0
-    for (let i = 0; i < array.length; i++) {
-        if (array[i].statusClient === 'active') {
-            active++
-        } else if (array[i].statusClient === 'inactive') {
-            inactive++
-        } else if (array[i].statusClient === 'awaiting meals') {
-            await_meals++
-        } else {
-            continue
-        }
-    }
-    return { active: active, inactive: inactive, awaitingMeals: await_meals }
-}
