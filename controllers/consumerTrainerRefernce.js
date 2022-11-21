@@ -1,4 +1,4 @@
-// models
+s // models
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
@@ -23,3 +23,5 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     await ConsumerTrainer.create({ consumerId, nutritionistId: req.nutritionist.id })
     response(206, 'you successfuly requested binding to consumer', true, '', res)
 })
+
+exports.getAllConsumerStats = CatchError(async (req, res, next) => {})

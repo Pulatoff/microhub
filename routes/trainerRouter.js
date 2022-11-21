@@ -6,10 +6,14 @@ const consumerTrainer = require('../controllers/consumerTrainerRefernce')
 // middlewares
 const trainerInfo = require('../middlewares/TrainerInfo')
 
+// routes
 router.route('/requests').get(auth.protect, controller.getAcceptConsumer)
 router.route('/consumers').get(auth.protect, controller.getConsumers)
 router.route('/consumer/accept').post(auth.protect, controller.acceptConsumer)
 router.route('/consumer').post(auth.protect, trainerInfo, consumerTrainer.bindNutritionist)
+router
+    .route('/consumer/stats')
+    .get(auth.protect, auth.role(['nutritionist', 'personal_trainer']), consumerTrainer.getAllConsumerStats)
 router.route('/:linkToken').get(controller.inviteConsumer)
 
 module.exports = router
