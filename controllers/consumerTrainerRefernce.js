@@ -1,4 +1,4 @@
-s // models
+// models
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
@@ -24,4 +24,29 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     response(206, 'you successfuly requested binding to consumer', true, '', res)
 })
 
-exports.getAllConsumerStats = CatchError(async (req, res, next) => {})
+exports.getAllConsumerStats = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const nutritionist = await Trainer.findOne({ where: { userId } })
+    const ref = await Trainer.findAll({ where: { nutritionistId: nutritionist.id } })
+    const stats = countClientStats(ref)
+    console.log(stats)
+    response(200, 'You are successfuly geting stats', true, { stats }, res)
+})
+
+function countClientStats(array) {
+    let await_meals = 0
+    let active = 0
+    let inactive = 0
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].statusClient === 'active') {
+            active++
+        } else if (array[i].statusClient === 'inactive') {
+            inactive++
+        } else if (array[i].statusClient === 'awaitng meals') {
+            await_meals++
+        } else {
+            continue
+        }
+    }
+    return { active: active, inactive: inactive, awaitingMeals: await_meals }
+}
