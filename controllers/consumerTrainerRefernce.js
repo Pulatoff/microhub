@@ -27,7 +27,7 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
 exports.getAllConsumerStats = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const nutritionist = await Trainer.findOne({ where: { userId } })
-    const ref = await Trainer.findAll({ where: { nutritionistId: nutritionist.id } })
+    const ref = await ConsumerTrainer.findAll({ where: { nutritionistId: nutritionist.id } })
     const stats = countClientStats(ref)
     console.log(stats)
     response(200, 'You are successfuly geting stats', true, { stats }, res)
@@ -42,7 +42,7 @@ function countClientStats(array) {
             active++
         } else if (array[i].statusClient === 'inactive') {
             inactive++
-        } else if (array[i].statusClient === 'awaitng meals') {
+        } else if (array[i].statusClient === 'awaiting meals') {
             await_meals++
         } else {
             continue
