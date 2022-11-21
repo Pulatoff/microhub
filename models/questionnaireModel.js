@@ -13,6 +13,7 @@ const Questionnaire = sequelize.define(
         work_phone_number: { type: DataTypes.STRING, allowNull: false },
         height: { type: DataTypes.FLOAT, allowNull: false },
         weight: { type: DataTypes.FLOAT, allowNull: false },
+        email: { type: DataTypes.STRING, allowNull: false },
         lowest_weight: { type: DataTypes.FLOAT, allowNull: false },
         lowest_height: { type: DataTypes.FLOAT, allowNull: false },
     },
