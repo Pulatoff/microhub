@@ -5,6 +5,7 @@ const response = require('../utils/response')
 // models
 const Questionnaire = require('../models/questionnaireModel')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
+const Consumer = require('../models/consumerModel')
 
 exports.sendQuestionnaire = CatchError(async (req, res, next) => {
     const {
@@ -19,7 +20,9 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         lowest_weight,
         work_phone_number,
         home_number,
+        nutritionistId,
     } = req.body
+    const userId = req.user.id
     if (
         !questions ||
         !name ||
@@ -35,6 +38,8 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
     )
         next(new AppError('You must enter all fields', 404))
 
+    const consumer = await Consumer.findOne({ where: { userId } })
+
     const questionnaire = await Questionnaire.create({
         email,
         lowest_height,
@@ -46,10 +51,13 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         height,
         name,
         date,
+        consumerId: consumer.id,
+        nutritionistId: nutritionistId,
     })
     for (let i = 0; i < questions.length; i++) {
         if (questions[i].question && questions[i].answer) {
-            const quesetions = await QuestionnaireQuestion.create({
+            await QuestionnaireQuestion.create({
+                questionnairyId: questionnaire.id,
                 question: questions[i].question,
                 answer: questions[i].answer,
                 additional_question: questions[i].additional_question,
