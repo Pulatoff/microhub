@@ -77,7 +77,13 @@ exports.getSendingQuestionnaire = CatchError(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId } })
     const questionaire = await Questionnaire.findAll({
         where: { nutritionistId: trainer.id },
-        include: [{ model: QuestionnaireQuestion }],
+        attributes: ['id', 'name', 'date', 'date_of_birth', 'home_number'],
+        include: [
+            {
+                model: QuestionnaireQuestion,
+                attributes: ['question', 'answer', 'additional_question', 'additional_answer', 'details'],
+            },
+        ],
     })
     response(200, 'You are successfully getting sended questionnaires', true, { questionaire }, res)
 })
