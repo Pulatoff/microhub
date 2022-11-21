@@ -6,6 +6,7 @@ const response = require('../utils/response')
 const Questionnaire = require('../models/questionnaireModel')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 const Consumer = require('../models/consumerModel')
+const Trainer = require('../models/personalTrainerModel')
 
 exports.sendQuestionnaire = CatchError(async (req, res, next) => {
     const {
@@ -69,4 +70,14 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
         }
     }
     response(201, 'You are successfully sended your questionaire', true, '', res)
+})
+
+exports.getSendingQuestionnaire = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const questionaire = await Questionnaire.findAll({
+        where: { nutritionistId: trainer.id },
+        include: [{ model: QuestionnaireQuestion }],
+    })
+    response(200, 'You are successfully getting sended questionnaires', true, { questionaire }, res)
 })
