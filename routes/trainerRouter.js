@@ -17,7 +17,7 @@ router
     .route('/consumer/stats')
     .get(auth.protect, auth.role(['nutritionist', 'personal_trainer']), consumerTrainer.getAllConsumerStats)
 
-router.route('/questionnaire').get(auth.protect, auth.role(['consumer']), questionaire.getSendingQuestionnaire)
+router.route('/questionnaire').get(auth.protect, auth.role(['nutritionist']), questionaire.getSendingQuestionnaire)
 router.route('/:linkToken').get(controller.inviteConsumer)
 
 module.exports = router
