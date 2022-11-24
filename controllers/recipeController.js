@@ -47,12 +47,30 @@ exports.subsituteIngredients = CatchError(async (req, res, next) => {
     response(200, data?.message, true, { ingredient: data.ingredient, substitutes: data.substitutes }, res)
 })
 
+exports.getIngredientInfo = CatchError(async (req, res, next) => {
+    // ingredient id
+    const { id } = req.params
+    const { grams } = req.query
+    const responseData = await axios.get(
+        SPOONACULAR_API_URL +
+            '/food/ingredients/' +
+            id +
+            '/information/?apiKey=' +
+            SPOONACULAR_API_KEY +
+            '&amount=' +
+            grams +
+            '&unit=grams'
+    )
+    const data = responseData.data
+    response(200, 'successfully geted inforomation' + data.original, true, { data }, res)
+})
+
 // Search individual food items
 // calculate the food items and change them via volumes in grams (not number value: e.g. 300g of chicken tenders, not 6 chicken tenders)
 // Display total macro count after food calculation in recipes
 // Create and edit custom recipes
 // Add non-recipe based food items
 // Substitute ingredients // COMPLETED
-// Apply created recipes to a mealplan for 1 week,
+// Apply created recipes to a mealplan for 1 week
 // create, edit and delete meal plan templates.
 // Assign said mealplans to a specific client of Nutritionist
