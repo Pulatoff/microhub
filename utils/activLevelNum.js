@@ -1,12 +1,12 @@
 module.exports = (value) => {
     switch (value) {
-        case 'extrmely_active':
+        case 'extrmely active':
             return 1.9
-        case 'very_active':
+        case 'very active':
             return 1.725
-        case 'moderate_active':
+        case 'moderate active':
             return 1.55
-        case 'lightly_active':
+        case 'lightly active':
             return 1.375
         default:
             return 1.2

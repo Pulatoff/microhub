@@ -35,8 +35,8 @@ const Consumer = sequlize.define(
         },
         gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
         activity_level: {
-            type: DataTypes.ENUM('sendentary', 'lightly active', 'moderate active', 'very active', 'extrmely active'),
-            defaultValue: 'sendentary',
+            type: DataTypes.ENUM('sedentary', 'lightly active', 'moderate active', 'very active', 'extrmely active'),
+            defaultValue: 'sedentary',
         },
         preferences: {
             type: DataTypes.ENUM(
