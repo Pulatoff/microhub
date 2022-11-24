@@ -5,6 +5,8 @@ const controller = require('../controllers/recipeController')
 const consumer = require('../controllers/consumerController')
 
 router.route('/search').get(auth.protect, consumer.protectConsumer, controller.searchRecipes)
+router.route('/planer').get(controller.createMealPlanner)
+router.route('/ingredients/subsitutes/:id').get(controller.subsituteIngredients)
 router.route('/:id').get(auth.protect, controller.getOneRecipe)
 
 module.exports = router
