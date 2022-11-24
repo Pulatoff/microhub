@@ -124,5 +124,4 @@ const Consumer = sequlize.define(
 // referencing
 User.hasOne(Consumer)
 Consumer.belongsTo(User)
-
 module.exports = Consumer
