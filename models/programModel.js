@@ -1,7 +1,9 @@
 const { DataTypes } = require('sequelize')
+// configs
 const sequelize = require('../configs/db')
-const Personal_Trainer = require('./personalTrainerModel')
-const Meal = require('./mealModel')
+// models
+const Trainer = require('./personalTrainerModel')
+const Diary = require('./dairyModel')
 
 const Program = sequelize.define(
     'programs',
@@ -9,6 +11,8 @@ const Program = sequelize.define(
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
+        preference: { type: DataTypes.STRING },
+        weeks: { type: DataTypes.INTEGER },
     },
     {
         timestamps: true,
@@ -17,10 +21,10 @@ const Program = sequelize.define(
     }
 )
 
-Personal_Trainer.hasMany(Program)
-Program.belongsTo(Personal_Trainer)
+Trainer.hasMany(Program)
+Program.belongsTo(Trainer)
 
-Program.hasMany(Meal)
-Meal.belongsTo(Program)
+Program.hasMany(Diary)
+Diary.belongsTo(Program)
 
 module.exports = Program

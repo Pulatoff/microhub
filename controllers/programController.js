@@ -11,20 +11,9 @@ const response = require('../utils/response')
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-    const { meals, name, description } = req.body
-    const program = await Program.create({
-        nutritionistId: trainer.id,
-        name,
-        description,
-    })
-    for (let i = 0; i < meals.length; i++) {
-        await Meal.create({ ...meals[i], programId: program.id })
-    }
+    const { name, description, preference } = req.body
 
-    const createdMeals = await Meal.findAll({
-        where: { programId: program.id },
-        attributes: ['course', 'quantity', 'serving', 'food_id'],
-    })
+    const program = await Program.create({ nutritionistId: trainer.id, name, description })
 
     response(
         201,
@@ -35,7 +24,6 @@ exports.addProgram = CatchError(async (req, res, next) => {
                 id: program.id,
                 name: program.name,
                 description: program.description,
-                meals: createdMeals,
                 createdAt: program.createdAt,
             },
         },
