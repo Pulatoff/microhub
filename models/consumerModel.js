@@ -41,7 +41,7 @@ const Consumer = sequlize.define(
         preferences: {
             type: DataTypes.ENUM(
                 'diet',
-                'standart',
+                'standard',
                 'vegetarian',
                 'lacto vegetarian',
                 'ovo vegetarian',

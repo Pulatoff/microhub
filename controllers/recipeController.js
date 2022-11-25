@@ -65,7 +65,7 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
     response(200, 'successfully geted inforomation' + data.original, true, { data }, res)
 })
 
-// Search individual food items
+// Search individual food  // COMPLETED
 // calculate the food items and change them via volumes in grams (not number value: e.g. 300g of chicken tenders, not 6 chicken tenders)
 // Display total macro count after food calculation in recipes
 // Create and edit custom recipes
