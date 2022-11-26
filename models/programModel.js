@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize')
-// configs
+//configs
 const sequelize = require('../configs/db')
 // models
 const Trainer = require('./personalTrainerModel')

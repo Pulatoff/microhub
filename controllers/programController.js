@@ -11,24 +11,11 @@ const response = require('../utils/response')
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-    const { name, description, preference } = req.body
+    const { name, description, preference, weeks, recipes } = req.body
 
-    const program = await Program.create({ nutritionistId: trainer.id, name, description })
+    const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
 
-    response(
-        201,
-        'You are successfully added to program',
-        true,
-        {
-            program: {
-                id: program.id,
-                name: program.name,
-                description: program.description,
-                createdAt: program.createdAt,
-            },
-        },
-        res
-    )
+    response(201, 'You are successfully added to program', true, { program }, res)
 })
 
 exports.getAllPrograms = CatchError(async (req, res, next) => {

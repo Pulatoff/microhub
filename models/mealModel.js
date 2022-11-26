@@ -5,17 +5,12 @@ const Meals = sequelize.define(
     'meals',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        course: {
-            type: DataTypes.ENUM('breakfast', 'brunch', 'lunch', 'snacks', 'dinner'),
-            allowNull: false,
-        },
+        title: { type: DataTypes.STRING, allowNull: false },
         quantity: { type: DataTypes.INTEGER },
         serving: { type: DataTypes.STRING },
         food_id: { type: DataTypes.STRING, allowNull: false },
     },
-    {
-        timestamps: false,
-    }
+    { timestamps: true, createdAt: true, updatedAt: false }
 )
 
 module.exports = Meals

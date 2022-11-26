@@ -27,16 +27,6 @@ exports.getOneRecipe = CatchError(async (req, res, next) => {
         })
 })
 
-exports.createMealPlanner = CatchError(async (req, res, next) => {
-    const meal_planner = await axios.get(
-        SPOONACULAR_API_URL +
-            '/mealplanner/dsky/week/2020-06-01?hash=ipsum ea proident amet occaecat&apiKey=' +
-            SPOONACULAR_API_KEY
-    )
-    console.log(meal_planner)
-    response(200, 'all is good', true, {}, res)
-})
-
 exports.subsituteIngredients = CatchError(async (req, res, next) => {
     // igredient id
     const { id } = req.params
@@ -66,11 +56,11 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
 })
 
 // Search individual food  // COMPLETED
-// calculate the food items and change them via volumes in grams (not number value: e.g. 300g of chicken tenders, not 6 chicken tenders)
-// Display total macro count after food calculation in recipes
-// Create and edit custom recipes
-// Add non-recipe based food items
+// calculate the food items and change them via volumes in grams (not number value: e.g. 300g of chicken tenders, not 6 chicken tenders) // AWAITING
+// Display total macro count after food calculation in recipes // AWAITING
+// Create and edit custom recipes // AWAITING
+// Add non-recipe based food items // AWAITING
 // Substitute ingredients // COMPLETED
-// Apply created recipes to a mealplan for 1 week
-// create, edit and delete meal plan templates.
-// Assign said mealplans to a specific client of Nutritionist
+// Apply created recipes to a mealplan for 1 week // AWAITING
+// create, edit and delete meal plan templates. // PROCESSING
+// Assign said mealplans to a specific client of Nutritionist // COMPLETED
