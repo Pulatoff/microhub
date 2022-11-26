@@ -8,7 +8,7 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 
 exports.addDairy = CatchError(async (req, res, next) => {
-    const { day, week, programId, breakfast, lunch, dinner, snack } = req.body
+    const { day, week, programId } = req.body
     const diary = await Dairy.create({ day, week, programId })
     response(201, 'you successfully add your diaries', true, { diary }, res)
 })
