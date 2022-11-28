@@ -4,7 +4,7 @@ const sequelize = require('../configs/db')
 const Meal = require('./mealModel')
 
 const Course = sequelize.define(
-    'course',
+    'mealplan_foods',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         day: { type: DataTypes.STRING },
@@ -16,35 +16,43 @@ const Course = sequelize.define(
         updatedAt: false,
     }
 )
-// Course.hasMany(Meal)
-// Meal.belongsTo(Course)
+Course.hasMany(Meal)
+Meal.belongsTo(Course)
 
 module.exports = Course
 
-const data = {
+const object = {
     day: 'Monday',
-    breakfast: {
-        meals: [
+    week: 1,
+    food_items: {
+        breakfast: [
             {
+                food_id: 1,
+                serving: '150g',
+                quantity: 23,
                 title: 'Niyozbek',
-                cals: 13,
             },
         ],
+        dinner: [],
+        lunch: [],
+        snacks: [],
     },
-    dinner: {
-        meals: [
-            {
-                title: 'Niyozbek',
-                cals: 24,
-            },
-        ],
-    },
-    lunch: {
-        meals: [
-            {
-                title: 'Niyozbek',
-                cals: 45,
-            },
-        ],
-    },
+}
+
+const object2 = {
+    day: 'Monday',
+    week: 1,
+    food_items: [
+        {
+            food_id: 1,
+            serving: '150g',
+            quantity: 23,
+            title: 'Niyozbek',
+        },
+    ],
+}
+
+const object3 = {
+    name: 'Niyozbek',
+    description: 'deas smfkdol wefol FKOSDFdd',
 }

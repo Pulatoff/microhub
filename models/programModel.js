@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize')
 const sequelize = require('../configs/db')
 // models
 const Trainer = require('./personalTrainerModel')
-const Diary = require('./dairyModel')
+const Course = require('./courseModel')
 
 const Program = sequelize.define(
     'programs',
@@ -12,6 +12,9 @@ const Program = sequelize.define(
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
         preference: { type: DataTypes.STRING },
+        calories: { type: DataTypes.INTEGER },
+        protein: { type: DataTypes.STRING },
+        fats: { type: DataTypes.STRING },
         weeks: { type: DataTypes.INTEGER },
     },
     {
@@ -24,7 +27,7 @@ const Program = sequelize.define(
 Trainer.hasMany(Program)
 Program.belongsTo(Trainer)
 
-Program.hasMany(Diary)
-Diary.belongsTo(Program)
+Program.hasMany(Course)
+Course.belongsTo(Program)
 
 module.exports = Program

@@ -16,7 +16,4 @@ const Dairy = sequelize.define(
     }
 )
 
-Dairy.hasMany(Course)
-Course.belongsTo(Dairy)
-
 module.exports = Dairy
