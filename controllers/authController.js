@@ -43,29 +43,15 @@ exports.signupCLient = CatchError(async (req, res, next) => {
 exports.signin = CatchError(async (req, res, next) => {
     const { password, email } = req.body
     if (!password || !email) next(new AppError('Email or Password could not be empty', 404))
-    const user = await User.findOne({ where: { email, isActive: 1 } })
+    const user = await User.findOne({ where: { email, isActive: 1 }, include: [{ model: Consumer }] })
     if (!user) next(new AppError('Wrong password or email, Please try again', 404))
     // comparing passwords
     const compare = await bcrypt.compare(password, user.password)
     if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
+
     const token = createJwt(user.id)
     saveCookie(token, res)
-    response(
-        201,
-        'You are successfully logged in',
-        true,
-        {
-            user: {
-                id: user.id,
-                email: user.email,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                photo: user.photo,
-                createdAt: user.createdAt,
-            },
-        },
-        res
-    )
+    response(201, 'You are successfully logged in', true, { user }, res)
 })
 
 exports.logout = CatchError(async (req, res, next) => {

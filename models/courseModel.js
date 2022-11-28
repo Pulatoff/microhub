@@ -4,10 +4,11 @@ const sequelize = require('../configs/db')
 const Meal = require('./mealModel')
 
 const Course = sequelize.define(
-    'coures',
+    'course',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        course: { type: DataTypes.STRING },
+        day: { type: DataTypes.STRING },
+        week: { type: DataTypes.INTEGER },
     },
     {
         timestamps: true,
@@ -15,9 +16,8 @@ const Course = sequelize.define(
         updatedAt: false,
     }
 )
-
-Course.hasMany(Meal)
-Meal.belongsTo(Course)
+// Course.hasMany(Meal)
+// Meal.belongsTo(Course)
 
 module.exports = Course
 

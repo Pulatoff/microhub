@@ -5,7 +5,7 @@ const Meals = sequelize.define(
     'meals',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        title: { type: DataTypes.STRING, allowNull: false },
+        course: { type: DataTypes.STRING },
         quantity: { type: DataTypes.INTEGER },
         serving: { type: DataTypes.STRING },
         food_id: { type: DataTypes.STRING, allowNull: false },
