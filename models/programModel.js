@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize')
 const sequelize = require('../configs/db')
 // models
 const Trainer = require('./personalTrainerModel')
-const Course = require('./courseModel')
+const Course = require('./programTimeModel')
 
 const Program = sequelize.define(
     'programs',

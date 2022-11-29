@@ -1,7 +1,6 @@
 // models
-const Course = require('../models/courseModel')
+const Course = require('../models/programTimeModel')
 const Meal = require('../models/mealModel')
-
 // utils
 const AppError = require('../utils/AppError')
 const response = require('../utils/response')

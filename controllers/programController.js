@@ -3,6 +3,7 @@ const Program = require('../models/programModel')
 const Trainer = require('../models/personalTrainerModel')
 const Meal = require('../models/mealModel')
 const Consumer = require('../models/consumerModel')
+const ProgramTime = require('../models/programTimeModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const AppError = require('../utils/AppError')
@@ -11,11 +12,22 @@ const response = require('../utils/response')
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-    const { name, description, preference, weeks, recipes } = req.body
+    const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
+    if (meals) {
+        for (let i = 0; i < meals.length; i++) {
+            const { week, day, food_items } = meals[i]
 
-    response(201, 'You are successfully added to program', true, { program }, res)
+            const mealFood = await ProgramTime.create({ week, day, programId: program.id })
+            for (let k = 0; k < food_items.length; k++) {
+                const { food_id, serving, quantity, course } = food_items[k]
+                await Meal.create({ food_id, serving, serving, quantity, course, mealplanFoodId: mealFood.id })
+            }
+        }
+    }
+
+    response(201, 'You are successfully added to program', true, '', res)
 })
 
 exports.getAllPrograms = CatchError(async (req, res, next) => {
@@ -62,3 +74,33 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
         res
     )
 })
+
+// example program data body
+// const obj = {
+//     name: 'Program1',
+//     description: 'a lot of text',
+//     meals: [
+//         {
+//             week: 1,
+//             day: 'Monday',
+//             food_items: [
+//                 {
+//                     food_id: 1,
+//                     quantity: 2,
+//                     serving: '150g',
+//                 },
+//             ],
+//         },
+//         {
+//             week: 1,
+//             day: 'Monday',
+//             food_items: [
+//                 {
+//                     food_id: 1,
+//                     quantity: 2,
+//                     serving: '150g',
+//                 },
+//             ],
+//         },
+//     ],
+// }

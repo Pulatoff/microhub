@@ -9,7 +9,7 @@ router
     .post(auth.protect, auth.role(['admin', 'nutritionist']), controller.addProgram)
     .get(auth.protect, controller.getAllPrograms)
 
-router.route('/items').post(auth.protect, course.addCourse)
+router.route('/recipes').post(auth.protect, course.addCourse)
 router.route('/:id').get(controller.getProgram).patch(controller.updatePrograms)
 router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']), bindController.bindConumer)
 
