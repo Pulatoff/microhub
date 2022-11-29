@@ -10,6 +10,12 @@ const AppError = require('../utils/AppError')
 const response = require('../utils/response')
 
 exports.addProgram = CatchError(async (req, res, next) => {
+    let total_macros = {
+        cals: 0,
+        fats: 0,
+        carbs: 0,
+        protein: 1,
+    }
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
     const { name, description, preference, weeks, meals } = req.body
@@ -18,15 +24,19 @@ exports.addProgram = CatchError(async (req, res, next) => {
     if (meals) {
         for (let i = 0; i < meals.length; i++) {
             const { week, day, food_items } = meals[i]
-
             const mealFood = await ProgramTime.create({ week, day, programId: program.id })
             for (let k = 0; k < food_items.length; k++) {
-                const { food_id, serving, quantity, course } = food_items[k]
+                const { food_id, serving, quantity, course, cals, protein, fats, carbs } = food_items[k]
                 await Meal.create({ food_id, serving, serving, quantity, course, mealplanFoodId: mealFood.id })
+                total_macros.protein += protein
+                total_macros.cals += cals
+                total_macros.fats += fats
+                total_macros.carbs += carbs
             }
         }
     }
 
+    console.log(total_macros)
     response(201, 'You are successfully added to program', true, '', res)
 })
 

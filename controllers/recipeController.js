@@ -7,14 +7,16 @@ const response = require('../utils/response')
 const AppError = require('../utils/AppError')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
-    const { search } = req.query
+    let { search, number } = req.query
+    number = number || 1
     const results = await axios.get(
         SPOONACULAR_API_URL +
             '/recipes/complexSearch?apiKey=' +
             SPOONACULAR_API_KEY +
             '&query=' +
             search +
-            '&instructionsRequired=true&fillIngredients=true&addRecipeNutrition=true'
+            '&addRecipeNutrition=true&number=' +
+            number
     )
     if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
     response(200, 'You successfuly recieved recipes', true, results?.data, res)
