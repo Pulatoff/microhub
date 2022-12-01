@@ -12,9 +12,10 @@ const Program = sequelize.define(
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
         preference: { type: DataTypes.STRING },
-        calories: { type: DataTypes.INTEGER },
-        protein: { type: DataTypes.STRING },
-        fats: { type: DataTypes.STRING },
+        cals: { type: DataTypes.INTEGER },
+        protein: { type: DataTypes.INTEGER },
+        fats: { type: DataTypes.INTEGER },
+        carbs: { type: DataTypes.INTEGER },
         weeks: { type: DataTypes.INTEGER },
     },
     {

@@ -10,7 +10,7 @@ router
     .get(auth.protect, controller.getAllPrograms)
 
 router.route('/recipes').post(auth.protect, course.addCourse)
-router.route('/:id').get(controller.getProgram).patch(controller.updatePrograms)
+router.route('/:id').get(auth.protect, controller.getProgram).patch(controller.updatePrograms)
 router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']), bindController.bindConumer)
 
 module.exports = router

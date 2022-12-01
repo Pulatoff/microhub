@@ -9,6 +9,11 @@ const Meals = sequelize.define(
         quantity: { type: DataTypes.INTEGER },
         serving: { type: DataTypes.STRING },
         food_id: { type: DataTypes.STRING, allowNull: false },
+        carbs: { type: DataTypes.INTEGER },
+        fats: { type: DataTypes.INTEGER },
+        cals: { type: DataTypes.INTEGER },
+        title: { type: DataTypes.STRING },
+        protein: { type: DataTypes.INTEGER },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
