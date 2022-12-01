@@ -3,6 +3,7 @@ const ProgramConsumer = require('../models/ProgramConsumer')
 const Consumer = require('../models/consumerModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
+const Program = require('../models/programModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -21,4 +22,15 @@ exports.bindConumer = CatchError(async (req, res, next) => {
     checkRef.statusClient = 'active'
     await checkRef.save()
     response(200, 'You are successfuly binded to program', true, '', res)
+})
+
+exports.getPrograms = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const consumer = await Consumer.findAll({ where: { userId } })
+    const programs = await ProgramConsumer.findAll({
+        where: { consumerId: consumer.id },
+        include: [{ model: Program }],
+    })
+    console.log(programs)
+    response(200, 'You successfully geted assign programs', true, {}, res)
 })
