@@ -81,7 +81,7 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
     const { name, description, weeks, preference } = req.body
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-    if (!trainer) next(new AppError("Tou don't access this request"))
+    if (!trainer) next(new AppError("You don't access this request"))
     const program = await Program.findByPk(req.params.id, { where: { nutritionistId: trainer.id } })
 
     if (!program) next(new AppError('Program not found', 404))
@@ -89,6 +89,8 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
     program.name = name || program.name
     program.description = description || program.description
     program.weeks = weeks || program.weeks
+    program.preference = preference || program.preference
+
     await program.save()
     response(
         203,
@@ -112,4 +114,5 @@ exports.deletePrograms = CatchError(async (req, res, next) => {
  * PATCH # update programs # /programs/:id
  * POST # add additioanal recipe # /programs/:id
  * DELETE # deleted programs # /programs
+ * PATCH # edit meals # /program/:id/foods/:food_id
  */
