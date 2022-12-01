@@ -31,6 +31,6 @@ exports.getPrograms = CatchError(async (req, res, next) => {
         where: { consumerId: consumer.id },
         include: [{ model: Program }],
     })
-    console.log(programs)
+
     response(200, 'You successfully geted assign programs', true, {}, res)
 })
