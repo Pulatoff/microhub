@@ -5,6 +5,7 @@ const { SPOONACULAR_API_URL, SPOONACULAR_API_KEY } = require('../configs/URL')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const AppError = require('../utils/AppError')
+const { search } = require('../routes/trainerRouter')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number } = req.query
@@ -24,7 +25,7 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
 
 exports.getOneRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    const query = req.query
+
     axios
         .get(SPOONACULAR_API_URL + '/recipes/' + id + '/nutritionWidget.json?apiKey=' + SPOONACULAR_API_KEY)
         .then((respone) => {
@@ -59,6 +60,19 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
     )
     const data = responseData.data
     response(200, 'successfully geted inforomation' + data.original, true, { data }, res)
+})
+
+exports.searchIngredients = CatchError(async (req, res, next) => {
+    const { query } = req.query
+    const data = await axios.get(
+        SPOONACULAR_API_URL +
+            '/food/ingredients/search?metaInformation=true&offset=0&number=10&query=' +
+            query +
+            '&apiKey=' +
+            SPOONACULAR_API_KEY
+    )
+
+    response(200, 'You are successfully got data', true, { ingridients: data?.data }, res)
 })
 
 // Search individual food  // COMPLETED
