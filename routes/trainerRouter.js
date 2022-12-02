@@ -19,6 +19,7 @@ router
 
 router.route('/questionnaire').get(auth.protect, auth.role(['nutritionist']), questionaire.getSendingQuestionnaire)
 router.route('/search').get(consumerTrainer.searchEngine)
+
 router.route('/:linkToken').get(controller.inviteConsumer)
 
 module.exports = router
