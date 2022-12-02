@@ -28,5 +28,5 @@ exports.getPrograms = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Program }] })
 
-    response(200, 'You successfully geted assign programs', true, { programs: consumer.programs }, res)
+    response(200, 'You successfully got assign programs', true, { programs: consumer.programs }, res)
 })
