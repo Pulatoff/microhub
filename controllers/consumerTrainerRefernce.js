@@ -64,5 +64,5 @@ exports.searchConsumer = CatchError(async (req, res, next) => {
             },
         ],
     })
-    response(200, 'Your searched nutritionists', true, { consumers }, res, consumers.length)
+    response(200, 'Your searched consumers', true, { consumers }, res, consumers.length)
 })
