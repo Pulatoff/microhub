@@ -6,10 +6,10 @@ const Dairy = sequelize.define(
     'diaries',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        serving: { type: DataTypes.STRING },
-        quantity: { type: DataTypes.INTEGER },
-        date: { type: DataTypes.DATE },
-        course: { type: DataTypes.STRING },
+        serving: { type: DataTypes.STRING, allowNull: false },
+        quantity: { type: DataTypes.INTEGER, defaultValue: 0 },
+        date: { type: DataTypes.DATE, allowNull: false },
+        course: { type: DataTypes.STRING, allowNull: false },
     },
     {
         timestamps: true,

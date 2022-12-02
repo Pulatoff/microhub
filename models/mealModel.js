@@ -5,15 +5,15 @@ const Meals = sequelize.define(
     'meals',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        course: { type: DataTypes.STRING },
-        quantity: { type: DataTypes.INTEGER },
-        serving: { type: DataTypes.STRING },
+        course: { type: DataTypes.STRING, allowNull: false },
+        quantity: { type: DataTypes.INTEGER, allowNull: false },
+        serving: { type: DataTypes.STRING, allowNull: false },
         food_id: { type: DataTypes.STRING, allowNull: false },
-        carbs: { type: DataTypes.INTEGER },
-        fats: { type: DataTypes.INTEGER },
-        cals: { type: DataTypes.INTEGER },
-        title: { type: DataTypes.STRING },
-        protein: { type: DataTypes.INTEGER },
+        carbs: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        fats: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        cals: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        title: { type: DataTypes.STRING, allowNull: false },
+        protein: { type: DataTypes.INTEGER, allowNull: false },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
