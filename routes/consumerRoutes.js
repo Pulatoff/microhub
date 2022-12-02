@@ -27,6 +27,8 @@ router
 
 router.route('/programs').get(authController.protect, authController.role(['consumer']), bindProgram.getPrograms)
 
+router.route('/search').get(authController.protect, bindConsumer.searchConsumer)
+
 router
     .route('/trainer')
     .post(authController.protect, controller.protectConsumer, bindConsumer.bindConsumer)

@@ -51,3 +51,18 @@ exports.searchEngine = CatchError(async (req, res, next) => {
 
     response(200, 'Your searched nutritionists', true, { nutritioinsts }, res, nutritioinsts.length)
 })
+
+exports.searchConsumer = CatchError(async (req, res, next) => {
+    const { search } = req.query
+    console.log(search)
+    const consumers = await Consumer.findAll({
+        include: [
+            {
+                model: User,
+                where: { email: { [Op.like]: '%' + search + '%' }, role: 'consumer' },
+                attributes: ['first_name', 'last_name', 'email', 'role'],
+            },
+        ],
+    })
+    response(200, 'Your searched nutritionists', true, { consumers }, res, consumers.length)
+})
