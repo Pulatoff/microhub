@@ -54,7 +54,7 @@ exports.searchEngine = CatchError(async (req, res, next) => {
 
 exports.searchConsumer = CatchError(async (req, res, next) => {
     const { search } = req.query
-    console.log(search)
+
     const consumers = await Consumer.findAll({
         include: [
             {
