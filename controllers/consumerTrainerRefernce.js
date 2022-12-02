@@ -4,6 +4,7 @@ const Op = Sequelize.Op
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
+const User = require('../models/userModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -37,6 +38,16 @@ exports.getAllConsumerStats = CatchError(async (req, res, next) => {
 
 exports.searchEngine = CatchError(async (req, res, next) => {
     const { search } = req.query
-    const nutritioinsts = await Trainer.findAll({ where: { [Op.like]: '%' + search + '%' } })
+    const nutritioinsts = await Trainer.findAll({
+        include: [
+            {
+                model: User,
+                where: { email: { [Op.like]: '%' + search + '%' }, role: 'nutritionist' },
+                attributes: ['first_name', 'last_name', 'email', 'role'],
+            },
+        ],
+        attributes: ['id', 'linkToken', 'createdAt'],
+    })
+
     response(200, 'Your searched nutritionists', true, { nutritioinsts }, res, nutritioinsts.length)
 })
