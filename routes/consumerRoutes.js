@@ -4,6 +4,7 @@ const controller = require('../controllers/consumerController')
 const authController = require('../controllers/authController')
 const bindConsumer = require('../controllers/consumerTrainerRefernce')
 const questionaire = require('../controllers/questionaireController')
+const bindProgram = require('../controllers/programConsumer')
 
 router
     .route('/')
@@ -23,6 +24,8 @@ router
 router
     .route('/questionnaire')
     .post(authController.protect, authController.role(['consumer']), questionaire.sendQuestionnaire)
+
+router.route('/programs').get(authController.protect, authController.role(['consumer']), bindProgram.getPrograms)
 
 router
     .route('/trainer')

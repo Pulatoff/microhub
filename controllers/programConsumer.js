@@ -26,11 +26,7 @@ exports.bindConumer = CatchError(async (req, res, next) => {
 
 exports.getPrograms = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const consumer = await Consumer.findAll({ where: { userId } })
-    const programs = await ProgramConsumer.findAll({
-        where: { consumerId: consumer.id },
-        include: [{ model: Program }],
-    })
+    const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Program }] })
 
-    response(200, 'You successfully geted assign programs', true, {}, res)
+    response(200, 'You successfully geted assign programs', true, { programs: consumer.programs }, res)
 })
