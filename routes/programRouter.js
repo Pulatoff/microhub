@@ -13,6 +13,10 @@ router.route('/recipes').post(auth.protect, course.addCourse)
 
 router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']), bindController.bindConumer)
 
-router.route('/:id').get(auth.protect, controller.getProgram).patch(controller.updatePrograms)
+router
+    .route('/:id')
+    .get(auth.protect, controller.getProgram)
+    .patch(controller.updatePrograms)
+    .delete(auth.protect.apply, auth.role(['nutritionist']), controller.deletePrograms)
 
 module.exports = router
