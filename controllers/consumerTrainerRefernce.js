@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 // models
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
@@ -35,4 +37,6 @@ exports.getAllConsumerStats = CatchError(async (req, res, next) => {
 
 exports.searchEngine = CatchError(async (req, res, next) => {
     const { search } = req.query
+    const nutritioinsts = await Trainer.findAll({ where: { [Op.like]: '%' + search + '%' } })
+    response(200, 'Your searched nutritionists', true, { nutritioinsts }, res, nutritioinsts.length)
 })
