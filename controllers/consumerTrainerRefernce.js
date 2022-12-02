@@ -32,3 +32,7 @@ exports.getAllConsumerStats = CatchError(async (req, res, next) => {
     const stats = countClientStats(ref)
     response(200, 'You are successfuly geting stats', true, { stats }, res)
 })
+
+exports.searchEngine = CatchError(async (req, res, next) => {
+    const { search } = req.query
+})
