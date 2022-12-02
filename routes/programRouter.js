@@ -17,6 +17,6 @@ router
     .route('/:id')
     .get(auth.protect, controller.getProgram)
     .patch(controller.updatePrograms)
-    .delete(auth.protect.apply, auth.role(['nutritionist']), controller.deletePrograms)
+    .delete(auth.protect, auth.role(['nutritionist']), controller.deletePrograms)
 
 module.exports = router

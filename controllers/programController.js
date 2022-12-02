@@ -102,6 +102,7 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
 })
 
 exports.deletePrograms = CatchError(async (req, res, next) => {
+    console.log(0)
     const { id } = req.params
     await Program.destroy({ where: { id } })
     response(204, 'You deleted program', true, '', res)
