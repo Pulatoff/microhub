@@ -50,7 +50,7 @@ exports.searchEngine = CatchError(async (req, res, next) => {
     })
     if (!nutritioinst) next(new AppError(`profesional by this email:${search} not found`, 404))
 
-    response(200, 'Your searched nutritionists', true, { nutritioinst }, res, nutritioinsts.length)
+    response(200, 'Your searched nutritionists', true, { nutritioinst }, res)
 })
 
 exports.searchConsumer = CatchError(async (req, res, next) => {
