@@ -38,18 +38,19 @@ exports.getAllConsumerStats = CatchError(async (req, res, next) => {
 
 exports.searchEngine = CatchError(async (req, res, next) => {
     const { search } = req.query
-    const nutritioinsts = await Trainer.findAll({
+    const nutritioinst = await Trainer.findOne({
         include: [
             {
                 model: User,
-                where: { email: { [Op.like]: '%' + search + '%' }, role: 'nutritionist' },
+                where: { email: search },
                 attributes: ['first_name', 'last_name', 'email', 'role'],
             },
         ],
         attributes: ['id', 'linkToken', 'createdAt'],
     })
+    if (!nutritioinst) next(new AppError(`profesional by this email:${search} not found`, 404))
 
-    response(200, 'Your searched nutritionists', true, { nutritioinsts }, res, nutritioinsts.length)
+    response(200, 'Your searched nutritionists', true, { nutritioinst }, res, nutritioinsts.length)
 })
 
 exports.searchConsumer = CatchError(async (req, res, next) => {
@@ -65,5 +66,5 @@ exports.searchConsumer = CatchError(async (req, res, next) => {
         ],
     })
     if (!consumer) next(new AppError(`client by this email:${search} not found`, 404))
-    response(200, 'Your searched consumers', true, { consumer }, res)
+    response(200, 'Your searched consumer', true, { consumer }, res)
 })
