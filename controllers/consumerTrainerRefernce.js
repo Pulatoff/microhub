@@ -75,7 +75,9 @@ exports.searchConsumer = CatchError(async (req, res, next) => {
 exports.getOneConsumer = CatchError(async (req, res, next) => {
     const { id } = req.params
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
-    const checkBind = await ConsumerTrainer({ where: { consumerId: id, nutritionistId: trainer.id, status: 1 } })
+    const checkBind = await ConsumerTrainer.findOne({
+        where: { consumerId: id, nutritionistId: trainer.id, status: 1 },
+    })
     if (!checkBind) next(new AppError('You are not assign this consumer', 404))
     const consumer = await Consumer.findOne({
         where: { id },
