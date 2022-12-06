@@ -71,3 +71,15 @@ exports.searchConsumer = CatchError(async (req, res, next) => {
     if (!consumer) next(new AppError(`client by this email:${search} not found`, 404))
     response(200, 'Your searched consumer', true, { consumer }, res)
 })
+
+exports.getOneConsumer = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
+    const checkBind = await ConsumerTrainer({ where: { consumerId: id, nutritionistId: trainer.id, status: 1 } })
+    if (!checkBind) next(new AppError('You are not assign this consumer', 404))
+    const consumer = await Consumer.findOne({
+        where: { id },
+        include: [{ model: User, attributes: ['first_name', 'last_name', 'email', 'role', 'createdAt'] }],
+    })
+    response(200, 'You are successfully got consumer', true, { consumer }, res)
+})
