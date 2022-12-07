@@ -9,6 +9,7 @@ const Swaper = sequelize.define(
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
         food_id: { type: DataTypes.INTEGER, allowNull: false },
         ingredient_id: { type: DataTypes.INTEGER, allowNull: false },
+        swap_ingredient_id: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
         timestamps: true,
@@ -16,5 +17,8 @@ const Swaper = sequelize.define(
         updatedAt: false,
     }
 )
+
+Dairy.hasMany(Swaper)
+Swaper.belongsTo(Dairy)
 
 module.exports = Swaper

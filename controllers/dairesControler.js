@@ -8,9 +8,11 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 
 exports.addDairy = CatchError(async (req, res, next) => {
-    const { day, week, programId } = req.body
-    const diary = await Dairy.create({ day, week, programId })
-    response(201, 'you successfully add your diaries', true, { diary }, res)
+    const { food_id, date, programId, serving, quantity, course } = req.body
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userId } })
+    const diary = await Dairy.create({ quantity, serving, programId, date, food_id, course, consumerId: consumer.id })
+    response(201, 'you successfully add your diaries', true, {}, res)
 })
 
 exports.getDairy = CatchError(async (req, res, next) => {

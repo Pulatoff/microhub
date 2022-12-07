@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../configs/db')
 const Program = require('./programModel')
+const Consumer = require('./consumerModel')
 
 const Dairy = sequelize.define(
     'diaries',
@@ -21,4 +22,6 @@ const Dairy = sequelize.define(
 Program.hasMany(Dairy)
 Dairy.belongsTo(Program)
 
+Consumer.hasMany(Dairy)
+Dairy.belongsTo(Consumer)
 module.exports = Dairy

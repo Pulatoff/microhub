@@ -28,7 +28,6 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
     if (!trainer) next(new AppError('this nutritionist is not exist', 404))
     if (!consumer) next(new AppError('This consumer is not exist', 404))
-    console.log(trainer)
     await ConsumerTrainer.create({ consumerId, nutritionistId: trainer.id })
     response(206, 'you successfuly requested binding to consumer', true, '', res)
 })
