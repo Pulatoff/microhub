@@ -24,4 +24,5 @@ Dairy.belongsTo(Program)
 
 Consumer.hasMany(Dairy)
 Dairy.belongsTo(Consumer)
+
 module.exports = Dairy

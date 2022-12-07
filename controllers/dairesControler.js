@@ -2,6 +2,7 @@
 const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
 const Program = require('../models/programModel')
+const Swaper = require('../models/swaperModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -22,7 +23,7 @@ exports.getDairy = CatchError(async (req, res, next) => {
     const diaries = await Dairy.findAll({
         where: { consumerId: consumer.id },
         attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
-        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
+        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }, { model: Swaper }],
     })
     response(200, 'You are successfuly getting your diaries', true, { diaries }, res)
 })
