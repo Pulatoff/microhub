@@ -11,7 +11,7 @@ const trainerInfo = require('../middlewares/TrainerInfo')
 router.route('/requests').get(auth.protect, controller.getAcceptConsumer)
 router.route('/consumers').get(auth.protect, controller.getConsumers)
 router.route('/consumer/accept').post(auth.protect, controller.acceptConsumer)
-router.route('/consumer').post(auth.protect, consumerTrainer.bindNutritionist)
+router.route('/consumer').post(auth.protect, auth.role(['nutritionist']), consumerTrainer.bindNutritionist)
 
 router
     .route('/consumer/stats')
