@@ -59,20 +59,22 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     response(203, 'You are successfully update data', true, { consumer }, res)
 })
 
-exports.getTrainers = CatchError(async (req, res, next) => {
+exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 
     const nutritionists = consumer.nutritionists.map((val) => {
-        return {
-            id: val.id,
-            first_name: val.user.first_name,
-            last_name: val.user.last_name,
-            photo: val.user.photo,
-            email: val.user.email,
-            linkToken: val.linkToken,
-            status: val.consumer_trainers.status,
-            createdAt: val.createdAt,
+        if (val.consumer_trainers.status === 0 && val.consumer_trainers?.invate_side === 'profesional') {
+            return {
+                id: val.id,
+                first_name: val.user.first_name,
+                last_name: val.user.last_name,
+                photo: val.user.photo,
+                email: val.user.email,
+                linkToken: val.linkToken,
+                status: val.consumer_trainers.status,
+                createdAt: val.createdAt,
+            }
         }
     })
 
