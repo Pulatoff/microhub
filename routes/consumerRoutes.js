@@ -32,6 +32,8 @@ router.route('/search').get(authController.protect, bindConsumer.searchConsumer)
 router
     .route('/trainer')
     .post(authController.protect, controller.protectConsumer, bindConsumer.bindConsumer)
-    .get(authController.protect, controller.getRequestedTrainers)
+    .get(authController.protect, controller.getTrainers)
+
+router.route('/trainers/request').get(authController.protect, controller.getRequestedTrainers)
 
 module.exports = router

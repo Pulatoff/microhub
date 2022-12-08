@@ -81,7 +81,7 @@ exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     response(200, 'Successfully geting own nutritionists', true, { nutritionists }, res)
 })
 
-exports.getRequestedTrainers = CatchError(async (req, res, next) => {
+exports.getTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 
