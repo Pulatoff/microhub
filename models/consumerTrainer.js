@@ -8,7 +8,7 @@ const ConsumerTrainer = sequelize.define(
     {
         status: { type: DataTypes.INTEGER, defaultValue: 0 },
         statusClient: { type: DataTypes.ENUM('active', 'inactive', 'awaiting meals'), defaultValue: 'awaiting meals' },
-        // invate_side: { type: DataTypes.ENUM('profesional', 'client') },
+        invate_side: { type: DataTypes.ENUM('profesional', 'client') },
     },
     { timestamps: false }
 )

@@ -22,7 +22,6 @@ exports.bindConsumer = CatchError(async (req, res, next) => {
 
 exports.bindNutritionist = CatchError(async (req, res, next) => {
     const { consumerId } = req.body
-    console.log(req.user.id)
 
     const consumer = await Consumer.findByPk(consumerId)
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
