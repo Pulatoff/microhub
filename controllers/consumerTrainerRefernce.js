@@ -69,6 +69,7 @@ exports.searchConsumer = CatchError(async (req, res, next) => {
         ],
     })
     if (!consumer) next(new AppError(`client by this email:${search} not found`, 404))
+
     response(200, 'Your searched consumer', true, { consumer }, res)
 })
 
