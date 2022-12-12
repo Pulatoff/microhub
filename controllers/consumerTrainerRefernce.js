@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize')
-const Op = Sequelize.Op
 // models
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')

@@ -83,12 +83,12 @@ exports.usersSelf = CatchError(async (req, res, next) => {
     if (req.user.role === 'consumer') {
         user = await User.findByPk(req.user.id, {
             include: [{ model: Consumer }],
-            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
     } else if (req.user.role === 'nutritionist') {
         user = await User.findByPk(req.user.id, {
             include: [{ model: Personal_Trainer }],
-            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'createdAt'],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
     }
 
