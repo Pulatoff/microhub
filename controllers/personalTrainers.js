@@ -21,6 +21,11 @@ exports.updateTrainer = async (req, res, next) => {
 exports.getConsumers = CatchError(async (req, res) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId }, include: Consumer })
+    trainer.consumers = trainer.consumers?.map((e) => {
+        if (e.consumer_trainers.status === 1) {
+            return e
+        }
+    })
     response(200, 'consumers already geted', true, { consumers: trainer.consumers }, res)
 })
 
@@ -48,12 +53,14 @@ exports.getAcceptConsumer = CatchError(async (req, res) => {
     if (consumers) {
         consumers = consumers.map((val) => {
             if (val.nutritionists[0].consumer_trainers.status === 0) {
+                val.nutritionists = {}
                 return val
             }
         })
     } else {
         consumers = []
     }
+
     response(200, 'successful get consumers', true, { consumers }, res)
 })
 
