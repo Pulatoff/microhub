@@ -122,7 +122,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             createdAt: newUser.createdAt,
             consumer: newUser.consumer,
             requested_nutritionists,
-            questionnaire: newUser.questionnairy || {},
+            questionnaire: newUser.consumer.questionnairy || {},
         }
     } else if (req.user.role === 'nutritionist') {
         user = await User.findByPk(req.user.id, {

@@ -11,8 +11,20 @@ const checkInvate = require('../utils/checkInvate')
 const AppError = require('../utils/AppError')
 
 exports.addConsumer = CatchError(async (req, res, next) => {
-    const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
-        req.body
+    const {
+        weight,
+        height,
+        favorite_foods,
+        least_favorite_foods,
+        allergies,
+        preferences,
+        gender,
+        activity_level,
+        wrist,
+        forearm,
+        hip,
+        waist,
+    } = req.body
 
     const oldConsumer = await Consumer.findOne({ where: { userId: req.user.id } })
     if (oldConsumer) next(new AppError('This consumer options already exists', 403))
@@ -27,6 +39,10 @@ exports.addConsumer = CatchError(async (req, res, next) => {
         gender,
         userId: req.user.id,
         activity_level,
+        wrist,
+        waist,
+        hip,
+        forearm,
     })
 
     const { invitationToken } = req.cookies
