@@ -27,12 +27,14 @@ exports.addProgram = CatchError(async (req, res, next) => {
             const { week, day, food_items } = meals[i]
             const mealFood = await ProgramTime.create({ week, day, programId: program.id })
             for (let k = 0; k < food_items.length; k++) {
-                const { food_id, serving, quantity, course, cals, protein, fats, carbs, title } = food_items[k]
+                const { food_id, serving, quantity, course, cals, protein, fats, carbs, title, image_url } =
+                    food_items[k]
                 await Meal.create({
                     food_id,
                     serving,
                     quantity,
                     course,
+                    image_url,
                     mealplanFoodId: mealFood.id,
                     protein,
                     title,
@@ -102,7 +104,6 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
 })
 
 exports.deletePrograms = CatchError(async (req, res, next) => {
-    console.log(0)
     const { id } = req.params
     await Program.destroy({ where: { id } })
     response(204, 'You deleted program', true, '', res)

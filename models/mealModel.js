@@ -14,6 +14,7 @@ const Meals = sequelize.define(
         cals: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         title: { type: DataTypes.STRING, allowNull: false },
         protein: { type: DataTypes.INTEGER, allowNull: false },
+        image_url: { type: DataTypes.STRING },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
