@@ -33,6 +33,10 @@ const Consumer = sequlize.define(
                 this.setDataValue('least_favorite_foods', val.join(';'))
             },
         },
+        wrist: { type: DataTypes.INTEGER, allowNull: false },
+        forearm: { type: DataTypes.INTEGER, allowNull: false },
+        hip: { type: DataTypes.INTEGER, allowNull: false },
+        waist: { type: DataTypes.INTEGER, allowNull: false },
         gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
         activity_level: {
             type: DataTypes.ENUM('sedentary', 'lightly active', 'moderate active', 'very active', 'extremely active'),
@@ -67,7 +71,6 @@ const Consumer = sequlize.define(
         body_fat: {
             type: DataTypes.VIRTUAL,
             get() {
-                console.log(this.gender, this.weight)
                 const fat = body_fat(this.gender, this.weight, 10)
                 return fat
             },
