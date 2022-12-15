@@ -27,10 +27,7 @@ const Questionnaire = sequelize.define(
     }
 )
 
-Consumer.hasMany(Questionnaire)
+Consumer.hasOne(Questionnaire)
 Questionnaire.belongsTo(Consumer)
-
-Trainer.hasMany(Questionnaire)
-Questionnaire.belongsTo(Trainer)
 
 module.exports = Questionnaire

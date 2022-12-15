@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
 const Personal_Trainer = require('../models/personalTrainerModel')
-
+const Questionaire = require('../models/questionnaireModel')
+const Questions = require('../models/questionnariesQuestionModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -83,10 +84,18 @@ exports.usersSelf = CatchError(async (req, res, next) => {
     let user
     if (req.user.role === 'consumer') {
         const newUser = await User.findByPk(req.user.id, {
-            include: [{ model: Consumer, include: [{ model: Personal_Trainer, include: [{ model: User }] }] }],
+            include: [
+                {
+                    model: Consumer,
+                    include: [
+                        { model: Personal_Trainer, include: [{ model: User }] },
+                        { model: Questionaire, include: [{ model: Questions }] },
+                    ],
+                },
+            ],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
-
+        console.log(newUser)
         const requested_nutritionists = newUser.consumer.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
             if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
@@ -113,6 +122,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             createdAt: newUser.createdAt,
             consumer: newUser.consumer,
             requested_nutritionists,
+            questionnaire: newUser.questionnairy || {},
         }
     } else if (req.user.role === 'nutritionist') {
         user = await User.findByPk(req.user.id, {
