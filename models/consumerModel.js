@@ -67,6 +67,7 @@ const Consumer = sequlize.define(
         body_fat: {
             type: DataTypes.VIRTUAL,
             get() {
+                console.log(this.gender, this.weight)
                 const fat = body_fat(this.gender, this.weight, 10)
                 return fat
             },
