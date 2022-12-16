@@ -109,13 +109,3 @@ exports.deletePrograms = CatchError(async (req, res, next) => {
     await Program.destroy({ where: { id } })
     response(204, 'You deleted program', true, '', res)
 })
-
-/*
- * POST # add programs  # /programs
- * GET # get all programs # /programs
- * GET # get one program # /progams/:id
- * PATCH # update programs # /programs/:id
- * POST # add additioanal recipe # /programs/:id
- * DELETE # deleted programs # /programs
- * PATCH # edit meals # /program/:id/foods/:food_id
- */
