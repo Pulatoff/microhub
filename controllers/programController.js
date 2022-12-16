@@ -49,6 +49,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
             }
         }
     }
+
     program.cals = total_macros.cals
     program.protein = total_macros.protein
     program.carbs = total_macros.carbs
