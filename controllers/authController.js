@@ -99,7 +99,6 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             ],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
-        console.log(newUser)
         const requested_nutritionists = newUser.consumer.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
             if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {

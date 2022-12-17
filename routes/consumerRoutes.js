@@ -25,6 +25,10 @@ router
     .route('/questionnaire')
     .post(authController.protect, authController.role(['consumer']), questionaire.sendQuestionnaire)
 
+router
+    .route('/questionnaire/:id')
+    .patch(authController.protect, authController.role(['consumer']), questionaire.updateQuestionaire)
+
 router.route('/programs').get(authController.protect, authController.role(['consumer']), bindProgram.getPrograms)
 
 router.route('/search').get(authController.protect, bindConsumer.searchConsumer)

@@ -102,3 +102,48 @@ exports.getSendingQuestionnaire = CatchError(async (req, res, next) => {
     })
     response(200, 'You are successfully getting sended questionnaires', true, { questionaire }, res)
 })
+
+exports.updateQuestionaire = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    const userId = req.user.id
+    const {
+        questions,
+        name,
+        date,
+        date_of_birth,
+        weight,
+        height,
+        email,
+        lowest_height,
+        lowest_weight,
+        work_phone_number,
+        home_phone_number,
+    } = req.body
+
+    // const consumer = await Consumer.findOne({ where: { userId } })
+    const questionnaire = await Questionnaire.findByPk(id)
+
+    questionnaire.date = date || questionnaire.date
+    questionnaire.date_of_birth = date_of_birth || questionnaire.date_of_birth
+    questionnaire.email = email || questionnaire.email
+    questionnaire.height = height || questionnaire.height
+    questionnaire.weight = weight || questionnaire.weight
+    questionnaire.name = name || questionnaire.name
+    questionnaire.lowest_height = lowest_height || questionnaire.lowest_height
+    questionnaire.lowest_weight = lowest_weight || questionnaire.lowest_weight
+    questionnaire.work_phone_number = work_phone_number || questionnaire.work_phone_number
+    questionnaire.home_phone_number = home_phone_number || questionnaire.home_phone_number
+    await questionnaire.save()
+    if (questions) {
+        for (let i = 0; i < questions.length; i++) {
+            const { id, question, answer, additional_question, additional_answer, details } = questions[i]
+
+            const questionQuestionnaire = await QuestionnaireQuestion.findByPk(id)
+            questionQuestionnaire.answer = answer || questionQuestionnaire.answer
+            questionQuestionnaire.additional_answer = additional_answer || questionQuestionnaire.additional_answer
+            questionQuestionnaire.details = details || questionQuestionnaire.details
+            questionQuestionnaire.save()
+        }
+    }
+    response(203, 'You are successfully update questionnaire', true, {}, res)
+})
