@@ -19,4 +19,6 @@ router
     .patch(controller.updatePrograms)
     .delete(auth.protect, auth.role(['nutritionist']), controller.deletePrograms)
 
+router.route('/:id/meals').post(auth.protect, controller.addMealToProgram)
+
 module.exports = router

@@ -109,3 +109,43 @@ exports.deletePrograms = CatchError(async (req, res, next) => {
     await Program.destroy({ where: { id } })
     response(204, 'You deleted program', true, '', res)
 })
+
+exports.addMealToProgram = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    const { week, day, food_items } = req.body
+    const program = await Program.findByPk(id)
+    if (!program) next(new AppError(`Program by id ${id} not found`, 404))
+    let total_macros = {
+        cals: program.cals,
+        fats: program.fats,
+        carbs: program.carbs,
+        protein: program.protein,
+    }
+    const mealFood = await ProgramTime.create({ week, day, programId: program.id })
+    for (let k = 0; k < food_items.length; k++) {
+        const { food_id, serving, quantity, course, cals, protein, fats, carbs, title, image_url } = food_items[k]
+        await Meal.create({
+            food_id,
+            serving,
+            quantity,
+            course,
+            image_url,
+            mealplanFoodId: mealFood.id,
+            protein,
+            title,
+            cals,
+            carbs,
+            fats,
+        })
+        total_macros.protein += protein
+        total_macros.cals += cals
+        total_macros.fats += fats
+        total_macros.carbs += carbs
+    }
+    program.cals = total_macros.cals
+    program.protein = total_macros.protein
+    program.carbs = total_macros.carbs
+    program.fats = total_macros.fats
+    await program.save()
+    response(201, 'You are successfully added to program', true, '', res)
+})
