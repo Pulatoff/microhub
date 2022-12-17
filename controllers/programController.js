@@ -112,6 +112,7 @@ exports.deletePrograms = CatchError(async (req, res, next) => {
 
 exports.addMealToProgram = CatchError(async (req, res, next) => {
     const { id } = req.params
+
     const { week, day, food_items } = req.body
     const program = await Program.findByPk(id)
     if (!program) next(new AppError(`Program by id ${id} not found`, 404))
@@ -124,6 +125,7 @@ exports.addMealToProgram = CatchError(async (req, res, next) => {
     const mealFood = await ProgramTime.create({ week, day, programId: program.id })
     for (let k = 0; k < food_items.length; k++) {
         const { food_id, serving, quantity, course, cals, protein, fats, carbs, title, image_url } = food_items[k]
+
         await Meal.create({
             food_id,
             serving,
