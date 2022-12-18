@@ -70,7 +70,16 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
                 next(new AppError('You must enter question and Answer', 404))
             }
         }
-        response(201, 'You are successfully sended your questionaire', true, '', res)
+        const sendQuestionnaire = await Questionnaire.findByPk(questionnaire.id, {
+            include: [
+                {
+                    model: QuestionnaireQuestion,
+                    attributes: ['id', 'question', 'answer', 'additional_question', 'additional_answer', 'details'],
+                },
+            ],
+        })
+
+        response(201, 'You are successfully sended your questionaire', true, { questionnaire: sendQuestionnaire }, res)
     }
 })
 
@@ -105,7 +114,6 @@ exports.getSendingQuestionnaire = CatchError(async (req, res, next) => {
 
 exports.updateQuestionaire = CatchError(async (req, res, next) => {
     const { id } = req.params
-    const userId = req.user.id
     const {
         questions,
         name,
