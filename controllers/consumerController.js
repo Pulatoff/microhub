@@ -135,10 +135,15 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     const updateModel = await ConsumerTrainer.findOne({
         where: { nutritionistId, consumerId: req.consumer.id, status: 0 },
     })
+
     if (!updateModel) next(new AppError('this requested nutritionist not found', 404))
     updateModel.status = status
     await updateModel.save()
-    response(206, 'Nutritioinst successfully accept to consumer', true, '', res)
+    if (status === 1) {
+        response(206, `Client accept Nutritionist by id ${nutritionistId}`, true, '', res)
+    } else {
+        response(206, `Client reject Nutritionist by id ${nutritionistId}`, true, '', res)
+    }
 })
 
 exports.acceptProgram = CatchError(async (req, res, next) => {
