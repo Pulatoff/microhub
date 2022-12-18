@@ -99,11 +99,12 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             ],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
-        const requested_nutritionists = newUser.consumer.nutritionists.map((val) => {
+        const requested_nutritionists = []
+        newUser.consumer.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
             if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
                 const nutUser = val.user
-                return {
+                requested_nutritionists.push({
                     id: val.id,
                     first_name: nutUser.first_name,
                     last_name: nutUser.last_name,
@@ -112,7 +113,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     linkToken: val.linkToken,
                     status: val.consumer_trainers.status,
                     createdAt: val.createdAt,
-                }
+                })
             }
         })
         user = {
