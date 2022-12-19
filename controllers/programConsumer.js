@@ -4,6 +4,7 @@ const Consumer = require('../models/consumerModel')
 const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const Program = require('../models/programModel')
+const User = require('../models/userModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -26,7 +27,10 @@ exports.bindConumer = CatchError(async (req, res, next) => {
 
 exports.getPrograms = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Program }] })
+    const consumer = await Consumer.findOne({
+        where: { userId },
+        include: [{ model: Program, include: [{ model: Trainer, include: [{ model: User }] }] }],
+    })
 
     response(200, 'You successfully got assign programs', true, { programs: consumer.programs }, res)
 })
