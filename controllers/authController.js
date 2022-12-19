@@ -13,10 +13,6 @@ const saveCookie = require('../utils/sendCookieJWT')
 const createJwt = require('../utils/createJWT')
 const response = require('../utils/response')
 
-function SortProfesional(array) {
-    return {}
-}
-
 exports.signupCLient = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
     if (!first_name || !last_name || !email || !password || !passwordConfirm)
