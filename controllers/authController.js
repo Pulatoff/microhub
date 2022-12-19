@@ -60,7 +60,7 @@ exports.signin = CatchError(async (req, res, next) => {
     if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
     let user
     if (oldUser.role === 'consumer') {
-        const newUser = await User.findByPk(req.user.id, {
+        const newUser = await User.findByPk(oldUser.id, {
             include: [
                 {
                     model: Consumer,
@@ -106,12 +106,12 @@ exports.signin = CatchError(async (req, res, next) => {
             user.requested_nutritionists = requested_nutritionists
         }
     } else if (oldUser.role === 'nutritionist') {
-        user = await User.findByPk(req.user.id, {
+        user = await User.findByPk(oldUser.id, {
             include: [{ model: Personal_Trainer }],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
     }
-    const token = createJwt(user.id)
+    const token = createJwt(oldUser.id)
     saveCookie(token, res)
     response(201, 'You are successfully logged in', true, { user }, res)
 })
