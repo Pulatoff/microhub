@@ -49,12 +49,68 @@ exports.signupCLient = CatchError(async (req, res, next) => {
 exports.signin = CatchError(async (req, res, next) => {
     const { password, email } = req.body
     if (!password || !email) next(new AppError('Email or Password could not be empty', 404))
-    const user = await User.findOne({ where: { email, isActive: 1 }, include: [{ model: Consumer }] })
-    if (!user) next(new AppError('Wrong password or email, Please try again', 404))
-    // comparing passwords
-    const compare = await bcrypt.compare(password, user.password)
-    if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
+    const oldUser = await User.findOne({
+        where: { email, isActive: 1 },
+        include: [{ model: Consumer }],
+    })
 
+    if (!oldUser) next(new AppError('Wrong password or email, Please try again', 404))
+    // comparing passwords
+    const compare = await bcrypt.compare(password, oldUser.password)
+    if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
+    let user
+    if (oldUser.role === 'consumer') {
+        const newUser = await User.findByPk(req.user.id, {
+            include: [
+                {
+                    model: Consumer,
+                    include: [
+                        { model: Personal_Trainer, include: [{ model: User }] },
+                        { model: Questionaire, include: [{ model: Questions }] },
+                    ],
+                },
+            ],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+        })
+        const requested_nutritionists = []
+        newUser.consumer.nutritionists.map((val) => {
+            const bindConsumer = val.consumer_trainers
+            if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
+                const nutUser = val.user
+                requested_nutritionists.push({
+                    id: val.id,
+                    first_name: nutUser.first_name,
+                    last_name: nutUser.last_name,
+                    photo: nutUser.photo,
+                    email: nutUser.email,
+                    linkToken: val.linkToken,
+                    status: val.consumer_trainers.status,
+                    createdAt: val.createdAt,
+                })
+            }
+        })
+        user = {
+            id: newUser.id,
+            first_name: newUser.first_name,
+            last_name: newUser.last_name,
+            email: newUser.email,
+            photo: newUser.photo,
+            role: newUser.role,
+            createdAt: newUser.createdAt,
+            consumer: newUser.consumer,
+        }
+        if (newUser.consumer.questionnairy) {
+            user.questionnaire = newUser.consumer.questionnairy
+        }
+        if (requested_nutritionists.length !== 0) {
+            user.requested_nutritionists = requested_nutritionists
+        }
+    } else if (oldUser.role === 'nutritionist') {
+        user = await User.findByPk(req.user.id, {
+            include: [{ model: Personal_Trainer }],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+        })
+    }
     const token = createJwt(user.id)
     saveCookie(token, res)
     response(201, 'You are successfully logged in', true, { user }, res)
