@@ -3,6 +3,7 @@ const Program = require('../models/programModel')
 const Trainer = require('../models/personalTrainerModel')
 const Meal = require('../models/mealModel')
 const Consumer = require('../models/consumerModel')
+const User = require('../models/userModel')
 const ProgramTime = require('../models/programTimeModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -73,7 +74,10 @@ exports.getProgram = CatchError(async (req, res, next) => {
     if (!trainer) next(new AppError("You can't allowed this method", 404))
 
     const program = await Program.findByPk(id, {
-        include: [{ model: ProgramTime, include: [{ model: Meal }] }],
+        include: [
+            { model: ProgramTime, include: [{ model: Meal }] },
+            { model: Consumer, include: [{ model: User }] },
+        ],
         where: { nutritionistId: trainer.id },
     })
 
