@@ -54,7 +54,7 @@ exports.addConsumer = CatchError(async (req, res, next) => {
 })
 
 exports.getConsumer = CatchError(async (req, res, next) => {
-    const consumers = await Consumer.findAll()
+    const consumers = await Consumer.findAll({ include: [{ model: User }] })
     response(200, 'Successfuly geting consumer', true, { consumers }, res)
 })
 
