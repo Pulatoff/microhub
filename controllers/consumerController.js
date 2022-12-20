@@ -156,3 +156,9 @@ exports.getRequestedProfi = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
 })
+
+exports.getOneCOnsumer = CatchError(async (req, res) => {
+    const { id } = req.params
+    const consumer = await Consumer.findByPk(id)
+    response(200, 'successfully consumer', true, { consumer }, res)
+})
