@@ -54,7 +54,8 @@ exports.addConsumer = CatchError(async (req, res, next) => {
 })
 
 exports.getConsumer = CatchError(async (req, res, next) => {
-    response(200, 'Successfuly geting consumer', true, { consumer: req.consumer }, res)
+    const consumers = await Consumer.findAll()
+    response(200, 'Successfuly geting consumer', true, { consumers }, res)
 })
 
 exports.updateConsumer = CatchError(async (req, res, next) => {
