@@ -54,7 +54,11 @@ exports.addConsumer = CatchError(async (req, res, next) => {
 })
 
 exports.getConsumer = CatchError(async (req, res, next) => {
-    const consumers = await Consumer.findAll({ include: [{ model: User }] })
+    const consumers = await Consumer.findAll({
+        include: [
+            { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
+        ],
+    })
     response(200, 'Successfuly geting consumer', true, { consumers }, res)
 })
 
@@ -159,6 +163,10 @@ exports.getRequestedProfi = CatchError(async (req, res, next) => {
 
 exports.getOneCOnsumer = CatchError(async (req, res) => {
     const { id } = req.params
-    const consumer = await Consumer.findByPk(id, { include: [{ model: User }] })
+    const consumer = await Consumer.findByPk(id, {
+        include: [
+            { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
+        ],
+    })
     response(200, 'successfully consumer', true, { consumer }, res)
 })

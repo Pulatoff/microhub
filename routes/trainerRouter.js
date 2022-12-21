@@ -4,8 +4,6 @@ const controller = require('../controllers/personalTrainers')
 const auth = require('../controllers/authController')
 const consumerTrainer = require('../controllers/consumerTrainerRefernce')
 const questionaire = require('../controllers/questionaireController')
-// middlewares
-const trainerInfo = require('../middlewares/TrainerInfo')
 
 // routes
 router.route('/requests').get(auth.protect, controller.getAcceptConsumer)
