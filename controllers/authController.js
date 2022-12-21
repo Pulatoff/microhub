@@ -69,7 +69,9 @@ exports.signin = CatchError(async (req, res, next) => {
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
         const requested_nutritionists = []
-        newUser.consumer.nutritionists.map((val) => {
+        console.log(newUser.consumer.nutrisionists)
+        // if (newUser.consumer.nutritionists) {
+        newUser?.consumer?.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
             if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
                 const nutUser = val.user
@@ -85,6 +87,8 @@ exports.signin = CatchError(async (req, res, next) => {
                 })
             }
         })
+        // }
+
         user = {
             id: newUser.id,
             first_name: newUser.first_name,
