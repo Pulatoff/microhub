@@ -11,8 +11,12 @@ const response = require('../utils/response')
 exports.addDairy = CatchError(async (req, res, next) => {
     const { food_id, date, programId, serving, quantity, course } = req.body
     const userId = req.user.id
-    const consumer = await Consumer.findOne({ where: { userId } })
-    const diary = await Dairy.create({ quantity, serving, programId, date, food_id, course, consumerId: consumer.id })
+    const consumer = await Consumer.findOne({
+        where: { userId },
+        include: [{ model: Program, where: { id: programId } }],
+    })
+
+    await Dairy.create({ quantity, serving, programId, date, food_id, course, consumerId: consumer.id })
     response(201, 'you successfully add your diaries', true, {}, res)
 })
 
