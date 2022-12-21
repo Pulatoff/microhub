@@ -123,7 +123,7 @@ exports.signin = CatchError(async (req, res, next) => {
             last_name: user.last_name,
             email: user.email,
             role: user.role,
-            assign_consumers: count_consumer,
+            active_clients: count_consumer,
             createdAt: user.createdAt,
         }
     }
@@ -221,7 +221,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             last_name: user.last_name,
             email: user.email,
             role: user.role,
-            assign_consumers: count_consumer,
+            active_clients: count_consumer,
             createdAt: user.createdAt,
         }
     }
