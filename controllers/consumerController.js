@@ -156,11 +156,6 @@ exports.acceptProgram = CatchError(async (req, res, next) => {
     const program = await Program.findByPk(programId)
 })
 
-exports.getRequestedProfi = CatchError(async (req, res, next) => {
-    const userId = req.user.id
-    const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: User }] })
-})
-
 exports.getOneCOnsumer = CatchError(async (req, res) => {
     const { id } = req.params
     const consumer = await Consumer.findByPk(id, {
