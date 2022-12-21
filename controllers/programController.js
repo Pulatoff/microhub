@@ -158,3 +158,11 @@ exports.addMealToProgram = CatchError(async (req, res, next) => {
     await program.save()
     response(201, 'You are successfully added to program', true, '', res)
 })
+
+exports.searchPrograms = CatchError(async (req, res, next) => {
+    const { search } = req.query
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const program = await Program.findOne({ where: { name: search, nutritionistId: trainer.id } })
+    response(200, 'Your search program', true, program, res)
+})

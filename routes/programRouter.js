@@ -13,6 +13,8 @@ router.route('/recipes').post(auth.protect, course.addCourse)
 
 router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']), bindController.bindConumer)
 
+router.route('/search').get(auth.protect, auth.role(['nutritionist']), controller.searchPrograms)
+
 router
     .route('/:id')
     .get(auth.protect, controller.getProgram)
