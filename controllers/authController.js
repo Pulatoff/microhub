@@ -69,7 +69,7 @@ exports.signin = CatchError(async (req, res, next) => {
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
         const requested_nutritionists = []
-        console.log(newUser.consumer.nutrisionists)
+
         // if (newUser.consumer.nutritionists) {
         newUser?.consumer?.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
@@ -107,9 +107,25 @@ exports.signin = CatchError(async (req, res, next) => {
         }
     } else if (oldUser.role === 'nutritionist') {
         user = await User.findByPk(oldUser.id, {
-            include: [{ model: Personal_Trainer }],
+            include: [{ model: Personal_Trainer, include: [{ model: Consumer }] }],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
+        let count_consumer = 0
+        user.nutritionist.consumers.map((val) => {
+            if (val.consumer_trainers.status === 1) {
+                count_consumer++
+            }
+        })
+
+        user = {
+            id: user.nutritionist.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            role: user.role,
+            assign_consumers: count_consumer,
+            createdAt: user.createdAt,
+        }
     }
     const token = createJwt(oldUser.id)
     saveCookie(token, res)
@@ -190,11 +206,25 @@ exports.usersSelf = CatchError(async (req, res, next) => {
         }
     } else if (req.user.role === 'nutritionist') {
         user = await User.findByPk(req.user.id, {
-            include: [{ model: Personal_Trainer }],
+            include: [{ model: Personal_Trainer, include: [{ model: Consumer }] }],
             attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
+        let count_consumer = 0
+        user.nutritionist.consumers.map((val) => {
+            if (val.consumer_trainers.status === 1) {
+                count_consumer++
+            }
+        })
+        user = {
+            id: user.nutritionist.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            role: user.role,
+            assign_consumers: count_consumer,
+            createdAt: user.createdAt,
+        }
     }
-
     response(200, 'user data', true, { user }, res)
 })
 
