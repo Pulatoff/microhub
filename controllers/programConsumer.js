@@ -19,7 +19,6 @@ exports.bindConumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findByPk(consumerId)
     const nutritionist = await Trainer.findOne({ where: { userId } })
     const checkRef = await ConsumerTrainer.findOne({ where: { consumerId, nutritionistId: nutritionist.id } })
-    if (!checkRef) next(new AppError('This consumer already binded', 404))
 
     if (!consumer) next(new AppError('This consumer is not exist', 404))
     await ProgramConsumer.create({ programId, consumerId })
