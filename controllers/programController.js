@@ -16,6 +16,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
         fats: 0,
         carbs: 0,
         protein: 0,
+        total_recipes: 0,
     }
 
     const userId = req.user.id
@@ -47,6 +48,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
                 total_macros.cals += cals
                 total_macros.fats += fats
                 total_macros.carbs += carbs
+                total_macros.total_recipes++
             }
         }
     }
@@ -55,6 +57,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
     program.protein = total_macros.protein
     program.carbs = total_macros.carbs
     program.fats = total_macros.fats
+    program.total_recipes = total_macros.total_recipes
     await program.save()
     response(201, 'You are successfully added to program', true, '', res)
 })
