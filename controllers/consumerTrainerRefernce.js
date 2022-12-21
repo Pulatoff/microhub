@@ -4,6 +4,7 @@ const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
+const Program = require('../models/programModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -26,7 +27,7 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
     if (!trainer) next(new AppError('this nutritionist is not exist', 404))
     if (!consumer) next(new AppError('This consumer is not exist', 404))
-    const reference = await ConsumerTrainer.findOne({ consumerId, nutritionistId: trainer.id, status: -1 })
+    const reference = await ConsumerTrainer.findOne({ where: { consumerId, nutritionistId: trainer.id, status: -1 } })
     if (reference) {
         reference.status = 0
         reference.save()
@@ -87,7 +88,14 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
     if (!checkBind) next(new AppError('You are not assign this consumer', 404))
     const consumer = await Consumer.findOne({
         where: { id },
-        include: [{ model: User, attributes: ['first_name', 'last_name', 'email', 'role', 'createdAt'] }],
+        include: [
+            {
+                model: User,
+                attributes: ['first_name', 'last_name', 'email', 'role', 'createdAt'],
+            },
+            { model: Program, where: { nutritionistId: trainer.id } },
+        ],
     })
+
     response(200, 'You are successfully got consumer', true, { consumer }, res)
 })
