@@ -151,11 +151,6 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     }
 })
 
-exports.acceptProgram = CatchError(async (req, res, next) => {
-    const { programId } = req.body
-    const program = await Program.findByPk(programId)
-})
-
 exports.getOneCOnsumer = CatchError(async (req, res) => {
     const { id } = req.params
     const consumer = await Consumer.findByPk(id, {
