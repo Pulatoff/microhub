@@ -54,8 +54,13 @@ exports.addConsumer = CatchError(async (req, res, next) => {
 })
 
 exports.getConsumer = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    if (!trainer) next(new AppError('Nutritionist not exist', 404))
+
     const consumers = await Consumer.findAll({
         include: [
+            { model: Program, where: { nutritionistId: trainer.id } },
             { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
         ],
     })
@@ -151,11 +156,15 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     }
 })
 
-exports.getOneCOnsumer = CatchError(async (req, res) => {
+exports.getOneCOnsumer = CatchError(async (req, res, next) => {
     const { id } = req.params
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    if (!trainer) next(new AppError('Nutritionist not exist', 404))
     const consumer = await Consumer.findByPk(id, {
         include: [
             { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
+            { model: Program, where: { nutritionistId: trainer.id } },
         ],
     })
     response(200, 'successfully consumer', true, { consumer }, res)

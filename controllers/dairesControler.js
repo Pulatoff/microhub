@@ -3,6 +3,7 @@ const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
 const Program = require('../models/programModel')
 const Swaper = require('../models/swaperModel')
+const ConsumerProgram = require('../models/ProgramConsumer')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -13,9 +14,11 @@ exports.addDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({
         where: { userId },
-        include: [{ model: Program, where: { id: programId } }],
     })
-
+    const checkAssign = await ConsumerProgram.findOne({ where: { programId, consumerId: consumer.id } })
+    if (!checkAssign) {
+        next(new AppError(`You are not assigned to program by id ${programId}`, 404))
+    }
     await Dairy.create({ quantity, serving, programId, date, food_id, course, consumerId: consumer.id })
     response(201, 'you successfully add your diaries', true, {}, res)
 })
