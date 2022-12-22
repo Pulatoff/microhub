@@ -105,3 +105,45 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     })
     response(200, 'You are successfully created recipe', true, '', res)
 })
+
+exports.getAllRecipes = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const recipes = await Recipes.findAll({ where: { nutritionistId: trainer.id } })
+    response(200, 'You are successfully get recipes', true, { recipes }, res)
+})
+
+exports.updateRecipes = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const id = req.params.id
+    const {
+        name,
+        ingredients,
+        fat,
+        protein,
+        calories,
+        carbohydrates,
+        proteinPercentage,
+        fatPercentage,
+        carbohydratesPercentage,
+    } = req.body
+
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const recipe = await Recipes.findByPk(id)
+    recipe.name = name || recipe.name
+    recipe.fat = fat || recipe.fat
+    recipe.calories = calories || recipe.calories
+    recipe.carbohydrates = carbohydrates || recipe.carbohydrates
+    recipe.carbohydratesPercentage = carbohydratesPercentage || recipe.carbohydratesPercentage
+    recipe.protein = protein || recipe.protein
+    recipe.fatPercentage = fatPercentage || recipe.fatPercentage
+    recipe.proteinPercentage = proteinPercentage || recipe.proteinPercentage
+    await recipe.save()
+    response(200, `You are successfully update recipe by id ${id}`, true, '', res)
+})
+
+exports.deleteRecipe = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    await Recipes.destroy(id)
+    response(200, 'You are successfully delete user', true, '', res)
+})
