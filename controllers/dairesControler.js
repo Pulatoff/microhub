@@ -41,7 +41,7 @@ exports.getOneDairy = CatchError(async (req, res, next) => {
     const diary = await Dairy.findByPk(req.params.id, {
         where: { consumerId: consumer.id },
         attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
-        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
+        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }, { model: Swaper }],
     })
     if (!diary) next("This diary don't belongs to you")
     response(200, 'You are successfully geting one diary', true, { diary }, res)
