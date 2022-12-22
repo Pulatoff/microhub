@@ -7,6 +7,9 @@ const Personal_Trainer = require('../models/personalTrainerModel')
 const Questionaire = require('../models/questionnaireModel')
 const Questions = require('../models/questionnariesQuestionModel')
 const Program = require('../models/programModel')
+const Meal = require('../models/mealModel')
+const ProgramTime = require('../models/programTimeModel')
+
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -64,7 +67,10 @@ exports.signin = CatchError(async (req, res, next) => {
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
                         { model: Questionaire, include: [{ model: Questions }] },
-                        { model: Program },
+                        {
+                            model: Program,
+                            include: [{ model: ProgramTime, include: [{ model: Meal }] }],
+                        },
                     ],
                 },
             ],
@@ -89,7 +95,6 @@ exports.signin = CatchError(async (req, res, next) => {
                 })
             }
         })
-        // }
 
         user = {
             id: newUser.id,
@@ -100,7 +105,7 @@ exports.signin = CatchError(async (req, res, next) => {
             role: newUser.role,
             createdAt: newUser.createdAt,
             consumer: newUser.consumer,
-            programs: newUser.consumer.programs,
+            program: newUser.consumer.programs[0] ? newUser.consumer.programs[0] : {},
         }
         if (newUser.consumer.questionnairy) {
             user.questionnaire = newUser.consumer.questionnairy
@@ -169,7 +174,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
                         { model: Questionaire, include: [{ model: Questions }] },
-                        { model: Program },
+                        { model: Program, include: [{ model: ProgramTime, include: [{ model: Meal }] }] },
                     ],
                 },
             ],
@@ -201,7 +206,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             role: newUser.role,
             createdAt: newUser.createdAt,
             consumer: newUser.consumer,
-            programs: newUser.consumer.programs,
+            program: newUser.consumer.programs[0] ? newUser.consumer.programs[0] : {},
         }
         if (newUser.consumer.questionnairy) {
             user.questionnaire = newUser.consumer.questionnairy
