@@ -63,6 +63,7 @@ exports.signin = CatchError(async (req, res, next) => {
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
                         { model: Questionaire, include: [{ model: Questions }] },
+                        { model: Program },
                     ],
                 },
             ],
@@ -166,6 +167,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
                         { model: Questionaire, include: [{ model: Questions }] },
+                        { model: Program },
                     ],
                 },
             ],
