@@ -4,6 +4,9 @@ const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
 const Program = require('../models/programModel')
+const Meal = require('../models/mealModel')
+const ProgramTime = require('../models/programTimeModel')
+
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
@@ -60,7 +63,11 @@ exports.getConsumer = CatchError(async (req, res, next) => {
 
     const consumers = await Consumer.findAll({
         include: [
-            { model: Program, where: { nutritionistId: trainer.id } },
+            {
+                model: Program,
+                where: { nutritionistId: trainer.id },
+                include: [{ model: ProgramTime, include: [{ model: Meal }] }],
+            },
             { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
         ],
     })
@@ -164,7 +171,11 @@ exports.getOneCOnsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findByPk(id, {
         include: [
             { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
-            { model: Program, where: { nutritionistId: trainer.id } },
+            {
+                model: Program,
+                include: [{ model: ProgramTime, include: [{ model: Meal }] }],
+                where: { nutritionistId: trainer.id },
+            },
         ],
     })
     response(200, 'successfully consumer', true, { consumer }, res)
