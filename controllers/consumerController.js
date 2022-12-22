@@ -71,7 +71,35 @@ exports.getConsumer = CatchError(async (req, res, next) => {
             { model: User, attributes: ['id', 'first_name', 'last_name', 'email', 'role', 'photo', 'createdAt'] },
         ],
     })
-    response(200, 'Successfuly geting consumer', true, { consumers }, res)
+    const newConsumers = []
+    for (let i = 0; i <= consumers.length - 1; i++) {
+        const newUser = {
+            favorite_foods: consumers[i].favorite_foods,
+            least_favorite_foods: consumers[i].least_favorite_foods,
+            allergies: consumers[i].allergies,
+            body_fat: consumers[i].body_fat,
+            tdee: consumers[i].tdee,
+            body_frame: consumers[i].body_frame,
+            healthy_weight: consumers[i].healthy_weight,
+            bmi: consumers[i].bmi,
+            daily_targets: consumers[i].daily_targets,
+            id: consumers[i].id,
+            weight: consumers[i].weight,
+            height: consumers[i].height,
+            wrist: consumers[i].wrist,
+            forearm: consumers[i].forearm,
+            hip: consumers[i].hip,
+            waist: consumers[i].waist,
+            gender: consumers[i].gender,
+            activity_level: consumers[i].activity_level,
+            preferences: consumers[i].preferences,
+            createdAt: consumers[i].createdAt,
+            program: consumers[i].programs[0] ? consumers[i].programs[0] : {},
+            user: consumers[i].user,
+        }
+        newConsumers.push(newUser)
+    }
+    response(200, 'Successfuly geting consumer', true, { consumers: newConsumers }, res)
 })
 
 exports.updateConsumer = CatchError(async (req, res, next) => {
@@ -178,5 +206,29 @@ exports.getOneCOnsumer = CatchError(async (req, res, next) => {
             },
         ],
     })
-    response(200, 'successfully consumer', true, { consumer }, res)
+    const newUser = {
+        favorite_foods: consumer.favorite_foods,
+        least_favorite_foods: consumer.least_favorite_foods,
+        allergies: consumer.allergies,
+        body_fat: consumer.body_fat,
+        tdee: consumer.tdee,
+        body_frame: consumer.body_frame,
+        healthy_weight: consumer.healthy_weight,
+        bmi: consumer.bmi,
+        daily_targets: consumer.daily_targets,
+        id: consumer.id,
+        weight: consumer.weight,
+        height: consumer.height,
+        wrist: consumer.wrist,
+        forearm: consumer.forearm,
+        hip: consumer.hip,
+        waist: consumer.waist,
+        gender: consumer.gender,
+        activity_level: consumer.activity_level,
+        preferences: consumer.preferences,
+        createdAt: consumer.createdAt,
+        program: consumer.programs[0] ? consumer.programs[0] : {},
+        user: consumer.user,
+    }
+    response(200, 'successfully consumer', true, { consumer: newUser }, res)
 })
