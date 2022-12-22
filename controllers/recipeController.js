@@ -5,7 +5,8 @@ const { SPOONACULAR_API_URL, SPOONACULAR_API_KEY } = require('../configs/URL')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const AppError = require('../utils/AppError')
-const { search } = require('../routes/trainerRouter')
+// models
+const Trainer = require('../models/personalTrainerModel')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number } = req.query
@@ -75,12 +76,18 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     response(200, 'You are successfully got data', true, { ingridients: data?.data }, res)
 })
 
-// Search individual food  // COMPLETED
-// calculate the food items and change them via volumes in grams (not number value: e.g. 300g of chicken tenders, not 6 chicken tenders) // AWAITING
-// Display total macro count after food calculation in recipes // AWAITING
-// Create and edit custom recipes // AWAITING
-// Add non-recipe based food items // AWAITING
-// Substitute ingredients // COMPLETED
-// Apply created recipes to a mealplan for 1 week // AWAITING
-// create, edit and delete meal plan templates. // PROCESSING
-// Assign said mealplans to a specific client of Nutritionist // COMPLETED
+exports.addRecipe = CatchError(async (req, res, next) => {
+    const {
+        name,
+        ingredients,
+        fat,
+        protein,
+        calories,
+        carbohydrates,
+        proteinPercentage,
+        fatPercentage,
+        carbohydratesPercentage,
+    } = req.body
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+})
