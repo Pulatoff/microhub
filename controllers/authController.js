@@ -6,6 +6,7 @@ const Consumer = require('../models/consumerModel')
 const Personal_Trainer = require('../models/personalTrainerModel')
 const Questionaire = require('../models/questionnaireModel')
 const Questions = require('../models/questionnariesQuestionModel')
+const Program = require('../models/programModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -99,6 +100,7 @@ exports.signin = CatchError(async (req, res, next) => {
             role: newUser.role,
             createdAt: newUser.createdAt,
             consumer: newUser.consumer,
+            programs: newUser.consumer.programs,
         }
         if (newUser.consumer.questionnairy) {
             user.questionnaire = newUser.consumer.questionnairy
@@ -199,6 +201,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
             role: newUser.role,
             createdAt: newUser.createdAt,
             consumer: newUser.consumer,
+            programs: newUser.consumer.programs,
         }
         if (newUser.consumer.questionnairy) {
             user.questionnaire = newUser.consumer.questionnairy
