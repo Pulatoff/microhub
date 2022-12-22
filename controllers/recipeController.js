@@ -7,6 +7,7 @@ const response = require('../utils/response')
 const AppError = require('../utils/AppError')
 // models
 const Trainer = require('../models/personalTrainerModel')
+const Recipes = require('../models/recipeModel')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number } = req.query
@@ -90,4 +91,17 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     } = req.body
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
+    await Recipes.create({
+        name,
+        ingredients,
+        fat,
+        protein,
+        calories,
+        carbohydrates,
+        proteinPercentage,
+        fatPercentage,
+        carbohydratesPercentage,
+        nutritionistId: trainer.id,
+    })
+    response(200, 'You are successfully created recipe', true, '', res)
 })
