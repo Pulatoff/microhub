@@ -41,4 +41,5 @@ router
 router.route('/trainers/request').get(authController.protect, controller.getRequestedTrainers)
 
 router.route('/:id').get(authController.protect, controller.getOneCOnsumer)
+
 module.exports = router

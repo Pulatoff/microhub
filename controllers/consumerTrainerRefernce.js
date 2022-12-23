@@ -27,13 +27,16 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
     if (!trainer) next(new AppError('this nutritionist is not exist', 404))
     if (!consumer) next(new AppError('This consumer is not exist', 404))
-    const reference = await ConsumerTrainer.findOne({ where: { consumerId, nutritionistId: trainer.id, status: -1 } })
-    if (reference) {
+    const reference = await ConsumerTrainer.findOne({ where: { consumerId, nutritionistId: trainer.id } })
+    if (!reference) {
+        await ConsumerTrainer.create({ consumerId, nutritionistId: trainer.id, invate_side: 'profesional' })
+    } else if (reference.status === -1) {
         reference.status = 0
         reference.save()
     } else {
-        await ConsumerTrainer.create({ consumerId, nutritionistId: trainer.id, invate_side: 'profesional' })
+        next(new AppError(`Nutritioninst and Client by ids ${trainer.id} ${consumer.id} assigned each other`))
     }
+
     response(206, 'you successfuly requested binding to consumer', true, '', res)
 })
 
