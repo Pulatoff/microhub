@@ -8,5 +8,6 @@ router.route('/signup/nutritionist').post(authController.signupNutritionist)
 router.route('/self').get(authController.protect, authController.usersSelf)
 router.route('/signin').post(authController.signin)
 router.route('/logout').get(authController.logout)
+router.route('/:id').get(controller.getUser)
 
 module.exports = router
