@@ -71,7 +71,7 @@ const Consumer = sequlize.define(
         body_fat: {
             type: DataTypes.VIRTUAL,
             get() {
-                const fat = body_fat(this.gender, this.weight, 10)
+                const fat = body_fat(this.gender, this.weight, this.wrist, this.waist, this.hip, this.forearm)
                 return fat
             },
             set: set_error,
@@ -88,7 +88,7 @@ const Consumer = sequlize.define(
         body_frame: {
             type: DataTypes.VIRTUAL,
             get() {
-                const body_frame = find_body_frame(METRIC, this.gender, 10)
+                const body_frame = find_body_frame(METRIC, this.gender, this.wrist)
                 return body_frame
             },
             set: set_error,
