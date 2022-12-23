@@ -4,10 +4,10 @@ const sequelize = require('../configs/db')
 // models
 const Trainer = require('./personalTrainerModel')
 
-const Recipes = sequelize.define(
+const Recipe = sequelize.define(
     'recipes',
     {
-        id: { type: DataTypes.STRING, primaryKey: true, autoIncrement: true },
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         calories: { type: DataTypes.STRING, allowNull: false },
         carbohydrates: { type: DataTypes.STRING, allowNull: false },
         carbohydratesPercentage: { type: DataTypes.STRING, allowNull: false },
@@ -16,7 +16,7 @@ const Recipes = sequelize.define(
         proteinPercentage: { type: DataTypes.STRING, allowNull: false },
         name: { type: DataTypes.STRING, allowNull: false },
         protein: { type: DataTypes.STRING, allowNull: false },
-        ingredients: { type: DataTypes.STRING, allowNull: false },
+        ingredients: { type: DataTypes.JSON, allowNull: false },
     },
     {
         timestamps: true,
@@ -25,7 +25,7 @@ const Recipes = sequelize.define(
     }
 )
 
-Trainer.hasMany(Recipes)
-Recipes.belongsTo(Trainer)
+Trainer.hasMany(Recipe)
+Recipe.belongsTo(Trainer)
 
-module.exports = Recipes
+module.exports = Recipe
