@@ -79,7 +79,7 @@ exports.sendQuestionnaire = CatchError(async (req, res, next) => {
             ],
         })
 
-        response(201, 'You are successfully sended your questionaire', true, { questionnaire: sendQuestionnaire }, res)
+        response(201, 'You are successfully create your questionaire', true, { questionnaire: sendQuestionnaire }, res)
     }
 })
 
@@ -128,7 +128,6 @@ exports.updateQuestionaire = CatchError(async (req, res, next) => {
         home_phone_number,
     } = req.body
 
-    // const consumer = await Consumer.findOne({ where: { userId } })
     const questionnaire = await Questionnaire.findByPk(id)
 
     questionnaire.date = date || questionnaire.date
