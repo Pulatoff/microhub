@@ -2,7 +2,7 @@ const authController = require('../controllers/authController')
 const router = require('express').Router()
 const controller = require('../controllers/userController')
 
-router.route('/').post(controller.addUser)
+router.route('/').post(controller.addUser).get(controller.getUsers)
 router.route('/signup/client').post(authController.signupCLient)
 router.route('/signup/nutritionist').post(authController.signupNutritionist)
 router.route('/self').get(authController.protect, authController.usersSelf)
