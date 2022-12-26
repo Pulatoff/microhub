@@ -34,7 +34,9 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
         reference.status = 0
         reference.save()
     } else {
-        next(new AppError(`Nutritioninst and Client by ids ${trainer.id} ${consumer.id} assigned each other`))
+        next(
+            new AppError(`Nutritioninst and Client by ids ${trainer.id} and ${consumer.id} already assigned each other`)
+        )
     }
 
     response(206, 'you successfuly requested binding to consumer', true, '', res)
