@@ -32,6 +32,7 @@ exports.getUsers = CatchError(async (req, res, next) => {
         exclude: [],
         include: [],
     }
+
     fields.map((val) => {
         if (val.startsWith('-')) {
             attribute.exclude.push(val.slice(1))
