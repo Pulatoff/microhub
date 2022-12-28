@@ -6,8 +6,8 @@ const consumer = require('../controllers/consumerController')
 const swap = require('../controllers/swaperController')
 router
     .route('/')
-    .post(auth.protect, auth.role(['consumer']), controller.addDairy)
-    .get(auth.protect, auth.role(['consumer']), controller.getDairy)
+    .post(auth.protect, auth.role(['consumer', 'admin']), controller.addDairy)
+    .get(auth.protect, auth.role(['consumer', 'admin']), controller.getDairy)
 router
     .route('/:id')
     .get(auth.protect, auth.role(['consumer']), controller.getOneDairy)

@@ -21,7 +21,7 @@ exports.signupCLient = CatchError(async (req, res, next) => {
     if (!first_name || !last_name || !email || !password || !passwordConfirm)
         next(new AppError('You need to enter all required fields', 401))
 
-    if (password !== passwordConfirm) next(new AppError('password not the same', 401))
+    if (password !== passwordConfirm) next(new AppError('You need enter password same passwords', 401))
 
     const user = await User.create({ first_name, last_name, email, password, role: 'consumer' })
 
@@ -29,7 +29,7 @@ exports.signupCLient = CatchError(async (req, res, next) => {
     saveCookie(token, res)
     response(
         201,
-        'You are successfully authorizated',
+        'You have registered as a client by id 1',
         true,
         {
             user: {
@@ -136,12 +136,12 @@ exports.signin = CatchError(async (req, res, next) => {
     }
     const token = createJwt(oldUser.id)
     saveCookie(token, res)
-    response(201, 'You are successfully logged in', true, { user }, res)
+    response(201, 'You are logged in successfully', true, { user }, res)
 })
 
 exports.logout = CatchError(async (req, res, next) => {
     saveCookie('loggedOut', res)
-    response(206, 'You are successfuly logout', true, '', res)
+    response(206, 'You are logged successfuly', true, '', res)
 })
 
 exports.protect = CatchError(async (req, res, next) => {
@@ -151,7 +151,7 @@ exports.protect = CatchError(async (req, res, next) => {
     } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.slice(7)
     } else {
-        next(new AppError('you are not authorized', 401))
+        next(new AppError('You are not authorized', 401))
     }
 
     if (!token) next(new AppError('You are not authorized', 401))
@@ -242,7 +242,12 @@ exports.role = (roles) => {
         try {
             // 1) User ni roleni olamiz databasedan, tekshiramiz
             if (!roles.includes(req.user.role)) {
-                return next(new AppError("You don't access this process", 405))
+                return next(
+                    new AppError(
+                        `This process only for ${roles.join(', ')} roles. (your role is a ${req.user.role})`,
+                        405
+                    )
+                )
             }
             next()
         } catch (error) {
