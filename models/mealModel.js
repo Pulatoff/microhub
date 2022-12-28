@@ -5,7 +5,7 @@ const Meals = sequelize.define(
     'meals',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        course: { type: DataTypes.STRING, allowNull: false },
+        course: { type: DataTypes.ENUM(['breakfast', 'dinner', 'lunch', 'snacks']), allowNull: false }, // enums breakfast,  lunch, dinner, snacks
         quantity: { type: DataTypes.INTEGER, allowNull: false },
         serving: { type: DataTypes.STRING, allowNull: false },
         food_id: { type: DataTypes.STRING, allowNull: false },

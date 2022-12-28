@@ -40,7 +40,7 @@ const User = sequelize.define(
             },
         },
         role: {
-            type: DataTypes.ENUM('consumer', 'personal_trainer', 'nutritionist', 'admin'),
+            type: DataTypes.ENUM('consumer', 'trainer', 'nutritionist', 'admin'),
             allowNull: false,
             defaultValue: 'consumer',
         },
