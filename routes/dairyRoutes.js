@@ -2,7 +2,6 @@ const router = require('express').Router()
 // controllers
 const controller = require('../controllers/dairesControler')
 const auth = require('../controllers/authController')
-const consumer = require('../controllers/consumerController')
 const swap = require('../controllers/swaperController')
 router
     .route('/')
