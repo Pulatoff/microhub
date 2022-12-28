@@ -141,7 +141,7 @@ exports.signin = CatchError(async (req, res, next) => {
 
 exports.logout = CatchError(async (req, res, next) => {
     saveCookie('loggedOut', res)
-    response(206, 'You are logged successfuly', true, '', res)
+    response(206, 'You are logged successfully', true, '', res)
 })
 
 exports.protect = CatchError(async (req, res, next) => {
@@ -285,7 +285,7 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
     saveCookie(token, res)
     response(
         201,
-        'You are successfully authorizated',
+        'You are logged successfully',
         true,
         {
             nutritionist: trainer,

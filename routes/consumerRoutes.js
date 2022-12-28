@@ -9,7 +9,7 @@ const bindProgram = require('../controllers/programConsumer')
 router
     .route('/')
     .post(authController.protect, authController.role(['consumer']), controller.addConsumer)
-    .get(authController.protect, controller.getConsumer)
+    .get(authController.protect, controller.getConsumers)
     .patch(authController.protect, controller.protectConsumer, controller.updateConsumer)
 
 router
@@ -40,6 +40,6 @@ router
 
 router.route('/trainers/request').get(authController.protect, controller.getRequestedTrainers)
 
-router.route('/:id').get(authController.protect, controller.getOneCOnsumer)
+router.route('/:id').get(authController.protect, controller.getOneConsumer)
 
 module.exports = router

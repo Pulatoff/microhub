@@ -6,7 +6,6 @@ const User = require('../models/userModel')
 const Program = require('../models/programModel')
 const Meal = require('../models/mealModel')
 const ProgramTime = require('../models/programTimeModel')
-
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
@@ -30,7 +29,7 @@ exports.addConsumer = CatchError(async (req, res, next) => {
     } = req.body
 
     const oldConsumer = await Consumer.findOne({ where: { userId: req.user.id } })
-    if (oldConsumer) next(new AppError('This consumer options already exists', 403))
+    if (oldConsumer) next(new AppError('This consumer details already exists', 403))
 
     const consumer = await Consumer.create({
         weight,
@@ -53,10 +52,10 @@ exports.addConsumer = CatchError(async (req, res, next) => {
         await checkInvate({ consumerId: consumer.id, invitationToken })
     }
 
-    response(201, 'adding consumer successfuly', true, { consumer }, res)
+    response(201, 'You are add consumer details successfully', true, { consumer }, res)
 })
 
-exports.getConsumer = CatchError(async (req, res, next) => {
+exports.getConsumers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
     if (!trainer) next(new AppError('Nutritionist not exist', 404))
@@ -191,7 +190,7 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     }
 })
 
-exports.getOneCOnsumer = CatchError(async (req, res, next) => {
+exports.getOneConsumer = CatchError(async (req, res, next) => {
     const { id } = req.params
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
