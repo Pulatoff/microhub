@@ -47,10 +47,7 @@ exports.getAllGroups = CatchError(async (req, res) => {
             },
         ],
     })
-    res.status(200).json({
-        status: 'success',
-        data: { groups },
-    })
+    res.status(200).json({ status: 'success', data: { groups } })
 })
 
 exports.getOneGroup = CatchError(async (req, res, next) => {
