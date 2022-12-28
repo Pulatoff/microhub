@@ -102,7 +102,9 @@ exports.getConsumers = CatchError(async (req, res, next) => {
 })
 
 exports.updateConsumer = CatchError(async (req, res, next) => {
-    const consumer = await Consumer.findByPk(req.consumer.id)
+    const userId = req.user.id
+
+    const consumer = await Consumer.findOne({ where: userId })
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
 

@@ -9,8 +9,8 @@ const bindProgram = require('../controllers/programConsumerController')
 router
     .route('/')
     .post(authController.protect, authController.role(['consumer']), controller.addConsumer)
-    .get(authController.protect, controller.getConsumers)
-    .patch(authController.protect, controller.protectConsumer, controller.updateConsumer)
+    .get(authController.protect, authController.role(['nutritionist']), controller.getConsumers)
+    .patch(authController.protect, authController.role(['consumer']), controller.updateConsumer)
 
 router
     .route('/trainer/accept')
