@@ -78,29 +78,11 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
 })
 
 exports.addRecipe = CatchError(async (req, res, next) => {
-    const {
-        name,
-        ingredients,
-        fat,
-        protein,
-        calories,
-        carbohydrates,
-        proteinPercentage,
-        fatPercentage,
-        carbohydratesPercentage,
-    } = req.body
     const userId = req.user.id
+
     const trainer = await Trainer.findOne({ where: { userId } })
     await Recipes.create({
-        name,
-        ingredients,
-        fat,
-        protein,
-        calories,
-        carbohydrates,
-        proteinPercentage,
-        fatPercentage,
-        carbohydratesPercentage,
+        ...req.body,
         nutritionistId: trainer.id,
     })
     response(200, 'You are successfully created recipe', true, '', res)
@@ -108,7 +90,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 
 exports.getAllRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const trainer = await Trainer.findOne({ where: { userId } })
+    const trainer = await Trainer.findOne({ where: { userId }, attributes: { exclude: ['nutritionistId'] } })
     const recipes = await Recipes.findAll({ where: { nutritionistId: trainer.id } })
     response(200, 'You are successfully get recipes', true, { recipes }, res)
 })
@@ -116,20 +98,11 @@ exports.getAllRecipes = CatchError(async (req, res, next) => {
 exports.updateRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const id = req.params.id
-    const {
-        name,
-        ingredients,
-        fat,
-        protein,
-        calories,
-        carbohydrates,
-        proteinPercentage,
-        fatPercentage,
-        carbohydratesPercentage,
-    } = req.body
+    const { name, fat, protein, calories, carbohydrates, proteinPercentage, fatPercentage, carbohydratesPercentage } =
+        req.body
 
     const trainer = await Trainer.findOne({ where: { userId } })
-    const recipe = await Recipes.findByPk(id)
+    const recipe = await Recipes.findByPk(id, { where: { nutritionistId: trainer.id } })
     recipe.name = name || recipe.name
     recipe.fat = fat || recipe.fat
     recipe.calories = calories || recipe.calories
