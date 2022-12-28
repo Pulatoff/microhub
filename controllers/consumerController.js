@@ -12,6 +12,23 @@ const response = require('../utils/response')
 const checkInvate = require('../utils/checkInvate')
 const AppError = require('../utils/AppError')
 
+const resConsumerType = (consumer) => {
+    return {
+        id: consumer.id,
+        height: consumer.height,
+        weight: consumer.weight,
+        favorite_foods: consumer.favorite_foods,
+        least_favorite_foods: consumer.least_favorite_foods,
+        allergies: consumer.allergies,
+        preferences: consumer.preferences,
+        hip: consumer.hip,
+        forearm: consumer.forearm,
+        wrist: consumer.wrist,
+        waist: consumer.waist,
+        user: consumer.user,
+    }
+}
+
 exports.addConsumer = CatchError(async (req, res, next) => {
     const {
         weight,
