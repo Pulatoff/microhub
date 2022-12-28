@@ -1,11 +1,11 @@
 //models
 const Consumer = require('../models/consumerModel')
-const ConsumerTrainer = require('../models/consumerTrainer')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
 const Program = require('../models/programModel')
 const Meal = require('../models/mealModel')
 const ProgramTime = require('../models/programTimeModel')
+const ConsumerTrainer = require('../models/consumerTrainerModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')

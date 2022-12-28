@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 // models
-const ConsumerTrainer = require('../models/consumerTrainer')
+const ConsumerTrainer = require('../models/consumerTrainerModel')
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')

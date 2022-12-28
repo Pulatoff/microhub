@@ -2,9 +2,9 @@ const router = require('express').Router()
 // controllers
 const controller = require('../controllers/consumerController')
 const authController = require('../controllers/authController')
-const bindConsumer = require('../controllers/consumerTrainerRefernce')
+const bindConsumer = require('../controllers/consumerTrainerController')
 const questionaire = require('../controllers/questionaireController')
-const bindProgram = require('../controllers/programConsumer')
+const bindProgram = require('../controllers/programConsumerController')
 
 router
     .route('/')

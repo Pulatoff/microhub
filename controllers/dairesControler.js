@@ -3,7 +3,7 @@ const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
 const Program = require('../models/programModel')
 const Swaper = require('../models/swaperModel')
-const ConsumerProgram = require('../models/ProgramConsumer')
+const ConsumerProgram = require('../models/programConsumerModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')

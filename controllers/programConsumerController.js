@@ -1,7 +1,7 @@
 // models
-const ProgramConsumer = require('../models/ProgramConsumer')
+const ProgramConsumer = require('../models/programConsumerModel')
 const Consumer = require('../models/consumerModel')
-const ConsumerTrainer = require('../models/consumerTrainer')
+const ConsumerTrainer = require('../models/consumerTrainerModel')
 const Trainer = require('../models/personalTrainerModel')
 const Program = require('../models/programModel')
 const User = require('../models/userModel')

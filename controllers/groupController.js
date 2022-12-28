@@ -2,7 +2,7 @@
 const Group = require('../models/groupModel')
 const GroupConsumer = require('../models/groupConsumerModel')
 const Trainer = require('../models/personalTrainerModel')
-const ConsumerTrainer = require('../models/consumerTrainer')
+const ConsumerTrainer = require('../models/consumerTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
 // utils

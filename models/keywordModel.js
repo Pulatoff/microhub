@@ -15,14 +15,14 @@ module.exports = Keyword
 
 // program => recipes => meals(SPOONACULAR API) => ingredients
 
-const programs = {
-    name: 'First Progam',
-    weeks: 123,
-    program_recipes: [
-        {
-            week: 1,
-            day: 0123456,
-            course: 'breakfast',
-        },
-    ],
-}
+// const programs = {
+//     name: 'First Progam',
+//     weeks: 123,
+//     program_recipes: [
+//         {
+//             week: 1,
+//             day: 0123456,
+//             course: 'breakfast',
+//         },
+//     ],
+// }

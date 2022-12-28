@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const controller = require('../controllers/programController')
 const auth = require('../controllers/authController')
-const bindController = require('../controllers/programConsumer')
+const bindController = require('../controllers/programConsumerController')
 const course = require('../controllers/courseController')
 
 router

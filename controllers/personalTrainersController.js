@@ -2,7 +2,7 @@
 const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
-const ConsumerTrainer = require('../models/consumerTrainer')
+const ConsumerTrainer = require('../models/consumerTrainerModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')

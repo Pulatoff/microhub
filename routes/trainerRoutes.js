@@ -1,8 +1,8 @@
 const router = require('express').Router()
 // controllers
-const controller = require('../controllers/personalTrainers')
+const controller = require('../controllers/personalTrainersController')
 const auth = require('../controllers/authController')
-const consumerTrainer = require('../controllers/consumerTrainerRefernce')
+const consumerTrainer = require('../controllers/consumerTrainerController')
 const questionaire = require('../controllers/questionaireController')
 
 // routes
