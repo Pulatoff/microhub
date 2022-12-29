@@ -8,9 +8,9 @@ router
     .get(auth.protect, auth.role(['nutritionist', 'admin']), controller.getAllRecipes)
     .post(auth.protect, auth.role(['nutritionist', 'admin']), controller.addRecipe)
 router.route('/search').get(auth.protect, controller.searchRecipes)
-router.route('/ingredients/subsitutes/:id').get(controller.subsituteIngredients)
+router.route('/ingredients/subsitutes').get(controller.subsituteIngredients)
 router.route('/ingredients/info/:id').get(controller.getIngredientInfo)
-router.route('/ingredients/info').get(auth.protect, controller.searchIngredients)
+router.route('/ingredients/info').get(controller.searchIngredients)
 
 router
     .route('/:id')

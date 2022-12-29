@@ -33,11 +33,19 @@ exports.getOneRecipe = CatchError(async (req, res, next) => {
 
 exports.subsituteIngredients = CatchError(async (req, res, next) => {
     // igredient id
-    const { id } = req.params
+    const { ingredientName } = req.query
     const responseData = await axios.get(
-        SPOONACULAR_API_URL + '/food/ingredients/' + id + '/substitutes/?apiKey=' + SPOONACULAR_API_KEY
+        SPOONACULAR_API_URL +
+            '/food/ingredients/substitutes/?apiKey=' +
+            SPOONACULAR_API_KEY +
+            '&ingredientName=' +
+            ingredientName
     )
+
     const data = responseData.data
+    if (data.substitutes) {
+        data.substitutes = ingredientFunc(data.substitutes)
+    }
     response(200, data?.message, true, { ingredient: data.ingredient, substitutes: data.substitutes }, res)
 })
 
@@ -115,3 +123,24 @@ exports.deleteRecipe = CatchError(async (req, res, next) => {
     await Recipes.destroy(id)
     response(200, 'You are successfully delete user', true, '', res)
 })
+
+// 1 cup = 1 cup tomato sauce + 1 tsp vinegar + 1 tbsp sugar
+// 1 cup = 1 cup margarine
+// 1 cup = 1 tbsp lemon juice or vinegar + enough milk to make 1 cup
+// 1 cup = 7/8 cup shortening and 1/2 tsp salt
+
+// function ingredientFunc(array) {
+//     const subIngredients = []
+//     console.log(array)
+//     for (let i = 0; i < array.length; i++) {
+//         console.log(array[i])
+//         let sub_ingredients = array[i].split('=')[1].split(' ')
+//         const num_plyus = sub_ingredients.indexOf('+')
+//         console.log(num_plyus)
+//         let ingredient = sub_ingredients.slice(3, num_plyus !== -1 ? num_plyus : 4).join(' ')
+//         // for (let k = 0; k < sub_ingredients; k++) {}
+
+//         subIngredients.push({ name: ingredient, amount: sub_ingredients[1] })
+//     }
+//     return subIngredients
+// }
