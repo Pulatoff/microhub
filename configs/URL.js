@@ -1,8 +1,8 @@
 module.exports = {
-    SPOONACULAR_API_URL: 'https://api.spoonacular.com',
-    SPOONACULAR_API_KEY: 'f49e92e81afe480f8bc054ca73708cdf',
-    SPOONACULAR_API_HASH: 'eb3b02724f47d1958490858a3ee657a3eec929de',
-    SPOONACULAR_API_USERNAME: 'niyozbek',
+    SPOONACULAR_API_URL: process.env.SPOONACULAR_API_URL,
+    SPOONACULAR_API_KEY: process.env.SPOONACULAR_API_KEY,
+    SPOONACULAR_API_HASH: process.env.SPOONACULAR_API_HASH,
+    SPOONACULAR_API_USERNAME: process.env.SPOONACULAR_API_USERNAME,
 }
 
 // Search individual food items

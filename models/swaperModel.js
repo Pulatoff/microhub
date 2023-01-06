@@ -21,4 +21,6 @@ const Swaper = sequelize.define(
 Dairy.hasMany(Swaper)
 Swaper.belongsTo(Dairy)
 
+sequelize.getQueryInterface
+
 module.exports = Swaper

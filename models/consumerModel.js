@@ -134,4 +134,5 @@ function isPositive(val) {
 // referencing
 User.hasOne(Consumer)
 Consumer.belongsTo(User)
+
 module.exports = Consumer
