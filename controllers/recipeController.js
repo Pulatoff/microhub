@@ -52,16 +52,11 @@ exports.subsituteIngredients = CatchError(async (req, res, next) => {
 exports.getIngredientInfo = CatchError(async (req, res, next) => {
     // ingredient id
     const { id } = req.params
-    const { grams } = req.query
+    let { grams, unit } = req.query
+    grams = grams || 100
+    unit = unit || 'grams'
     const responseData = await axios.get(
-        SPOONACULAR_API_URL +
-            '/food/ingredients/' +
-            id +
-            '/information/?apiKey=' +
-            SPOONACULAR_API_KEY +
-            '&amount=' +
-            grams +
-            '&unit=grams'
+        `${SPOONACULAR_API_URL}/food/ingredients/${id}/information/?apiKey=${SPOONACULAR_API_KEY}&amount=${grams}&unit=${unit}`
     )
     const data = responseData.data
     response(200, 'successfully geted inforomation' + data.original, true, { data }, res)
@@ -71,14 +66,14 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     const { query } = req.query
 
     /*
-    find by name 
-    /food/ingredients/search?query=${foodName}&number=1&apiKey=${process.env.API_KEY}
-    */
+     *    find by name
+     *   /food/ingredients/search?query=${foodName}&number=1&apiKey=${process.env.API_KEY}
+     */
 
     /*
-    find by id
-    /food/ingredients/${food.id}/information?amount=1&apiKey=${process.env.API_KEY}
-    */
+     *    find by id
+     *    /food/ingredients/${food.id}/information?amount=1&apiKey=${process.env.API_KEY}
+     */
 
     const data = await axios.get(
         SPOONACULAR_API_URL +
@@ -134,3 +129,13 @@ exports.deleteRecipe = CatchError(async (req, res, next) => {
     await Recipe.destroy(id)
     response(200, 'You are successfully delete user', true, '', res)
 })
+
+const meal_plan = {
+    meals: [
+        {
+            week: 1,
+            day: 'Monday',
+            recipes: [{ recipe_id: 1, course: 'breakfast', title: '', quantity: 12, serving: '10g' }],
+        },
+    ],
+}

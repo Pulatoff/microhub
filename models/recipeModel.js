@@ -29,3 +29,16 @@ Trainer.hasMany(Recipe)
 Recipe.belongsTo(Trainer)
 
 module.exports = Recipe
+
+/* 
+ recipe model
+ {
+    id: 1, // NUMBER
+    name: "recipe", // STRING 
+    prep: "sdfsf",  // TEXT
+    calories: 123, // number
+    protein: 123,
+ }   
+
+
+*/
