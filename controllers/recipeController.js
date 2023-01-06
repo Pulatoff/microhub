@@ -7,7 +7,7 @@ const response = require('../utils/response')
 const AppError = require('../utils/AppError')
 // models
 const Trainer = require('../models/personalTrainerModel')
-const Recipes = require('../models/recipeModel')
+const Recipe = require('../models/recipeModel')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number } = req.query
@@ -27,7 +27,7 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
 
 exports.getOneRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    const recipe = await Recipes.findByPk(id)
+    const recipe = await Recipe.findByPk(id)
     response(200, 'You get one recipe', true, { recipe }, res)
 })
 
@@ -95,7 +95,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     const userId = req.user.id
 
     const trainer = await Trainer.findOne({ where: { userId } })
-    await Recipes.create({
+    await Recipe.create({
         ...req.body,
         nutritionistId: trainer.id,
     })
@@ -105,7 +105,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 exports.getAllRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId }, attributes: { exclude: ['nutritionistId'] } })
-    const recipes = await Recipes.findAll({ where: { nutritionistId: trainer.id } })
+    const recipes = await Recipe.findAll({ where: { nutritionistId: trainer.id } })
     response(200, 'You are successfully get recipes', true, { recipes }, res)
 })
 
@@ -116,7 +116,7 @@ exports.updateRecipes = CatchError(async (req, res, next) => {
         req.body
 
     const trainer = await Trainer.findOne({ where: { userId } })
-    const recipe = await Recipes.findByPk(id, { where: { nutritionistId: trainer.id } })
+    const recipe = await Recipe.findByPk(id, { where: { nutritionistId: trainer.id } })
     recipe.name = name || recipe.name
     recipe.fat = fat || recipe.fat
     recipe.calories = calories || recipe.calories
@@ -131,27 +131,6 @@ exports.updateRecipes = CatchError(async (req, res, next) => {
 
 exports.deleteRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    await Recipes.destroy(id)
+    await Recipe.destroy(id)
     response(200, 'You are successfully delete user', true, '', res)
 })
-
-// 1 cup = 1 cup tomato sauce + 1 tsp vinegar + 1 tbsp sugar
-// 1 cup = 1 cup margarine
-// 1 cup = 1 tbsp lemon juice or vinegar + enough milk to make 1 cup
-// 1 cup = 7/8 cup shortening and 1/2 tsp salt
-
-// function ingredientFunc(array) {
-//     const subIngredients = []
-//     console.log(array)
-//     for (let i = 0; i < array.length; i++) {
-//         console.log(array[i])
-//         let sub_ingredients = array[i].split('=')[1].split(' ')
-//         const num_plyus = sub_ingredients.indexOf('+')
-//         console.log(num_plyus)
-//         let ingredient = sub_ingredients.slice(3, num_plyus !== -1 ? num_plyus : 4).join(' ')
-//         // for (let k = 0; k < sub_ingredients; k++) {}
-
-//         subIngredients.push({ name: ingredient, amount: sub_ingredients[1] })
-//     }
-//     return subIngredients
-// }
