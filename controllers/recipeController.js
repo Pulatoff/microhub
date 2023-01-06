@@ -9,7 +9,7 @@ const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
 const Recipes = require('../models/recipeModel')
 
-exports.ssearchRecipes = CatchError(async (req, res, next) => {
+exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number } = req.query
     number = number || 1
     const results = await axios.get(
@@ -69,7 +69,17 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
 
 exports.searchIngredients = CatchError(async (req, res, next) => {
     const { query } = req.query
-    // /food/ingredients/${food.id}/information?amount=1&apiKey=${process.env.API_KEY}
+
+    /*
+    find by name 
+    /food/ingredients/search?query=${foodName}&number=1&apiKey=${process.env.API_KEY}
+    */
+
+    /*
+    find by id
+    /food/ingredients/${food.id}/information?amount=1&apiKey=${process.env.API_KEY}
+    */
+
     const data = await axios.get(
         SPOONACULAR_API_URL +
             '/food/ingredients/search?metaInformation=true&offset=0&number=10&query=' +
