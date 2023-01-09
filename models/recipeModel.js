@@ -8,14 +8,14 @@ const Recipe = sequelize.define(
     'recipes',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        calories: { type: DataTypes.STRING, allowNull: false },
-        carbohydrates: { type: DataTypes.STRING, allowNull: false },
-        carbohydratesPercentage: { type: DataTypes.STRING, allowNull: false },
-        fat: { type: DataTypes.STRING, allowNull: false },
-        fatPercentage: { type: DataTypes.STRING, allowNull: false },
-        proteinPercentage: { type: DataTypes.STRING, allowNull: false },
+        calories: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        carbohydrates: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        carbohydratesPercentage: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        fat: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        fatPercentage: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        proteinPercentage: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         name: { type: DataTypes.STRING, allowNull: false },
-        protein: { type: DataTypes.STRING, allowNull: false },
+        protein: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         ingredients: { type: DataTypes.JSON, allowNull: false },
     },
     {
@@ -34,7 +34,7 @@ module.exports = Recipe
  recipe model
  {
     id: 1, // NUMBER
-    name: "recipe", // STRING 
+    name: "Name recipe", // STRING 
     prep: "sdfsf",  // TEXT
     calories: 123, // number
     protein: 123,
