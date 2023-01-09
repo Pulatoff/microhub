@@ -18,6 +18,8 @@ const Recipe = sequelize.define(
         protein: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         image_url: { type: DataTypes.TEXT },
         ingredients: { type: DataTypes.JSON, allowNull: false },
+        serving: { type: DataTypes.STRING, defaultValue: '1 serving' },
+        method: { type: DataTypes.TEXT, allowNull: true },
     },
     {
         timestamps: true,
