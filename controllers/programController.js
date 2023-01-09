@@ -1,66 +1,168 @@
+// models
 const Program = require('../models/programModel')
-const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
 const Meal = require('../models/mealModel')
 const Consumer = require('../models/consumerModel')
+const User = require('../models/userModel')
+const ProgramTime = require('../models/programTimeModel')
+// utils
+const CatchError = require('../utils/catchErrorAsyncFunc')
+const AppError = require('../utils/AppError')
+const response = require('../utils/response')
 
-exports.addProgram = async (req, res, next) => {
-    try {
-        const userId = req.user.id
-        const trainer = await Trainer.findOne({ where: { userId } })
-        const { meals, name, description } = req.body
-        const program = await Program.create({
-            programsId: trainer.id,
-            personalTrainerId: trainer.id,
-            name,
-            description,
-        })
+exports.addProgram = CatchError(async (req, res, next) => {
+    let total_macros = {
+        cals: 0,
+        fats: 0,
+        carbs: 0,
+        protein: 0,
+        total_recipes: 0,
+    }
+
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const { name, description, preference, weeks, meals } = req.body
+
+    const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
+    if (meals) {
         for (let i = 0; i < meals.length; i++) {
-            await Meal.create({ ...meals[0], programId: program.id, mealsId: program.id })
+            const { week, day, food_items } = meals[i]
+            const mealFood = await ProgramTime.create({ week, day, programId: program.id })
+            for (let k = 0; k < food_items.length; k++) {
+                const { food_id, serving, quantity, course, cals, protein, fats, carbs, title, image_url } =
+                    food_items[k]
+                await Meal.create({
+                    food_id,
+                    serving,
+                    quantity,
+                    course,
+                    image_url,
+                    mealplanFoodId: mealFood.id,
+                    protein,
+                    title,
+                    cals,
+                    carbs,
+                    fats,
+                })
+                total_macros.protein += protein
+                total_macros.cals += cals
+                total_macros.fats += fats
+                total_macros.carbs += carbs
+                total_macros.total_recipes++
+            }
         }
-        res.status(200).json({ status: 'success', data: { program } })
-    } catch (error) {
-        next(AppError(error.message, 404))
     }
-}
 
-exports.updatePrograms = async (req, res, next) => {
-    try {
-        const program = await Program.update(req.body, { where: { id: req.params.id }, returning: true, plain: true })
-        res.status(200).json({ status: 'success', data: { program } })
-    } catch (error) {
-        next(AppError(error.message, 404))
+    program.cals = total_macros.cals
+    program.protein = total_macros.protein
+    program.carbs = total_macros.carbs
+    program.fats = total_macros.fats
+    program.total_recipes = total_macros.total_recipes
+    await program.save()
+    response(201, 'You are successfully added to program', true, '', res)
+})
+
+exports.getAllPrograms = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    if (!trainer) next(new AppError("You can't allowed this method", 404))
+    const programs = await Program.findAll({ where: { nutritionistId: trainer.id } })
+    response(200, 'You are successfully geting programs', true, { programs }, res)
+})
+
+exports.getProgram = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    if (!trainer) next(new AppError("You can't allowed this method", 404))
+
+    const program = await Program.findByPk(id, {
+        include: [
+            { model: ProgramTime, include: [{ model: Meal }] },
+            { model: Consumer, include: [{ model: User }] },
+        ],
+        where: { nutritionistId: trainer.id },
+    })
+
+    response(200, 'You are successfully geted one program', true, { program }, res)
+})
+
+exports.updatePrograms = CatchError(async (req, res, next) => {
+    const { name, description, weeks, preference } = req.body
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    if (!trainer) next(new AppError("You don't access this request"))
+    const program = await Program.findByPk(req.params.id, { where: { nutritionistId: trainer.id } })
+
+    if (!program) next(new AppError('Program not found', 404))
+
+    program.name = name || program.name
+    program.description = description || program.description
+    program.weeks = weeks || program.weeks
+    program.preference = preference || program.preference
+
+    await program.save()
+    response(
+        203,
+        'You are successfuly update program',
+        true,
+        { program: { name: program.name, description: program.description } },
+        res
+    )
+})
+
+exports.deletePrograms = CatchError(async (req, res, next) => {
+    const { id } = req.params
+    await Program.destroy({ where: { id } })
+    response(204, 'You deleted program', true, '', res)
+})
+
+exports.addMealToProgram = CatchError(async (req, res, next) => {
+    const { id } = req.params
+
+    const { week, day, food_items } = req.body
+    const program = await Program.findByPk(id)
+    if (!program) next(new AppError(`Program by id ${id} not found`, 404))
+    let total_macros = {
+        cals: program.cals,
+        fats: program.fats,
+        carbs: program.carbs,
+        protein: program.protein,
     }
-}
+    const mealFood = await ProgramTime.create({ week, day, programId: program.id })
+    for (let k = 0; k < food_items.length; k++) {
+        const { food_id, serving, quantity, course, cals, protein, fats, carbs, title, image_url } = food_items[k]
 
-exports.getAllPrograms = async (req, res, next) => {
-    try {
-        const userId = req.user.id
-
-        const consumer = await Consumer.findOne({ where: { userId }, include: Program })
-
-        res.json({ status: 'success', data: { programs: consumer.programs } })
-    } catch (error) {
-        next(new AppError(error.message, 404))
-    }
-}
-
-exports.getProgram = async (req, res, next) => {
-    try {
-        const { id } = req.params
-        const program = await Program.findByPk(id, {
-            include: [
-                {
-                    model: Meal,
-                    as: 'meals',
-                },
-            ],
+        await Meal.create({
+            food_id,
+            serving,
+            quantity,
+            course,
+            image_url,
+            mealplanFoodId: mealFood.id,
+            protein,
+            title,
+            cals,
+            carbs,
+            fats,
         })
-        res.status(200).json({
-            status: 'success',
-            data: { program },
-        })
-    } catch (error) {
-        next(new AppError(error.message, 404))
+        total_macros.protein += protein
+        total_macros.cals += cals
+        total_macros.fats += fats
+        total_macros.carbs += carbs
     }
-}
+    program.cals = total_macros.cals
+    program.protein = total_macros.protein
+    program.carbs = total_macros.carbs
+    program.fats = total_macros.fats
+    await program.save()
+    response(201, 'You are successfully added to program', true, '', res)
+})
+
+exports.searchPrograms = CatchError(async (req, res, next) => {
+    const { search } = req.query
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const program = await Program.findOne({ where: { name: search, nutritionistId: trainer.id } })
+    response(200, 'Your search program', true, program, res)
+})

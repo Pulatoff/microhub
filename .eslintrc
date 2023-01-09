@@ -1,7 +1,17 @@
 {
-    "extends": ["react-app", "prettier"],
+    "extends": ["prettier"],
     "rules": {
-        "jsx-quotes": [1, "prefer-double"]
+        "no-console": "warn",
+        "no-debugger": "error",
+        "no-const-assign": "error"
     },
-    "plugins": ["prettier"]
+    "plugins": ["prettier", "eslint-plugin-prettier"],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "env": {
+        "commonjs": true,
+        "node": true,
+        "browser": true
+    }
 }

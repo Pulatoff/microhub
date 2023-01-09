@@ -1,103 +1,253 @@
-const User = require('../models/userModel')
-const createJwt = require('../utils/createJWT')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const AppError = require('../utils/AppError')
+// models
+const User = require('../models/userModel')
+const Consumer = require('../models/consumerModel')
 const Personal_Trainer = require('../models/personalTrainerModel')
+const Questionaire = require('../models/questionnaireModel')
+const Questions = require('../models/questionnariesQuestionModel')
+const Program = require('../models/programModel')
+const Meal = require('../models/mealModel')
+const ProgramTime = require('../models/programTimeModel')
+// utils
+const AppError = require('../utils/AppError')
+const CatchError = require('../utils/catchErrorAsyncFunc')
+const saveCookie = require('../utils/sendCookieJWT')
+const createJwt = require('../utils/createJWT')
+const response = require('../utils/response')
 
-exports.signupCLient = async (req, res, next) => {
-    try {
-        const { first_name, last_name, email, password, passwordConfirm } = req.body
-        // checking the saming => password and passwordConfirm
-        if (password !== passwordConfirm) throw new Error('password not the same')
-        // checking user existing
-        const user = await User.create({ first_name, last_name, email, password, role: 'consumer' })
-        const token = await createJwt(user.id)
-        res.status(200).json({
-            status: 'success',
-            data: {
-                accessToken: `Bearer ${token}`,
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    photo: user.photo,
-                },
+exports.signupCLient = CatchError(async (req, res, next) => {
+    const { first_name, last_name, email, password, passwordConfirm } = req.body
+    if (!first_name || !last_name || !email || !password || !passwordConfirm)
+        next(new AppError('You need to enter all required fields', 401))
+
+    if (password !== passwordConfirm) next(new AppError('You need enter password same passwords', 401))
+
+    const user = await User.create({ first_name, last_name, email, password, role: 'consumer' })
+
+    const token = await createJwt(user.id)
+    saveCookie(token, res)
+    response(
+        201,
+        'You have registered as a client by id 1',
+        true,
+        {
+            user: {
+                id: user.id,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                photo: user.photo,
+                createdAt: user.createdAt,
             },
-        })
-    } catch (error) {
-        res.status(404).json({ message: error.message })
-    }
-}
+        },
+        res
+    )
+})
 
-exports.signin = async (req, res, next) => {
-    try {
-        const { password, email } = req.body
-        if (!password || !email) throw new Error('field could not be pustim')
-        const user = await User.findOne({ where: { email, isActive: 1 } })
-        if (!user) throw new Error('Wrong password or email, Please try again')
-        // comparing passwords
-        const compare = await bcrypt.compare(password, user.password)
-        if (!compare) throw new Error('Wrong password or email, Please try again')
-        const token = createJwt(user.id)
-        res.status(200).json({
-            status: 'succes',
-            data: {
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    photo: user.photo,
+exports.signin = CatchError(async (req, res, next) => {
+    const { password, email } = req.body
+    if (!password || !email) next(new AppError('Email or Password could not be empty', 404))
+    const oldUser = await User.findOne({
+        where: { email, isActive: 1 },
+        include: [{ model: Consumer }],
+    })
+
+    if (!oldUser) next(new AppError('Wrong password or email, Please try again', 404))
+    // comparing passwords
+    const compare = await bcrypt.compare(password, oldUser.password)
+    if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
+    let user
+    if (oldUser.role === 'consumer') {
+        const newUser = await User.findByPk(oldUser.id, {
+            include: [
+                {
+                    model: Consumer,
+                    include: [
+                        { model: Personal_Trainer, include: [{ model: User }] },
+                        { model: Questionaire, include: [{ model: Questions }] },
+                        {
+                            model: Program,
+                            include: [{ model: ProgramTime, include: [{ model: Meal }] }],
+                        },
+                    ],
                 },
-                accessToken: `Bearer ${token}`,
-            },
+            ],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
         })
-    } catch (error) {
-        next(new AppError(error.message, 404))
-    }
-}
+        const requested_nutritionists = []
 
-exports.logout = async (req, res, next) => {
-    try {
-        const id = req.user.id
-        const user = await User.findByPk(id)
-        user.isActive = 0
-        user.save()
-        res.status(200).json({ status: 'success', data: '' })
-    } catch (error) {
-        next(new AppError(error.message, 404))
-    }
-}
+        // if (newUser.consumer.nutritionists) {
+        newUser?.consumer?.nutritionists.map((val) => {
+            const bindConsumer = val.consumer_trainers
+            if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
+                const nutUser = val.user
+                requested_nutritionists.push({
+                    id: val.id,
+                    first_name: nutUser.first_name,
+                    last_name: nutUser.last_name,
+                    photo: nutUser.photo,
+                    email: nutUser.email,
+                    linkToken: val.linkToken,
+                    status: val.consumer_trainers.status,
+                    createdAt: val.createdAt,
+                })
+            }
+        })
 
-exports.protect = async (req, res, next) => {
-    try {
-        let token
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.slice(7)
-            console.log(token)
-        } else {
-            throw new Error('you are not authorizated')
+        user = {
+            id: newUser.id,
+            first_name: newUser.first_name,
+            last_name: newUser.last_name,
+            email: newUser.email,
+            photo: newUser.photo,
+            role: newUser.role,
+            createdAt: newUser.createdAt,
+            consumer: newUser.consumer,
+            program: newUser.consumer.programs[0] ? newUser.consumer.programs[0] : {},
         }
-        if (!token) throw new Error('You not authorized')
-        const tekshir = jwt.verify(token, process.env.JWT_SECRET_KEY)
-        if (!tekshir) throw new Error('Your token expired')
-        const user = await User.findByPk(tekshir.id)
-        if (!user) throw new Error('This user not exist')
-        req.user = user
-        next()
-    } catch (error) {
-        next(new AppError(error.message))
+        if (newUser.consumer.questionnairy) {
+            user.questionnaire = newUser.consumer.questionnairy
+        }
+        if (requested_nutritionists.length !== 0) {
+            user.requested_nutritionists = requested_nutritionists
+        }
+    } else if (oldUser.role === 'nutritionist') {
+        user = await User.findByPk(oldUser.id, {
+            include: [{ model: Personal_Trainer, include: [{ model: Consumer }] }],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+        })
+        let count_consumer = 0
+        user.nutritionist.consumers.map((val) => {
+            if (val.consumer_trainers.status === 1) {
+                count_consumer++
+            }
+        })
+
+        user = {
+            id: user.nutritionist.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            role: user.role,
+            active_clients: count_consumer,
+            createdAt: user.createdAt,
+        }
     }
-}
+    const token = createJwt(oldUser.id)
+    saveCookie(token, res)
+    response(201, 'You are logged in successfully', true, { user }, res)
+})
+
+exports.logout = CatchError(async (req, res, next) => {
+    saveCookie('loggedOut', res)
+    response(206, 'You are logged successfully', true, '', res)
+})
+
+exports.protect = CatchError(async (req, res, next) => {
+    let token
+    if (req.cookies.jwt) {
+        token = req.cookies.jwt
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.slice(7)
+    } else {
+        next(new AppError('You are not authorized', 401))
+    }
+
+    if (!token) next(new AppError('You are not authorized', 401))
+    const tekshir = jwt.verify(token, process.env.JWT_SECRET_KEY)
+    if (!tekshir) next(new AppError('Your token expired', 401))
+    const user = await User.findByPk(tekshir.id)
+    if (!user) next(new AppError('This user not exist', 401))
+    req.user = user
+    next()
+})
+
+exports.usersSelf = CatchError(async (req, res, next) => {
+    let user
+    if (req.user.role === 'consumer') {
+        const newUser = await User.findByPk(req.user.id, {
+            include: [
+                {
+                    model: Consumer,
+                    include: [
+                        { model: Personal_Trainer, include: [{ model: User }] },
+                        { model: Questionaire, include: [{ model: Questions }] },
+                        { model: Program, include: [{ model: ProgramTime, include: [{ model: Meal }] }] },
+                    ],
+                },
+            ],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+        })
+        const requested_nutritionists = []
+        newUser.consumer.nutritionists.map((val) => {
+            const bindConsumer = val.consumer_trainers
+            if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
+                const nutUser = val.user
+                requested_nutritionists.push({
+                    id: val.id,
+                    first_name: nutUser.first_name,
+                    last_name: nutUser.last_name,
+                    photo: nutUser.photo,
+                    email: nutUser.email,
+                    linkToken: val.linkToken,
+                    status: val.consumer_trainers.status,
+                    createdAt: val.createdAt,
+                })
+            }
+        })
+        user = {
+            id: newUser.id,
+            first_name: newUser.first_name,
+            last_name: newUser.last_name,
+            email: newUser.email,
+            photo: newUser.photo,
+            role: newUser.role,
+            createdAt: newUser.createdAt,
+            consumer: newUser.consumer,
+            program: newUser.consumer.programs[0] ? newUser.consumer.programs[0] : {},
+        }
+        if (newUser.consumer.questionnairy) {
+            user.questionnaire = newUser.consumer.questionnairy
+        }
+        if (requested_nutritionists.length !== 0) {
+            user.requested_nutritionists = requested_nutritionists
+        }
+    } else if (req.user.role === 'nutritionist') {
+        user = await User.findByPk(req.user.id, {
+            include: [{ model: Personal_Trainer, include: [{ model: Consumer }] }],
+            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+        })
+        let count_consumer = 0
+        user.nutritionist.consumers.map((val) => {
+            if (val.consumer_trainers.status === 1) {
+                count_consumer++
+            }
+        })
+        user = {
+            id: user.nutritionist.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            role: user.role,
+            active_clients: count_consumer,
+            createdAt: user.createdAt,
+        }
+    }
+    response(200, 'user data', true, { user }, res)
+})
 
 exports.role = (roles) => {
     return async (req, res, next) => {
         try {
             // 1) User ni roleni olamiz databasedan, tekshiramiz
             if (!roles.includes(req.user.role)) {
-                return next(new AppError("You don't access this process", 401))
+                return next(
+                    new AppError(
+                        `This process only for ${roles.join(', ')} roles. (your role is a ${req.user.role})`,
+                        405
+                    )
+                )
             }
             next()
         } catch (error) {
@@ -106,31 +256,40 @@ exports.role = (roles) => {
     }
 }
 
-exports.signupNutritionist = async (req, res, next) => {
-    try {
-        const { first_name, last_name, email, password, passwordConfirm } = req.body
-        // checking the saming => password and passwordConfirm
-        if (password !== passwordConfirm) throw new Error('password not the same')
-        // checking user existing
-        const user = await User.create({ first_name, last_name, email, password, role: 'nutritionist' })
-        const nutrisionist = await Personal_Trainer.create({ userId: user.id })
-        const token = await createJwt(user.id)
-        const trainer = {
-            id: nutrisionist.id,
-            userId: user.id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            credentials: {},
-        }
-        res.status(200).json({
-            status: 'success',
-            data: {
-                accessToken: `Bearer ${token}`,
-                trainer,
-            },
-        })
-    } catch (error) {
-        next(new AppError(error.message, 404))
+exports.signupNutritionist = CatchError(async (req, res, next) => {
+    const { first_name, last_name, email, password, passwordConfirm } = req.body
+
+    if (!first_name || !last_name || !email || !password || !passwordConfirm)
+        next(new AppError('You need to enter all required fields', 404))
+
+    // checking the saming => password and passwordConfirm
+    if (password !== passwordConfirm) throw new Error('password not the same')
+    // checking user existing
+    const oldUser = await User.findOne({ where: { email } })
+    if (oldUser?.role === 'consumer') next(new AppError('This method is not allowed to you', 405))
+    const user = await User.create({ first_name, last_name, email, password, role: 'nutritionist' })
+    const nutrisionist = await Personal_Trainer.create({ userId: user.id })
+    const token = await createJwt(user.id)
+
+    // transformation to new object
+    const trainer = {
+        id: nutrisionist.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        photo: 'default.jpg',
+        linkToken: nutrisionist.linkToken,
+        credentials: {},
     }
-}
+    // sending cookies
+    saveCookie(token, res)
+    response(
+        201,
+        'You are logged successfully',
+        true,
+        {
+            nutritionist: trainer,
+        },
+        res
+    )
+})

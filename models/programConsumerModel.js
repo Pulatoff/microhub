@@ -1,4 +1,6 @@
+const { DataTypes } = require('sequelize')
 const sequelize = require('../configs/db')
+//models
 const Consumer = require('./consumerModel')
 const Program = require('./programModel')
 

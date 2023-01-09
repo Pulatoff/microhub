@@ -25,7 +25,7 @@ const User = sequelize.define(
             allowNull: false,
             unique: {
                 args: true,
-                message: 'Oops. Looks like you already have an account with this email address. Please try to login.',
+                msg: 'Oops. Looks like you already have an account with this email address. Please try to login.',
                 fields: [sequelize.fn('lower', sequelize.col('email'))],
             },
             validate: {
@@ -40,7 +40,7 @@ const User = sequelize.define(
             },
         },
         role: {
-            type: DataTypes.ENUM('consumer', 'personal_trainer', 'nutritionist', 'admin'),
+            type: DataTypes.ENUM('consumer', 'trainer', 'nutritionist', 'admin'),
             allowNull: false,
             defaultValue: 'consumer',
         },
@@ -60,7 +60,7 @@ const User = sequelize.define(
 )
 
 // hashing password before create
-User.addHook('beforeSave', async (user, options) => {
+User.addHook('beforeSave', async (user) => {
     const hashedPassword = await bcrypt.hash(user.password, 12)
     user.password = hashedPassword
 })

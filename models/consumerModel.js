@@ -1,19 +1,23 @@
-const sequlize = require('../configs/db')
 const { DataTypes } = require('sequelize')
+// configs
+const sequlize = require('../configs/db')
+// models
 const User = require('../models/userModel')
-const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('@presspage/fitnessjs')
+// utils
 const set_error = require('../utils/errorModel')
+const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('../utils/FitnessPage')
 const activ_level_num = require('../utils/activLevelNum')
-
+// configs
+const METRIC = +process.env.HEALTH_METRIC || 1
 const Consumer = sequlize.define(
     'consumers',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        weight: { type: DataTypes.FLOAT, allowNull: false },
-        height: { type: DataTypes.FLOAT, allowNull: false },
+        weight: { type: DataTypes.FLOAT, allowNull: false, validate: { isPositive } }, // unit in kg
+        height: { type: DataTypes.FLOAT, allowNull: false, validate: { isPositive } }, // unit in cm
         favorite_foods: {
             type: DataTypes.STRING,
-            get(val) {
+            get() {
                 return this.getDataValue('favorite_foods').split(';')
             },
             set(val) {
@@ -29,20 +33,24 @@ const Consumer = sequlize.define(
                 this.setDataValue('least_favorite_foods', val.join(';'))
             },
         },
+        wrist: { type: DataTypes.INTEGER, allowNull: false },
+        forearm: { type: DataTypes.INTEGER, allowNull: false },
+        hip: { type: DataTypes.INTEGER, allowNull: false },
+        waist: { type: DataTypes.INTEGER, allowNull: false },
         gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
         activity_level: {
-            type: DataTypes.ENUM('sendentary', 'lightly_active', 'moderate_active', 'very_active', 'extrmely_active'),
-            defaultValue: 'sendentary',
+            type: DataTypes.ENUM('sedentary', 'lightly active', 'moderate active', 'very active', 'extremely active'),
+            defaultValue: 'sedentary',
         },
         preferences: {
             type: DataTypes.ENUM(
                 'diet',
-                'standart',
+                'standard',
                 'vegetarian',
-                'lacto_vegetarian',
-                'ovo_vegetarian',
+                'lacto vegetarian',
+                'ovo vegetarian',
                 'vegan',
-                'gluten_free',
+                'gluten free',
                 'halal',
                 'kosher',
                 'meat',
@@ -63,7 +71,7 @@ const Consumer = sequlize.define(
         body_fat: {
             type: DataTypes.VIRTUAL,
             get() {
-                const fat = body_fat(this.gender, this.weight, 10)
+                const fat = body_fat(this.gender, this.weight, this.wrist, this.waist, this.hip, this.forearm)
                 return fat
             },
             set: set_error,
@@ -72,7 +80,7 @@ const Consumer = sequlize.define(
             type: DataTypes.VIRTUAL,
             get() {
                 const activ_level = activ_level_num(this.activ_level)
-                const tdee_result = tdee(1, this.gender, activ_level, this.height, this.weight, 24)
+                const tdee_result = tdee(METRIC, this.gender, activ_level, this.height, this.weight, 24)
                 return tdee_result
             },
             set: set_error,
@@ -80,7 +88,7 @@ const Consumer = sequlize.define(
         body_frame: {
             type: DataTypes.VIRTUAL,
             get() {
-                const body_frame = find_body_frame(1, this.gender, 10)
+                const body_frame = find_body_frame(METRIC, this.gender, this.wrist)
                 return body_frame
             },
             set: set_error,
@@ -88,7 +96,7 @@ const Consumer = sequlize.define(
         healthy_weight: {
             type: DataTypes.VIRTUAL,
             get() {
-                const weight_healthy = healthy_weight(1, this.gender, this.height, this.body_frame)
+                const weight_healthy = healthy_weight(METRIC, this.gender, this.height, this.body_frame)
                 return weight_healthy
             },
             set: set_error,
@@ -96,7 +104,7 @@ const Consumer = sequlize.define(
         bmi: {
             type: DataTypes.VIRTUAL,
             get() {
-                const bmi_results = bmi(1, this.weight, this.height)
+                const bmi_results = bmi(METRIC, this.weight, this.height)
                 return bmi_results
             },
             set: set_error,
@@ -117,8 +125,14 @@ const Consumer = sequlize.define(
     }
 )
 
+function isPositive(val) {
+    if (val <= 0) {
+        throw new Error(`You need enter positive number to field ${val}`)
+    }
+}
+
 // referencing
-User.hasOne(Consumer, { onDelete: 'CASCADE' })
-Consumer.belongsTo(User, { onDelete: 'CASCADE' })
+User.hasOne(Consumer)
+Consumer.belongsTo(User)
 
 module.exports = Consumer

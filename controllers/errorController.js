@@ -4,13 +4,17 @@ module.exports = (error, req, res, next) => {
     if (process.env.NODE_ENV === 'development') {
         res.status(error.statusCode).json({
             message: error.message,
-            status: error.status,
+            isOk: false,
+            status: error.status || 'failed',
+            data: '',
             stack: error.stack,
         })
     } else {
         res.status(error.statusCode).json({
             message: error.message,
-            status: error.status,
+            isOk: false,
+            data: '',
+            status: 'failed',
         })
     }
 }
