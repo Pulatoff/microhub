@@ -10,6 +10,17 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const AppError = require('../utils/AppError')
 const response = require('../utils/response')
 
+/* example body to add program
+ * const meal_plan = {
+ *    meals: [
+ *        {
+ *           week: 1,
+ *          day: 'Monday',
+ *         recipes: [{ recipe_id: 1, course: 'breakfast', title: '', quantity: 12, serving: '10g' }],
+ *    },
+ *  ],
+ * }
+ */
 exports.addProgram = CatchError(async (req, res, next) => {
     let total_macros = {
         cals: 0,

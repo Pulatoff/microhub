@@ -129,13 +129,3 @@ exports.deleteRecipe = CatchError(async (req, res, next) => {
     await Recipe.destroy(id)
     response(200, 'You are successfully delete user', true, '', res)
 })
-
-const meal_plan = {
-    meals: [
-        {
-            week: 1,
-            day: 'Monday',
-            recipes: [{ recipe_id: 1, course: 'breakfast', title: '', quantity: 12, serving: '10g' }],
-        },
-    ],
-}
