@@ -16,6 +16,7 @@ const Recipe = sequelize.define(
         proteinPercentage: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         name: { type: DataTypes.STRING, allowNull: false },
         protein: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        image_url: { type: DataTypes.TEXT },
         ingredients: { type: DataTypes.JSON, allowNull: false },
     },
     {

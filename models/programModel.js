@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize')
 const sequelize = require('../configs/db')
 // models
 const Trainer = require('./personalTrainerModel')
-const Course = require('./programTimeModel')
+const Meal = require('./programTimeModel')
 
 const Program = sequelize.define(
     'programs',
@@ -29,8 +29,8 @@ const Program = sequelize.define(
 Trainer.hasMany(Program)
 Program.belongsTo(Trainer)
 
-Program.hasMany(Course)
-Course.belongsTo(Program)
+Program.hasMany(Meal)
+Meal.belongsTo(Program)
 
 module.exports = Program
 
