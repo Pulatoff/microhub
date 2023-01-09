@@ -58,15 +58,6 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     offset = offset || 0
     number = number || 1
     unit = unit || 'oz'
-    /*
-     *    find by name
-     *   /food/ingredients/search?query=${foodName}&number=1&apiKey=${process.env.API_KEY}
-     */
-
-    /*
-     *    find by id
-     *    /food/ingredients/${food.id}/information?amount=1&apiKey=${process.env.API_KEY}
-     */
 
     const ingredients = []
 
