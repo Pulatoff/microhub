@@ -31,16 +31,3 @@ Trainer.hasMany(Recipe)
 Recipe.belongsTo(Trainer)
 
 module.exports = Recipe
-
-/* 
- recipe model
- {
-    id: 1, // NUMBER
-    name: "Name recipe", // STRING 
-    prep: "sdfsf",  // TEXT
-    calories: 123, // number
-    protein: 123,
- }   
-
-
-*/
