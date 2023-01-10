@@ -43,14 +43,34 @@ exports.subsituteIngredients = CatchError(async (req, res, next) => {
 exports.getIngredientInfo = CatchError(async (req, res, next) => {
     // ingredient id
     const { id } = req.params
-    let { grams, unit } = req.query
-    grams = grams || 100
-    unit = unit || 'grams'
+    let { amount, unit } = req.query
+    amount = amount || 1
+    unit = unit || 'g'
     const responseData = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/${id}/information/?apiKey=${SPOONACULAR_API_KEY}&amount=${grams}&unit=${unit}`
+        `${SPOONACULAR_API_URL}/food/ingredients/${id}/information/?apiKey=${SPOONACULAR_API_KEY}&amount=${amount}&unit=${unit}`
     )
+
     const data = responseData.data
-    response(200, 'successfully geted inforomation' + data.original, true, { data }, res)
+    const nutrients = data.nutrition.nutrients.filter((val) => {
+        if (
+            val.name.toLowerCase() === 'fat' ||
+            val.name.toLowerCase() === 'protein' ||
+            val.name.toLowerCase() === 'calories' ||
+            val.name.toLowerCase() === 'carbohydrates'
+        ) {
+            return val
+        }
+    })
+    const ingredient = {
+        id: data.id,
+        name: data.name,
+        amount: data.amount,
+        unit: data.unit,
+        possibleUnits: data.possibleUnits,
+        image: data.image,
+        nutrients,
+    }
+    response(200, 'successfully geted inforomation' + data.original, true, { ingredient }, res)
 })
 
 exports.searchIngredients = CatchError(async (req, res, next) => {
