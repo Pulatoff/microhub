@@ -69,7 +69,17 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
         const resp = await axios.get(
             `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=1&unit=${ingredient.possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
         )
-
+        const nutrients = []
+        resp.data.nutrition.nutrients.map((val) => {
+            if (
+                val.name.toLowerCase() === 'fat' ||
+                val.name.toLowerCase() === 'protein' ||
+                val.name.toLowerCase() === 'calories' ||
+                val.name.toLowerCase() === 'carbohydrates'
+            ) {
+                nutrients.push(val)
+            }
+        })
         ingredients.push({
             id: resp.data.id,
             name: resp.data.name,
@@ -77,12 +87,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
             unit: resp.data.unit,
             possibleUnits: resp.data.possibleUnits,
             image: resp.data.image,
-            nutrients: [
-                resp.data.nutrition.nutrients[12],
-                resp.data.nutrition.nutrients[18],
-                resp.data.nutrition.nutrients[24],
-                resp.data.nutrition.nutrients[29],
-            ],
+            nutrients,
         })
     }
     response(200, 'You are successfully got data', true, { ingredients }, res)
