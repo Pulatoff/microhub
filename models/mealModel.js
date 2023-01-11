@@ -9,7 +9,6 @@ const Food = sequelize.define(
         course: { type: DataTypes.ENUM(['breakfast', 'dinner', 'lunch', 'snacks']), allowNull: false }, // enums breakfast,  lunch, dinner, snacks
         quantity: { type: DataTypes.INTEGER, defaultValue: 1 },
         serving: { type: DataTypes.STRING, allowNull: false },
-        food_id: { type: DataTypes.INTEGER },
         title: { type: DataTypes.STRING, allowNull: false },
         image_url: { type: DataTypes.TEXT },
     },
