@@ -7,8 +7,8 @@ const Meal = sequelize.define(
     'meals',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        day: { type: DataTypes.STRING },
-        week: { type: DataTypes.INTEGER },
+        day: { type: DataTypes.INTEGER, defaultValue: 0 },
+        week: { type: DataTypes.INTEGER, defaultValue: 1 },
     },
     {
         timestamps: true,
@@ -16,6 +16,7 @@ const Meal = sequelize.define(
         updatedAt: false,
     }
 )
+
 Meal.hasMany(Food)
 Food.belongsTo(Meal)
 
