@@ -14,7 +14,7 @@ const Program = sequelize.define(
         preference: { type: DataTypes.STRING },
         cals: { type: DataTypes.INTEGER, defaultValue: 0 },
         protein: { type: DataTypes.INTEGER, defaultValue: 0 },
-        fats: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        fat: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         carbs: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         weeks: { type: DataTypes.INTEGER, defaultValue: 1 },
         total_recipes: { type: DataTypes.INTEGER },

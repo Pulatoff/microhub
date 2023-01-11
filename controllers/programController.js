@@ -71,34 +71,45 @@ function DayToNumber(day) {
 
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
+    let macros = {
+        cals: 0,
+        carbs: 0,
+        protein: 0,
+        fat: 0,
+    }
+    let total_recipes = 0
+
     const trainer = await Trainer.findOne({ where: { userId } })
-    if (!trainer) throw new Error('Trainer is not exist')
+    if (!trainer) throw new Error('Nutritionist is not exist')
     const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
     if (meals) {
         for (let i = 0; i < meals.length; i++) {
-            const { week, day, food_items } = meals[i]
+            const { week, day, fat, cals, carbs, protein, food_items } = meals[i]
+            macros.cals += cals
+            macros.carbs += carbs
+            macros.protein += protein
+            macros.fat += fat
             const numberDay = DayToNumber(day)
-            const meal = await Meal.create({ week, day: numberDay, programId: program.id })
+            const meal = await Meal.create({ week, day: numberDay, programId: program.id, fat, cals, protein, carbs })
             if (food_items) {
                 for (let k = 0; k < food_items.length; k++) {
                     const { food_id, serving, quantity, course, title, image_url, recipeId } = food_items[k]
-                    await Food.create({
-                        food_id,
-                        serving,
-                        quantity,
-                        course,
-                        image_url,
-                        mealId: meal.id,
-                        title,
-                        recipeId,
-                    })
+                    const mealId = meal.id
+                    await Food.create({ food_id, serving, quantity, course, image_url, mealId, title, recipeId })
+                    total_recipes++
                 }
             }
         }
     }
 
+    program.cals = macros.cals
+    program.carbs = macros.carbs
+    program.protein = macros.protein
+    program.fat = macros.fat
+    program.total_recipes = total_recipes
+    await program.save()
     response(201, 'You are successfully added to program', true, '', res)
 })
 
