@@ -202,6 +202,7 @@ exports.addMealToProgram = CatchError(async (req, res, next) => {
         total_macros.fats += fats
         total_macros.carbs += carbs
     }
+
     program.cals = total_macros.cals
     program.protein = total_macros.protein
     program.carbs = total_macros.carbs
