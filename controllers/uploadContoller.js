@@ -82,10 +82,3 @@ exports.deleteUpload = CatchAsync(async (req, res, next) => {
     await upload.destroy()
     response(206, 'You successfully deleted a file', true, '', res)
 })
-
-exports.downloadFile = CatchAsync(async (req, res, next) => {
-    const id = req.params.id
-})
-
-// 45e8eb06f0028c4fe093d3a0dfec846b2ba750bb63ca7dbc0bce0aa9972fe0c0
-// 45e8eb06f0028c4fe093d3a0dfec846b2ba750bb63ca7dbc0bce0aa9972fe0c0
