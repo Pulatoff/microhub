@@ -21,7 +21,10 @@ router.route('/consumer/:id').get(auth.protect, consumerTrainer.getOneConsumer)
 router.route('/questionnaire').get(auth.protect, auth.role(['nutritionist']), questionaire.getSendingQuestionnaire)
 router.route('/search').get(consumerTrainer.searchEngine)
 
-router.route('/uploads').post(upload.upload.single('file'), upload.uploadFile)
+router
+    .route('/uploads')
+    .post(auth.protect, auth.role(['nutritionist']), upload.upload.single('file'), upload.uploadFile)
+    .get(auth.protect, auth.role(['nutritionist']), upload.getUploads)
 
 router.route('/:linkToken').get(controller.inviteConsumer)
 

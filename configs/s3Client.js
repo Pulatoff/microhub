@@ -1,7 +1,7 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 
 const s3Client = new S3Client({
-    endpoint: 'https://sgp1.digitaloceanspaces.com',
+    endpoint: process.env.DO_SPACE_ENDPOINT,
     forcePathStyle: false,
     region: 'us-east-1',
     credentials: {
