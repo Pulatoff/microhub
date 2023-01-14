@@ -5,6 +5,7 @@ const auth = require('../controllers/authController')
 const consumerTrainer = require('../controllers/consumerTrainerController')
 const questionaire = require('../controllers/questionaireController')
 const upload = require('../controllers/uploadContoller')
+const notes = require('../controllers/notesController')
 
 // routes
 router.route('/requests').get(auth.protect, controller.getAcceptConsumer)
@@ -17,6 +18,17 @@ router
     .get(auth.protect, auth.role(['nutritionist', 'personal_trainer']), consumerTrainer.getAllConsumerStats)
 
 router.route('/consumer/:id').get(auth.protect, consumerTrainer.getOneConsumer)
+
+router
+    .route('/consumers/:consumerId/notes')
+    .post(auth.protect, auth.role(['nutritionist']), notes.addNotes)
+    .get(auth.protect, auth.role(['nutritionist']), notes.getAllNotes)
+
+router
+    .route('/consumers/:consumerId/notes/:id')
+    .get(auth.protect, auth.role(['nutritionist']), notes.getOneNote)
+    .patch(auth.protect, auth.role(['nutritionist']), notes.updateNote)
+    .delete(auth.protect, auth.role(['nutritionist']), notes.deletNote)
 
 router.route('/questionnaire').get(auth.protect, auth.role(['nutritionist']), questionaire.getSendingQuestionnaire)
 router.route('/search').get(consumerTrainer.searchEngine)
