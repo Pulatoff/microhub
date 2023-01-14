@@ -26,6 +26,11 @@ router
     .post(auth.protect, auth.role(['nutritionist']), upload.upload.single('file'), upload.uploadFile)
     .get(auth.protect, auth.role(['nutritionist']), upload.getUploads)
 
+router
+    .route('/uploads/:id')
+    .patch(auth.protect, auth.role(['nutritionist']), upload.updateUploads)
+    .delete(auth.protect, auth.role(['nutritionist']), upload.deleteUpload)
+
 router.route('/:linkToken').get(controller.inviteConsumer)
 
 module.exports = router

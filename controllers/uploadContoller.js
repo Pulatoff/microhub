@@ -1,7 +1,6 @@
-const { PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
+const { PutObjectCommand, GetObjectCommand, DeleteObjectsCommand } = require('@aws-sdk/client-s3')
 const s3Client = require('../configs/s3Client')
 const CatchAsync = require('../utils/catchErrorAsyncFunc')
-const sharp = require('sharp')
 const multer = require('multer')
 const response = require('../utils/response')
 const crypto = require('crypto')
@@ -71,7 +70,7 @@ exports.updateUploads = CatchAsync(async (req, res, next) => {
     const id = req.params.id
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-    const upload = await Upload.findByPk({ where: { id, nutritionistId: trainer.id } })
+    const upload = await Upload.findByPk(id, { where: { nutritionistId: trainer.id } })
     upload.title = title || upload.title
     await upload.save()
     response(203, 'You are successfully update', true, '', res)
@@ -79,6 +78,14 @@ exports.updateUploads = CatchAsync(async (req, res, next) => {
 
 exports.deleteUpload = CatchAsync(async (req, res, next) => {
     const id = req.params.id
-    await Upload.destroy({ where: { id } })
-    response(206, '', true, '', res)
+    const upload = await Upload.findByPk(id)
+    await upload.destroy()
+    response(206, 'You successfully deleted a file', true, '', res)
 })
+
+exports.downloadFile = CatchAsync(async (req, res, next) => {
+    const id = req.params.id
+})
+
+// 45e8eb06f0028c4fe093d3a0dfec846b2ba750bb63ca7dbc0bce0aa9972fe0c0
+// 45e8eb06f0028c4fe093d3a0dfec846b2ba750bb63ca7dbc0bce0aa9972fe0c0
