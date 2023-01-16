@@ -14,7 +14,7 @@ exports.addNotes = CatchError(async (req, res, next) => {
     if (!consumer) next(new AppError(`Not found consumer by id: ${consumerId}`))
 
     const nutritionist = consumer.nutritionists[0]
-    if (!nutritionist || nutritionist.consumer_trainers.status !== 1) {
+    if (!nutritionist || nutritionist.consumer_trainers.status !== 2) {
         throw new Error(`You are not assigned with consumer by id: ${consumerId}`)
     }
     await Notes.create({ note, consumerId, nutritionistId: trainer.id })
