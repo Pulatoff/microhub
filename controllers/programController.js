@@ -9,6 +9,7 @@ const Meal = require('../models/programTimeModel')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const AppError = require('../utils/AppError')
 const response = require('../utils/response')
+const Swap = require('../models/swaperModel')
 
 function DayToNumber(day) {
     const dayLower = day.toLowerCase()
@@ -86,19 +87,32 @@ exports.addProgram = CatchError(async (req, res, next) => {
     const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
     if (meals) {
         for (let i = 0; i < meals.length; i++) {
-            const { week, day, fat, cals, carbs, protein, food_items } = meals[i]
-            macros.cals += cals
-            macros.carbs += carbs
-            macros.protein += protein
-            macros.fat += fat
+            const { week, day, food_items } = meals[i]
+
             const numberDay = DayToNumber(day)
-            const meal = await Meal.create({ week, day: numberDay, programId: program.id, fat, cals, protein, carbs })
+            const meal = await Meal.create({ week, day: numberDay, programId: program.id })
             if (food_items) {
                 for (let k = 0; k < food_items.length; k++) {
-                    const { food_id, serving, quantity, course, title, image_url, recipeId } = food_items[k]
+                    const {
+                        food_id,
+                        serving,
+                        quantity,
+                        course,
+                        title,
+                        image_url,
+                        recipeId,
+                        fat,
+                        cals,
+                        carbs,
+                        protein,
+                    } = food_items[k]
                     const mealId = meal.id
                     await Food.create({ food_id, serving, quantity, course, image_url, mealId, title, recipeId })
                     total_recipes++
+                    macros.cals += cals
+                    macros.carbs += carbs
+                    macros.protein += protein
+                    macros.fat += fat
                 }
             }
         }
@@ -129,7 +143,7 @@ exports.getProgram = CatchError(async (req, res, next) => {
 
     const program = await Program.findByPk(id, {
         include: [
-            { model: ProgramTime, include: [{ model: Meal }] },
+            { model: Meal, include: [{ model: Food, include: [{ model: Swap }] }] },
             { model: Consumer, include: [{ model: User }] },
         ],
         where: { nutritionistId: trainer.id },

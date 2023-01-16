@@ -9,10 +9,6 @@ const Meal = sequelize.define(
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         day: { type: DataTypes.INTEGER, defaultValue: 0 },
         week: { type: DataTypes.INTEGER, defaultValue: 1 },
-        cals: { type: DataTypes.INTEGER, defaultValue: 0 },
-        carbs: { type: DataTypes.INTEGER, defaultValue: 0 },
-        fat: { type: DataTypes.INTEGER, defaultValue: 0 },
-        protein: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
     {
         timestamps: true,

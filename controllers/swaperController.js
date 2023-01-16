@@ -9,7 +9,7 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const { ingredientId, swapIngredientId, foodItemId } = req.body
     const userId = req.user.id
     const consumer = await Consumer.findOne({ userId })
-    await Swaper.create({ foodId, ingredientId, swapIngredientId, foodItemId, consumerId: consumer.id })
+    await Swaper.create({ ingredientId, swapIngredientId, foodItemId, consumerId: consumer.id })
     response(201, 'You are successfully swap ingredient', true, '', res)
 })
 
