@@ -128,3 +128,19 @@ exports.getSendedQuestionnaire = CatchError(async (req, res, next) => {
 
     response(200, 'you successfully get consumers', true, { consumers }, res)
 })
+
+exports.approveConsumer = CatchError(async (req, res, next) => {
+    const { consumerId, status } = req.body
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const consumerTrainer = await ConsumerTrainer.findOne({
+        where: { nutritionistId: trainer.id, consumerId, status: 1 },
+    })
+    if (!consumerTrainer) {
+        next(new AppError('This consumer dont send questionnaire', 404))
+    } else {
+        consumerTrainer.status = 2
+        await consumerTrainer.save()
+        response(200, 'You are successfully approve consumer', true, '', res)
+    }
+})
