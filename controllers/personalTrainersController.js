@@ -23,7 +23,7 @@ exports.getConsumers = CatchError(async (req, res) => {
     const trainer = await Trainer.findOne({ where: { userId }, include: [{ model: Consumer, include: User }] })
     const consumers = []
     trainer.consumers = trainer.consumers?.map((e) => {
-        if (e.consumer_trainers.status === 1) {
+        if (e.consumer_trainers.status === 2) {
             consumers.push(e)
         }
     })
@@ -53,7 +53,7 @@ exports.getAcceptConsumer = CatchError(async (req, res) => {
 
     if (consumers) {
         consumers = consumers.map((val) => {
-            if (val.nutritionists[0].consumer_trainers.status === 0) {
+            if (val.nutritionists[0].consumer_trainers.status === 1) {
                 val.nutritionists = {}
                 return val
             }
@@ -69,12 +69,12 @@ exports.acceptConsumer = CatchError(async (req, res) => {
     const { consumerId } = req.body
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
     const consumerTrainer = await ConsumerTrainer.findOne({
-        where: { consumerId, nutritionistId: trainer.id, status: 0 },
+        where: { consumerId, nutritionistId: trainer.id, status: 1 },
     })
     if (!consumerTrainer) {
         next('request went wrong', 404)
     }
-    consumerTrainer.status = 1
+    consumerTrainer.status = 2
     await consumerTrainer.save()
     response(206, 'consumer accepted', true, '', res)
 })
