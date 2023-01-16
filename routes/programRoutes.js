@@ -3,7 +3,7 @@ const controller = require('../controllers/programController')
 const auth = require('../controllers/authController')
 const bindController = require('../controllers/programConsumerController')
 const course = require('../controllers/courseController')
-
+const swap = require('../controllers/swaperController')
 router
     .route('/')
     .post(auth.protect, auth.role(['admin', 'nutritionist']), controller.addProgram)
@@ -14,6 +14,8 @@ router.route('/recipes').post(auth.protect, course.addCourse)
 router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']), bindController.bindConumer)
 
 router.route('/search').get(auth.protect, auth.role(['nutritionist']), controller.searchPrograms)
+
+router.route('/swaps').get(swap.searchSwapIngredints)
 
 router
     .route('/:id')
