@@ -2,12 +2,14 @@ const Swaper = require('../models/swaperModel')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const { SPOONACULAR_API_KEY, SPOONACULAR_API_URL } = require('../configs/URL')
+const Consumer = require('../models/consumerModel')
 const axios = require('axios')
 
 exports.addSwapIngredient = CatchError(async (req, res, next) => {
-    const { food_id, ingredient_id, swap_ingredient_id } = req.body
-    const { diary_id } = req.params
-    await Swaper.create({ food_id, ingredient_id, swap_ingredient_id })
+    const { ingredientId, swapIngredientId, foodItemId } = req.body
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ userId })
+    await Swaper.create({ foodId, ingredientId, swapIngredientId, foodItemId, consumerId: consumer.id })
     response(201, 'You are successfully swap ingredient', true, '', res)
 })
 
@@ -17,7 +19,6 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         `${SPOONACULAR_API_URL}/food/ingredients/search?metaInformation=true&offset=${0}&number=${1}&query=${search}&apiKey=${SPOONACULAR_API_KEY}`
     )
 
-    // if (ingredient) throw new Error('not found ingredient')
     const ingredient = await axios(
         `${SPOONACULAR_API_URL}/food/ingredients/${ingredients.data.results[0].id}/information?amount=1&unit=${ingredients.data.results[0].possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
     )
@@ -34,14 +35,12 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         } else if (val.name.toLowerCase() === 'protein') {
             nutrients.protein = val.amount
         } else if (val.name.toLowerCase() === 'carbohydrates') {
-            console.log()
             nutrients.carbs = val.amount
         } else if (val.name.toLowerCase() === 'fat') {
             nutrients.fat = val.amount
         }
     })
 
-    console.log(nutrients)
     const swap_ingredients = await axios.get(
         `${SPOONACULAR_API_URL}/recipes/findByNutrients?&minCalories=${
             nutrients.cals - 0.9 * nutrients.cals

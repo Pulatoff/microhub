@@ -15,7 +15,10 @@ router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']
 
 router.route('/search').get(auth.protect, auth.role(['nutritionist']), controller.searchPrograms)
 
-router.route('/swaps').get(swap.searchSwapIngredints)
+router
+    .route('/swaps')
+    .get(swap.searchSwapIngredints)
+    .post(auth.protect, auth.role(['consumer']), swap.addSwapIngredient)
 
 router
     .route('/:id')
