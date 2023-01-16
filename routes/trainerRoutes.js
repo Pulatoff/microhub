@@ -7,6 +7,8 @@ const questionaire = require('../controllers/questionaireController')
 const upload = require('../controllers/uploadContoller')
 const notes = require('../controllers/notesController')
 
+router.route('/consumers/aprove').get(auth.protect, auth.role(['nutritionist']), consumerTrainer.getSendedQuestionnaire)
+
 // routes
 router.route('/requests').get(auth.protect, controller.getAcceptConsumer)
 router.route('/consumers').get(auth.protect, controller.getConsumers)

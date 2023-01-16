@@ -11,6 +11,8 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const checkInvate = require('../utils/checkInvate')
 const AppError = require('../utils/AppError')
+const Questionnaire = require('../models/questionnaireModel')
+const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 
 const resConsumerType = (consumer) => {
     return {
@@ -165,7 +167,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 
     const nutritionists = consumer.nutritionists.map((val) => {
-        if (val.consumer_trainers.status === 1) {
+        if (val.consumer_trainers.status === 2) {
             return {
                 id: val.id,
                 first_name: val.user.first_name,
@@ -190,8 +192,9 @@ exports.protectConsumer = CatchError(async (req, res, next) => {
 })
 
 exports.acceptNutritioinst = CatchError(async (req, res, next) => {
-    const { nutritionistId, status } = req.body
-
+    const { nutritionistId, status, questionnaire } = req.body
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userId } })
     const nutritionist = await Trainer.findByPk(nutritionistId)
     if (!nutritionist) next(new AppError('This nutritionist is not exist!', 404))
 
@@ -202,7 +205,38 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     if (!updateModel) next(new AppError('this requested nutritionist not found', 404))
     updateModel.status = status
     await updateModel.save()
+
     if (status === 1) {
+        const questionnair = await Questionnaire.create({
+            email: questionnaire.email,
+            lowest_height: questionnaire.lowest_height,
+            lowest_weight: questionnaire.lowest_weight,
+            home_phone_number: questionnaire.home_phone_number,
+            work_phone_number: questionnaire.work_phone_number,
+            date_of_birth: questionnaire.date_of_birth,
+            weight: questionnaire.weight,
+            height: questionnaire.height,
+            name: questionnaire.name,
+            date: questionnaire.date,
+            consumerId: consumer.id,
+            nutritionistId,
+        })
+        const questions = questionnaire.questions
+        for (let i = 0; i < questions.length; i++) {
+            if (questions[i].question && questions[i].answer) {
+                await QuestionnaireQuestion.create({
+                    questionnairyId: questionnair.id,
+                    question: questions[i].question,
+                    answer: questions[i].answer,
+                    additional_question: questions[i].additional_question,
+                    additional_answer: questions[i].additional_answer,
+                    details: questions[i].details,
+                })
+            } else {
+                next(new AppError('You must enter question and Answer', 404))
+            }
+        }
+
         response(206, `Client accept Nutritionist by id ${nutritionistId}`, true, '', res)
     } else {
         response(206, `Client reject Nutritionist by id ${nutritionistId}`, true, '', res)
