@@ -24,8 +24,24 @@ function UserType(user) {
         role: user.role,
         email: user.email,
         photo: user.photo,
-        consumer: ConsumerType(user.consumer),
+        consumer: user.consumer ? ConsumerType(user.consumer) : undefined,
+        program: user.consumer.programs[0] ? ProgramType(user.consumer.programs[0]) : undefined,
         createdAt: user.createdAt,
+    }
+}
+
+function ProgramType(program) {
+    return {
+        id: program.id,
+        name: program.name,
+        preference: program.preference,
+        cals: program.cals,
+        protein: program.protein,
+        carbs: program.carbs,
+        fat: program.fat,
+        weeks: program.weeks,
+        total_recipes: program.total_recipes,
+        meals: program.meals,
     }
 }
 

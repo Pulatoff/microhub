@@ -41,7 +41,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
             nutrients.fat = val.percentOfDailyNeeds
         }
     })
-    console.log(nutrients)
+
     const swap_ingredients = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/search?minProteinPercent=${
             nutrients.protein - 0.1 * nutrients.protein
