@@ -29,22 +29,23 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         carbs: 0,
         fat: 0,
     }
+
     spoon_nutrients.map((val) => {
         if (val.name.toLowerCase() === 'calories') {
-            nutrients.cals = val.amount
+            nutrients.cals = val.percentOfDailyNeeds
         } else if (val.name.toLowerCase() === 'protein') {
-            nutrients.protein = val.amount
+            nutrients.protein = val.percentOfDailyNeeds
         } else if (val.name.toLowerCase() === 'carbohydrates') {
-            nutrients.carbs = val.amount
+            nutrients.carbs = val.percentOfDailyNeeds
         } else if (val.name.toLowerCase() === 'fat') {
-            nutrients.fat = val.amount
+            nutrients.fat = val.percentOfDailyNeeds
         }
     })
-
+    console.log(nutrients)
     const swap_ingredients = await axios.get(
-        `${SPOONACULAR_API_URL}/recipes/findByNutrients?&minCalories=${
-            nutrients.cals - 0.9 * nutrients.cals
-        }&maxCalories=${nutrients.cals + 0.9 * nutrients.cals}&apiKey=${SPOONACULAR_API_KEY}`
+        `${SPOONACULAR_API_URL}/food/ingredients/search?minProteinPercent=${
+            nutrients.protein - 0.1 * nutrients.protein
+        }&query=${search}&apiKey=${SPOONACULAR_API_KEY}`
     )
 
     response(200, 'You are successfully get ingredient', true, { ingredient: swap_ingredients.data }, res)

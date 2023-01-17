@@ -7,14 +7,50 @@ const Personal_Trainer = require('../models/personalTrainerModel')
 const Questionaire = require('../models/questionnaireModel')
 const Questions = require('../models/questionnariesQuestionModel')
 const Program = require('../models/programModel')
-const Meal = require('../models/mealModel')
-const ProgramTime = require('../models/programTimeModel')
+const Food = require('../models/mealModel')
+const Meal = require('../models/programTimeModel')
+const Swap = require('../models/swaperModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const saveCookie = require('../utils/sendCookieJWT')
 const createJwt = require('../utils/createJWT')
 const response = require('../utils/response')
+
+function UserType(user) {
+    return {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+        email: user.email,
+        photo: user.photo,
+        consumer: ConsumerType(user.consumer),
+        createdAt: user.createdAt,
+    }
+}
+
+function ConsumerType(consumer) {
+    return {
+        id: consumer.id,
+        weight: consumer.weight,
+        height: consumer.height,
+        wrist: consumer.wrist,
+        forearm: consumer.forearm,
+        hip: consumer.hip,
+        gender: consumer.gender,
+        activity_level: consumer.activity_level,
+        preferences: consumer.preferences,
+        least_favorite_foods: consumer.least_favorite_foods,
+        favorite_foods: consumer.favorite_foods,
+        allergies: consumer.allergies,
+        body_fat: consumer.body_fat,
+        tdee: consumer.tdee,
+        body_frame: consumer.body_frame,
+        healthy_weight: consumer.healthy_weight,
+        bmi: consumer.bmi,
+        daily_targets: consumer.daily_targets,
+    }
+}
 
 exports.signupCLient = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
@@ -58,6 +94,7 @@ exports.signin = CatchError(async (req, res, next) => {
     const compare = await bcrypt.compare(password, oldUser.password)
     if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
     let user
+
     if (oldUser.role === 'consumer') {
         const newUser = await User.findByPk(oldUser.id, {
             include: [
@@ -65,19 +102,27 @@ exports.signin = CatchError(async (req, res, next) => {
                     model: Consumer,
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
-                        { model: Questionaire, include: [{ model: Questions }] },
                         {
                             model: Program,
-                            include: [{ model: ProgramTime, include: [{ model: Meal }] }],
+                            include: [
+                                {
+                                    model: Meal,
+                                    include: [
+                                        {
+                                            model: Food,
+                                            include: [{ model: Swap, where: { consumerId: oldUser.consumer.id } }],
+                                        },
+                                    ],
+                                },
+                            ],
                         },
                     ],
                 },
             ],
-            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+            attributes: { exclude: ['password', 'isActive'] },
         })
         const requested_nutritionists = []
 
-        // if (newUser.consumer.nutritionists) {
         newUser?.consumer?.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
             if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
@@ -95,20 +140,7 @@ exports.signin = CatchError(async (req, res, next) => {
             }
         })
 
-        user = {
-            id: newUser.id,
-            first_name: newUser.first_name,
-            last_name: newUser.last_name,
-            email: newUser.email,
-            photo: newUser.photo,
-            role: newUser.role,
-            createdAt: newUser.createdAt,
-            consumer: newUser.consumer,
-            program: newUser.consumer.programs[0] ? newUser.consumer.programs[0] : {},
-        }
-        if (newUser.consumer.questionnairy) {
-            user.questionnaire = newUser.consumer.questionnairy
-        }
+        user = UserType(newUser)
         if (requested_nutritionists.length !== 0) {
             user.requested_nutritionists = requested_nutritionists
         }
@@ -173,7 +205,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
                         { model: Questionaire, include: [{ model: Questions }] },
-                        { model: Program, include: [{ model: ProgramTime, include: [{ model: Meal }] }] },
+                        { model: Program, include: [{ model: Meal, include: [{ model: Food }] }] },
                     ],
                 },
             ],
