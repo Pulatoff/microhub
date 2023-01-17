@@ -5,6 +5,7 @@ const User = require('../models/userModel')
 const Program = require('../models/programModel')
 const Meal = require('../models/mealModel')
 const ProgramTime = require('../models/programTimeModel')
+const Swap = require('../models/swaperModel')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -30,7 +31,9 @@ const resConsumerType = (consumer) => {
         user: consumer.user,
     }
 }
-
+/* # POST /api/v1/consumers
+ * role: consumer
+ */
 exports.addConsumer = CatchError(async (req, res, next) => {
     const {
         weight,
@@ -74,11 +77,10 @@ exports.addConsumer = CatchError(async (req, res, next) => {
     response(201, 'You are add consumer details successfully', true, { consumer }, res)
 })
 
+/* # GET /api/v1/consumers
+ * role: admin
+ */
 exports.getConsumers = CatchError(async (req, res, next) => {
-    const userId = req.user.id
-    const trainer = await Trainer.findOne({ where: { userId } })
-    if (!trainer) next(new AppError('Nutritionist not exist', 404))
-
     const consumers = await Consumer.findAll({
         include: [
             {
@@ -120,6 +122,9 @@ exports.getConsumers = CatchError(async (req, res, next) => {
     response(200, 'Successfuly geting consumer', true, { consumers: newConsumers }, res)
 })
 
+/* #PATCH /api/v1/consumers/:id
+ * role: consumer
+ */
 exports.updateConsumer = CatchError(async (req, res, next) => {
     const userId = req.user.id
 
@@ -135,11 +140,14 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     consumer.preferences = preferences || consumer.preferences
     consumer.gender = gender || consumer.gender
     consumer.activity_level = activity_level || consumer.activity_level
-    await consumer.save({ validate: true })
 
+    await consumer.save({ validate: true })
     response(203, 'You are successfully update data', true, { consumer }, res)
 })
 
+/* # GET /api/v1/consumers/trainers/request
+ * role: consumer
+ */
 exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
@@ -162,6 +170,9 @@ exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     response(200, 'Successfully geting own nutritionists', true, { nutritionists }, res)
 })
 
+/*
+ *
+ */
 exports.getTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
@@ -184,12 +195,17 @@ exports.getTrainers = CatchError(async (req, res, next) => {
     response(200, 'Successfully geting own nutritionists', true, { nutritionists }, res)
 })
 
+// middleware
 exports.protectConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId: req.user.id } })
     if (!consumer) next(new AppError('You need enter some options for doing this work!', 404))
     req.consumer = consumer
     next()
 })
+
+/* # POST /api/v1/consumers/accept
+ * role: consumer
+ */
 
 exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     const { nutritionistId, status, questionnaire } = req.body

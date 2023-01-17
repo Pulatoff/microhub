@@ -21,12 +21,14 @@ exports.updateTrainer = async (req, res, next) => {
 exports.getConsumers = CatchError(async (req, res) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId }, include: [{ model: Consumer, include: User }] })
+
     const consumers = []
     trainer.consumers = trainer.consumers?.map((e) => {
         if (e.consumer_trainers.status === 2) {
             consumers.push(e)
         }
     })
+
     response(200, 'consumers already geted', true, { consumers }, res)
 })
 
