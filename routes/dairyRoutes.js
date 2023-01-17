@@ -12,6 +12,4 @@ router
     .get(auth.protect, auth.role(['consumer']), controller.getOneDairy)
     .patch(auth.protect, auth.role(['consumer']), controller.updateDairy)
 
-router.route('/:diary_id/ingredient').post(auth.protect, swap.addSwapIngredient)
-
 module.exports = router

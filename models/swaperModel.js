@@ -1,15 +1,15 @@
 const sequelize = require('../configs/db')
 const { DataTypes } = require('sequelize')
 
-const Dairy = require('./dairyModel')
+const Food = require('./mealModel')
+const Consumer = require('./consumerModel')
 
 const Swaper = sequelize.define(
     'swapers',
     {
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        food_id: { type: DataTypes.INTEGER, allowNull: false },
-        ingredient_id: { type: DataTypes.INTEGER, allowNull: false },
-        swap_ingredient_id: { type: DataTypes.INTEGER, allowNull: false },
+        ingredientId: { type: DataTypes.INTEGER, allowNull: false },
+        swapIngredientId: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
         timestamps: true,
@@ -18,8 +18,11 @@ const Swaper = sequelize.define(
     }
 )
 
-Dairy.hasMany(Swaper)
-Swaper.belongsTo(Dairy)
+Food.hasMany(Swaper)
+Swaper.belongsTo(Food)
+
+Consumer.hasMany(Swaper)
+Swaper.belongsTo(Consumer)
 
 sequelize.getQueryInterface
 

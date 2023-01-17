@@ -1,22 +1,25 @@
 const sequelize = require('../configs/db')
 const { DataTypes } = require('sequelize')
+const Recipe = require('../models/recipeModel')
 
-const Meals = sequelize.define(
-    'meals',
+const Food = sequelize.define(
+    'food_items',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         course: { type: DataTypes.ENUM(['breakfast', 'dinner', 'lunch', 'snacks']), allowNull: false }, // enums breakfast,  lunch, dinner, snacks
-        quantity: { type: DataTypes.INTEGER, allowNull: false },
+        quantity: { type: DataTypes.INTEGER, defaultValue: 1 },
         serving: { type: DataTypes.STRING, allowNull: false },
-        food_id: { type: DataTypes.STRING, allowNull: false },
-        carbs: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        fats: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        cals: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         title: { type: DataTypes.STRING, allowNull: false },
-        protein: { type: DataTypes.INTEGER, allowNull: false },
-        image_url: { type: DataTypes.STRING },
+        image_url: { type: DataTypes.TEXT },
+        fat: { type: DataTypes.INTEGER },
+        cals: { type: DataTypes.INTEGER },
+        carbs: { type: DataTypes.INTEGER },
+        protein: { type: DataTypes.INTEGER },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
 
-module.exports = Meals
+Recipe.hasMany(Food)
+Food.belongsTo(Recipe)
+
+module.exports = Food

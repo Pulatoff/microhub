@@ -1,63 +1,128 @@
 // models
 const Program = require('../models/programModel')
 const Trainer = require('../models/personalTrainerModel')
-const Meal = require('../models/mealModel')
+const Food = require('../models/mealModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
-const ProgramTime = require('../models/programTimeModel')
+const Meal = require('../models/programTimeModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const AppError = require('../utils/AppError')
 const response = require('../utils/response')
+const Swap = require('../models/swaperModel')
+
+function DayToNumber(day) {
+    const dayLower = day.toLowerCase()
+    let dayNumber = 0
+    switch (dayLower) {
+        case 'monday':
+            dayNumber = 0
+            break
+        case 'tuesday':
+            dayNumber = 1
+            break
+        case 'wednesday':
+            dayNumber = 2
+            break
+        case 'thursday':
+            dayNumber = 3
+            break
+        case 'friday':
+            dayNumber: 4
+            break
+        case 'saturday':
+            dayNumber = 5
+            break
+        case 'sunday':
+            dayNumber = 6
+            break
+        default:
+            dayNumber = 0
+            break
+    }
+    return dayNumber
+}
+
+// const meal_plan = {
+//
+//     # programs table
+//     name: "First peogram",
+//     description: "Cool program submision",
+//     total_recipes: 6, # automaticly counted by backend
+//     weeks: 4, # automaticly counted by backend
+//     preference: "halal",
+//     meals: [
+//         # meals table
+//         {
+//             week: 1,
+//             day: 'Monday',
+//             # food_iems table
+//             food_items: [
+//                 {
+//                     recipe_id: 1,
+//                     course: 'breakfast',
+//                     title: '',
+//                     quantity: 12,
+//                     serving: '10g',
+//                 },
+//             ],
+//         },
+//     ],
+// }
 
 exports.addProgram = CatchError(async (req, res, next) => {
-    let total_macros = {
+    const userId = req.user.id
+    let macros = {
         cals: 0,
-        fats: 0,
         carbs: 0,
         protein: 0,
-        total_recipes: 0,
+        fat: 0,
     }
+    let total_recipes = 0
 
-    const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
+    if (!trainer) throw new Error('Nutritionist is not exist')
     const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
     if (meals) {
         for (let i = 0; i < meals.length; i++) {
             const { week, day, food_items } = meals[i]
-            const mealFood = await ProgramTime.create({ week, day, programId: program.id })
-            for (let k = 0; k < food_items.length; k++) {
-                const { food_id, serving, quantity, course, cals, protein, fats, carbs, title, image_url } =
-                    food_items[k]
-                await Meal.create({
-                    food_id,
-                    serving,
-                    quantity,
-                    course,
-                    image_url,
-                    mealplanFoodId: mealFood.id,
-                    protein,
-                    title,
-                    cals,
-                    carbs,
-                    fats,
-                })
-                total_macros.protein += protein
-                total_macros.cals += cals
-                total_macros.fats += fats
-                total_macros.carbs += carbs
-                total_macros.total_recipes++
+
+            const numberDay = DayToNumber(day)
+            const meal = await Meal.create({ week, day: numberDay, programId: program.id })
+            if (food_items) {
+                for (let k = 0; k < food_items.length; k++) {
+                    const {
+                        food_id,
+                        serving,
+                        quantity,
+                        course,
+                        title,
+                        image_url,
+                        recipeId,
+                        fat,
+                        cals,
+                        carbs,
+                        protein,
+                    } = food_items[k]
+                    const mealId = meal.id
+                    await Food.create({ food_id, serving, quantity, course, image_url, mealId, title, recipeId })
+                    total_recipes++
+                    macros.cals += cals
+                    macros.carbs += carbs
+                    macros.protein += protein
+                    macros.fat += fat
+                }
             }
         }
     }
 
-    program.cals = total_macros.cals
-    program.protein = total_macros.protein
-    program.carbs = total_macros.carbs
-    program.fats = total_macros.fats
-    program.total_recipes = total_macros.total_recipes
+    program.cals = macros.cals
+    program.carbs = macros.carbs
+    program.protein = macros.protein
+    program.fat = macros.fat
+    program.total_recipes = total_recipes
     await program.save()
     response(201, 'You are successfully added to program', true, '', res)
 })
@@ -78,7 +143,7 @@ exports.getProgram = CatchError(async (req, res, next) => {
 
     const program = await Program.findByPk(id, {
         include: [
-            { model: ProgramTime, include: [{ model: Meal }] },
+            { model: Meal, include: [{ model: Food, include: [{ model: Swap }] }] },
             { model: Consumer, include: [{ model: User }] },
         ],
         where: { nutritionistId: trainer.id },
@@ -151,6 +216,7 @@ exports.addMealToProgram = CatchError(async (req, res, next) => {
         total_macros.fats += fats
         total_macros.carbs += carbs
     }
+
     program.cals = total_macros.cals
     program.protein = total_macros.protein
     program.carbs = total_macros.carbs

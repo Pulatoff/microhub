@@ -5,11 +5,14 @@ const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
 const Program = require('../models/programModel')
+const Questionnaire = require('../models/questionnaireModel')
+const Swap = require('../models/swaperModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const countClientStats = require('../utils/clientStats')
+const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -88,19 +91,65 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
     const { id } = req.params
     const trainer = await Trainer.findOne({ where: { userId: req.user.id } })
     const checkBind = await ConsumerTrainer.findOne({
-        where: { consumerId: id, nutritionistId: trainer.id, status: 1 },
+        where: { consumerId: id, nutritionistId: trainer.id, status: 2 },
     })
     if (!checkBind) next(new AppError('You are not assign this consumer', 404))
     const consumer = await Consumer.findOne({
         where: { id },
         include: [
-            {
-                model: User,
-                attributes: ['first_name', 'last_name', 'email', 'role', 'createdAt'],
-            },
+            { model: User, attributes: { exclude: ['password', 'isActive'] } },
             { model: Program, where: { nutritionistId: trainer.id } },
         ],
     })
 
     response(200, 'You are successfully got consumer', true, { consumer }, res)
+})
+
+/*  # GET /api/v1/trainers/consumers/approve
+ *  role: nutritionist
+ */
+exports.getSendedQuestionnaire = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId }, include: [{ model: Consumer }] })
+    const consumers = []
+    for (let i = 0; i < trainer.consumers.length; i++) {
+        const consumer = trainer.consumers[i]
+        if (consumer.consumer_trainers.status === 1) {
+            const questionaire = await Questionnaire.findOne({
+                where: { nutritionistId: trainer.id, consumerId: consumer.id },
+                include: QuestionnaireQuestion,
+            })
+
+            const obj = {
+                id: consumer.id,
+                favorite_foods: consumer.favorite_foods,
+                least_favorite_foods: consumer.least_favorite_foods,
+                allergies: consumer.allergies,
+            }
+
+            consumers.push(obj)
+        }
+    }
+
+    response(200, 'you successfully get consumers', true, { consumers }, res)
+})
+
+exports.approveConsumer = CatchError(async (req, res, next) => {
+    const { consumerId, status } = req.body
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const consumerTrainer = await ConsumerTrainer.findOne({
+        where: { nutritionistId: trainer.id, consumerId, status: 1 },
+    })
+    if (!consumerTrainer) {
+        next(new AppError('This consumer dont send questionnaire', 404))
+    } else {
+        consumerTrainer.status = status
+        await consumerTrainer.save()
+        if (status === 2) {
+            response(200, 'You are successfully approved consumer', true, '', res)
+        } else if (status === -1) {
+            response(200, 'You are successfully rejected consumer', true, '', res)
+        }
+    }
 })

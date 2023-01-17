@@ -4,5 +4,3 @@ module.exports = {
     SPOONACULAR_API_HASH: process.env.SPOONACULAR_API_HASH,
     SPOONACULAR_API_USERNAME: process.env.SPOONACULAR_API_USERNAME,
 }
-
-// Search individual food items

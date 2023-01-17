@@ -7,19 +7,14 @@ const response = require('../utils/response')
 const AppError = require('../utils/AppError')
 // models
 const Trainer = require('../models/personalTrainerModel')
-const Recipes = require('../models/recipeModel')
+const Recipe = require('../models/recipeModel')
 
-exports.ssearchRecipes = CatchError(async (req, res, next) => {
-    let { search, number } = req.query
+exports.searchRecipes = CatchError(async (req, res, next) => {
+    let { search, number, offset } = req.query
     number = number || 1
+    offset = offset || 0
     const results = await axios.get(
-        SPOONACULAR_API_URL +
-            '/recipes/complexSearch?apiKey=' +
-            SPOONACULAR_API_KEY +
-            '&query=' +
-            search +
-            '&addRecipeNutrition=true&number=' +
-            number
+        `${SPOONACULAR_API_URL}/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&query=${search}&addRecipeNutrition=true&number=${number}&offset=${offset}`
     )
     if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
     response(200, 'You successfuly recieved recipes', true, results?.data, res)
@@ -27,7 +22,12 @@ exports.ssearchRecipes = CatchError(async (req, res, next) => {
 
 exports.getOneRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    const recipe = await Recipes.findByPk(id)
+    const userId = req.user.id
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const recipe = await Recipe.findByPk(id, {
+        attributes: { exclude: ['nutritionistId'] },
+        where: { nutritionistId: trainer.id },
+    })
     response(200, 'You get one recipe', true, { recipe }, res)
 })
 
@@ -35,11 +35,7 @@ exports.subsituteIngredients = CatchError(async (req, res, next) => {
     // igredient id
     const { ingredientName } = req.query
     const responseData = await axios.get(
-        SPOONACULAR_API_URL +
-            '/food/ingredients/substitutes/?apiKey=' +
-            SPOONACULAR_API_KEY +
-            '&ingredientName=' +
-            ingredientName
+        `${SPOONACULAR_API_URL}/food/ingredients/substitutes/?apiKey=${SPOONACULAR_API_KEY}&ingredientName=${ingredientName}`
     )
 
     const data = responseData.data
@@ -52,50 +48,100 @@ exports.subsituteIngredients = CatchError(async (req, res, next) => {
 exports.getIngredientInfo = CatchError(async (req, res, next) => {
     // ingredient id
     const { id } = req.params
-    const { grams } = req.query
+    let { amount, unit } = req.query
+    amount = amount || 1
+    unit = unit || 'g'
     const responseData = await axios.get(
-        SPOONACULAR_API_URL +
-            '/food/ingredients/' +
-            id +
-            '/information/?apiKey=' +
-            SPOONACULAR_API_KEY +
-            '&amount=' +
-            grams +
-            '&unit=grams'
+        `${SPOONACULAR_API_URL}/food/ingredients/${id}/information/?apiKey=${SPOONACULAR_API_KEY}&amount=${amount}&unit=${unit}`
     )
+
     const data = responseData.data
-    response(200, 'successfully geted inforomation' + data.original, true, { data }, res)
+    const nutrients = data.nutrition.nutrients.filter((val) => {
+        if (
+            val.name.toLowerCase() === 'fat' ||
+            val.name.toLowerCase() === 'protein' ||
+            val.name.toLowerCase() === 'calories' ||
+            val.name.toLowerCase() === 'carbohydrates'
+        ) {
+            return val
+        }
+    })
+    const ingredient = {
+        id: data.id,
+        name: data.name,
+        amount: data.amount,
+        unit: data.unit,
+        possibleUnits: data.possibleUnits,
+        image: data.image,
+        nutrients,
+    }
+    response(200, 'successfully geted inforomation' + data.original, true, { ingredient }, res)
 })
 
 exports.searchIngredients = CatchError(async (req, res, next) => {
-    const { query } = req.query
-    // /food/ingredients/${food.id}/information?amount=1&apiKey=${process.env.API_KEY}
-    const data = await axios.get(
-        SPOONACULAR_API_URL +
-            '/food/ingredients/search?metaInformation=true&offset=0&number=10&query=' +
-            query +
-            '&apiKey=' +
-            SPOONACULAR_API_KEY
-    )
+    let { query, number, offset, unit } = req.query
+    offset = offset || 0
+    number = number || 1
+    unit = unit || 'oz'
 
-    response(200, 'You are successfully got data', true, { ingridients: data?.data }, res)
+    const ingredients = []
+
+    const data = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/search?metaInformation=true&offset=${offset}&number=${number}&query=${query}&apiKey=${SPOONACULAR_API_KEY}`
+    )
+    for (let i = 0; i < data?.data.results.length; i++) {
+        const ingredient = data.data.results[i]
+        const resp = await axios.get(
+            `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=1&unit=${ingredient.possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
+        )
+        const nutrients = []
+        resp.data.nutrition.nutrients.map((val) => {
+            if (
+                val.name.toLowerCase() === 'fat' ||
+                val.name.toLowerCase() === 'protein' ||
+                val.name.toLowerCase() === 'calories' ||
+                val.name.toLowerCase() === 'carbohydrates'
+            ) {
+                nutrients.push(val)
+            }
+        })
+        ingredients.push({
+            id: resp.data.id,
+            name: resp.data.name,
+            amount: resp.data.amount,
+            unit: resp.data.unit,
+            possibleUnits: resp.data.possibleUnits,
+            image: resp.data.image,
+            nutrients,
+        })
+    }
+    response(200, 'You are successfully got data', true, { ingredients }, res)
 })
 
 exports.addRecipe = CatchError(async (req, res, next) => {
     const userId = req.user.id
+    let ingredients = req.body.ingredients
+
+    ingredients = ingredients.map((val) => {
+        const { id, name, amount, unit, nutrients } = val
+        if (!id || !name || !amount || !unit || !nutrients)
+            next(new AppError(`You need enter all field ingredient`, 404))
+        return { id, name, amount, unit, nutrients }
+    })
 
     const trainer = await Trainer.findOne({ where: { userId } })
-    await Recipes.create({
-        ...req.body,
-        nutritionistId: trainer.id,
-    })
+    await Recipe.create({ ...req.body, nutritionistId: trainer.id, ingredients })
+
     response(200, 'You are successfully created recipe', true, '', res)
 })
 
 exports.getAllRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId }, attributes: { exclude: ['nutritionistId'] } })
-    const recipes = await Recipes.findAll({ where: { nutritionistId: trainer.id } })
+    const recipes = await Recipe.findAll({
+        where: { nutritionistId: trainer.id },
+        attributes: { exclude: ['nutritionistId'] },
+    })
     response(200, 'You are successfully get recipes', true, { recipes }, res)
 })
 
@@ -106,7 +152,7 @@ exports.updateRecipes = CatchError(async (req, res, next) => {
         req.body
 
     const trainer = await Trainer.findOne({ where: { userId } })
-    const recipe = await Recipes.findByPk(id, { where: { nutritionistId: trainer.id } })
+    const recipe = await Recipe.findByPk(id, { where: { nutritionistId: trainer.id } })
     recipe.name = name || recipe.name
     recipe.fat = fat || recipe.fat
     recipe.calories = calories || recipe.calories
@@ -115,33 +161,14 @@ exports.updateRecipes = CatchError(async (req, res, next) => {
     recipe.protein = protein || recipe.protein
     recipe.fatPercentage = fatPercentage || recipe.fatPercentage
     recipe.proteinPercentage = proteinPercentage || recipe.proteinPercentage
+
     await recipe.save()
+
     response(200, `You are successfully update recipe by id ${id}`, true, '', res)
 })
 
 exports.deleteRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    await Recipes.destroy(id)
+    await Recipe.destroy(id)
     response(200, 'You are successfully delete user', true, '', res)
 })
-
-// 1 cup = 1 cup tomato sauce + 1 tsp vinegar + 1 tbsp sugar
-// 1 cup = 1 cup margarine
-// 1 cup = 1 tbsp lemon juice or vinegar + enough milk to make 1 cup
-// 1 cup = 7/8 cup shortening and 1/2 tsp salt
-
-// function ingredientFunc(array) {
-//     const subIngredients = []
-//     console.log(array)
-//     for (let i = 0; i < array.length; i++) {
-//         console.log(array[i])
-//         let sub_ingredients = array[i].split('=')[1].split(' ')
-//         const num_plyus = sub_ingredients.indexOf('+')
-//         console.log(num_plyus)
-//         let ingredient = sub_ingredients.slice(3, num_plyus !== -1 ? num_plyus : 4).join(' ')
-//         // for (let k = 0; k < sub_ingredients; k++) {}
-
-//         subIngredients.push({ name: ingredient, amount: sub_ingredients[1] })
-//     }
-//     return subIngredients
-// }

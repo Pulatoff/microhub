@@ -5,12 +5,15 @@ const User = require('../models/userModel')
 const Program = require('../models/programModel')
 const Meal = require('../models/mealModel')
 const ProgramTime = require('../models/programTimeModel')
+const Swap = require('../models/swaperModel')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const checkInvate = require('../utils/checkInvate')
 const AppError = require('../utils/AppError')
+const Questionnaire = require('../models/questionnaireModel')
+const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 
 const resConsumerType = (consumer) => {
     return {
@@ -28,7 +31,9 @@ const resConsumerType = (consumer) => {
         user: consumer.user,
     }
 }
-
+/* # POST /api/v1/consumers
+ * role: consumer
+ */
 exports.addConsumer = CatchError(async (req, res, next) => {
     const {
         weight,
@@ -72,11 +77,10 @@ exports.addConsumer = CatchError(async (req, res, next) => {
     response(201, 'You are add consumer details successfully', true, { consumer }, res)
 })
 
+/* # GET /api/v1/consumers
+ * role: admin
+ */
 exports.getConsumers = CatchError(async (req, res, next) => {
-    const userId = req.user.id
-    const trainer = await Trainer.findOne({ where: { userId } })
-    if (!trainer) next(new AppError('Nutritionist not exist', 404))
-
     const consumers = await Consumer.findAll({
         include: [
             {
@@ -118,6 +122,9 @@ exports.getConsumers = CatchError(async (req, res, next) => {
     response(200, 'Successfuly geting consumer', true, { consumers: newConsumers }, res)
 })
 
+/* #PATCH /api/v1/consumers/:id
+ * role: consumer
+ */
 exports.updateConsumer = CatchError(async (req, res, next) => {
     const userId = req.user.id
 
@@ -133,11 +140,14 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     consumer.preferences = preferences || consumer.preferences
     consumer.gender = gender || consumer.gender
     consumer.activity_level = activity_level || consumer.activity_level
-    await consumer.save({ validate: true })
 
+    await consumer.save({ validate: true })
     response(203, 'You are successfully update data', true, { consumer }, res)
 })
 
+/* # GET /api/v1/consumers/trainers/request
+ * role: consumer
+ */
 exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
@@ -160,12 +170,15 @@ exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     response(200, 'Successfully geting own nutritionists', true, { nutritionists }, res)
 })
 
+/*
+ *
+ */
 exports.getTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
 
     const nutritionists = consumer.nutritionists.map((val) => {
-        if (val.consumer_trainers.status === 1) {
+        if (val.consumer_trainers.status === 2) {
             return {
                 id: val.id,
                 first_name: val.user.first_name,
@@ -182,6 +195,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
     response(200, 'Successfully geting own nutritionists', true, { nutritionists }, res)
 })
 
+// middleware
 exports.protectConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId: req.user.id } })
     if (!consumer) next(new AppError('You need enter some options for doing this work!', 404))
@@ -189,9 +203,14 @@ exports.protectConsumer = CatchError(async (req, res, next) => {
     next()
 })
 
-exports.acceptNutritioinst = CatchError(async (req, res, next) => {
-    const { nutritionistId, status } = req.body
+/* # POST /api/v1/consumers/accept
+ * role: consumer
+ */
 
+exports.acceptNutritioinst = CatchError(async (req, res, next) => {
+    const { nutritionistId, status, questionnaire } = req.body
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userId } })
     const nutritionist = await Trainer.findByPk(nutritionistId)
     if (!nutritionist) next(new AppError('This nutritionist is not exist!', 404))
 
@@ -202,7 +221,38 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     if (!updateModel) next(new AppError('this requested nutritionist not found', 404))
     updateModel.status = status
     await updateModel.save()
+
     if (status === 1) {
+        const questionnair = await Questionnaire.create({
+            email: questionnaire.email,
+            lowest_height: questionnaire.lowest_height,
+            lowest_weight: questionnaire.lowest_weight,
+            home_phone_number: questionnaire.home_phone_number,
+            work_phone_number: questionnaire.work_phone_number,
+            date_of_birth: questionnaire.date_of_birth,
+            weight: questionnaire.weight,
+            height: questionnaire.height,
+            name: questionnaire.name,
+            date: questionnaire.date,
+            consumerId: consumer.id,
+            nutritionistId,
+        })
+        const questions = questionnaire.questions
+        for (let i = 0; i < questions.length; i++) {
+            if (questions[i].question && questions[i].answer) {
+                await QuestionnaireQuestion.create({
+                    questionnairyId: questionnair.id,
+                    question: questions[i].question,
+                    answer: questions[i].answer,
+                    additional_question: questions[i].additional_question,
+                    additional_answer: questions[i].additional_answer,
+                    details: questions[i].details,
+                })
+            } else {
+                next(new AppError('You must enter question and Answer', 404))
+            }
+        }
+
         response(206, `Client accept Nutritionist by id ${nutritionistId}`, true, '', res)
     } else {
         response(206, `Client reject Nutritionist by id ${nutritionistId}`, true, '', res)
