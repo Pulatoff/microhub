@@ -11,10 +11,10 @@ const Food = sequelize.define(
         serving: { type: DataTypes.STRING, allowNull: false },
         title: { type: DataTypes.STRING, allowNull: false },
         image_url: { type: DataTypes.TEXT },
-        fat: { type: DataTypes.INTEGER },
-        cals: { type: DataTypes.INTEGER },
-        carbs: { type: DataTypes.INTEGER },
-        protein: { type: DataTypes.INTEGER },
+        fat: { type: DataTypes.FLOAT, defaultValue: 0 },
+        cals: { type: DataTypes.FLOAT, defaultValue: 0 },
+        carbs: { type: DataTypes.FLOAT, defaultValue: 0 },
+        protein: { type: DataTypes.FLOAT, defaultValue: 0 },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )

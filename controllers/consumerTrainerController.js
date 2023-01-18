@@ -6,6 +6,7 @@ const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
 const Program = require('../models/programModel')
 const Questionnaire = require('../models/questionnaireModel')
+const Swap = require('../models/swaperModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -96,10 +97,7 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({
         where: { id },
         include: [
-            {
-                model: User,
-                attributes: ['first_name', 'last_name', 'email', 'role', 'createdAt'],
-            },
+            { model: User, attributes: { exclude: ['password', 'isActive'] } },
             { model: Program, where: { nutritionistId: trainer.id } },
         ],
     })
@@ -107,6 +105,9 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
     response(200, 'You are successfully got consumer', true, { consumer }, res)
 })
 
+/*  # GET /api/v1/trainers/consumers/approve
+ *  role: nutritionist
+ */
 exports.getSendedQuestionnaire = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId }, include: [{ model: Consumer }] })
@@ -118,10 +119,14 @@ exports.getSendedQuestionnaire = CatchError(async (req, res, next) => {
                 where: { nutritionistId: trainer.id, consumerId: consumer.id },
                 include: QuestionnaireQuestion,
             })
+
             const obj = {
-                consumer,
-                questionaire,
+                id: consumer.id,
+                favorite_foods: consumer.favorite_foods,
+                least_favorite_foods: consumer.least_favorite_foods,
+                allergies: consumer.allergies,
             }
+
             consumers.push(obj)
         }
     }
@@ -139,8 +144,12 @@ exports.approveConsumer = CatchError(async (req, res, next) => {
     if (!consumerTrainer) {
         next(new AppError('This consumer dont send questionnaire', 404))
     } else {
-        consumerTrainer.status = 2
+        consumerTrainer.status = status
         await consumerTrainer.save()
-        response(200, 'You are successfully approve consumer', true, '', res)
+        if (status === 2) {
+            response(200, 'You are successfully approved consumer', true, '', res)
+        } else if (status === -1) {
+            response(200, 'You are successfully rejected consumer', true, '', res)
+        }
     }
 })
