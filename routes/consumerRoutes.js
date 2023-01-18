@@ -35,7 +35,11 @@ router
 
 router
     .route('/search')
-    .get(authController.protect, authController.role(['admin', 'consumer']), bindConsumer.searchConsumer)
+    .get(
+        authController.protect,
+        authController.role(['admin', 'consumer', 'nutritionist']),
+        bindConsumer.searchConsumer
+    )
 
 router
     .route('/trainer')
