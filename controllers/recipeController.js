@@ -8,6 +8,7 @@ const AppError = require('../utils/AppError')
 // models
 const Trainer = require('../models/personalTrainerModel')
 const Recipe = require('../models/recipeModel')
+const Ingredient = require('../')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number, offset } = req.query
