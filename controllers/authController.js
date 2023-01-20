@@ -220,13 +220,16 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     model: Consumer,
                     include: [
                         { model: Personal_Trainer, include: [{ model: User }] },
-                        { model: Questionaire, include: [{ model: Questions }] },
-                        { model: Program, include: [{ model: Meal, include: [{ model: Food }] }] },
+                        {
+                            model: Program,
+                            include: [{ model: Meal, include: [{ model: Food, include: [{ model: Swap }] }] }],
+                        },
                     ],
                 },
             ],
-            attributes: ['id', 'first_name', 'last_name', 'email', 'photo', 'role', 'createdAt'],
+            attributes: { exclude: ['password', 'isActive'] },
         })
+
         const requested_nutritionists = []
         newUser.consumer.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
@@ -244,20 +247,8 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                 })
             }
         })
-        user = {
-            id: newUser.id,
-            first_name: newUser.first_name,
-            last_name: newUser.last_name,
-            email: newUser.email,
-            photo: newUser.photo,
-            role: newUser.role,
-            createdAt: newUser.createdAt,
-            consumer: newUser.consumer,
-            program: newUser.consumer.programs[0] ? newUser.consumer.programs[0] : {},
-        }
-        if (newUser.consumer.questionnairy) {
-            user.questionnaire = newUser.consumer.questionnairy
-        }
+        user = UserType(newUser)
+
         if (requested_nutritionists.length !== 0) {
             user.requested_nutritionists = requested_nutritionists
         }
