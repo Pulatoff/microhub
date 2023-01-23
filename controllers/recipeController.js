@@ -8,7 +8,6 @@ const AppError = require('../utils/AppError')
 // models
 const Trainer = require('../models/personalTrainerModel')
 const Recipe = require('../models/recipeModel')
-const Ingredient = require('../')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number, offset } = req.query
@@ -80,9 +79,10 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
 })
 
 exports.searchIngredients = CatchError(async (req, res, next) => {
-    let { query, number, offset, unit } = req.query
+    let { query, number, offset, unit, amount } = req.query
     offset = offset || 0
     number = number || 1
+    amount = amount || 1
     unit = unit || 'oz'
 
     const ingredients = []
@@ -93,7 +93,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     for (let i = 0; i < data?.data.results.length; i++) {
         const ingredient = data.data.results[i]
         const resp = await axios.get(
-            `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=1&unit=${ingredient.possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
+            `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=${amount}&unit=${ingredient.possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
         )
         const nutrients = []
         resp.data.nutrition.nutrients.map((val) => {
