@@ -122,7 +122,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
     program.carbs = macros.carbs
     program.protein = macros.protein
     program.fat = macros.fat
-    program.total_recipes = total_recipes
+    program.total_recipes = total_recipes || 0
     await program.save()
     response(201, 'You are successfully added to program', true, '', res)
 })

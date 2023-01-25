@@ -17,7 +17,7 @@ const Program = sequelize.define(
         fat: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         carbs: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         weeks: { type: DataTypes.INTEGER, defaultValue: 1 },
-        total_recipes: { type: DataTypes.INTEGER },
+        total_recipes: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
     {
         timestamps: true,
