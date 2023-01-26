@@ -27,7 +27,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
 
     if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
     const macros = getMacros(spoon.data.nutrition.nutrients)
-    console.log(macros)
+
     const swap = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/search?query=${swap_ingredient}&apiKey=${SPOONACULAR_API_KEY}&minProteinPercent${
             macros.protein - gap * macros.protein
