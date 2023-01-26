@@ -10,21 +10,11 @@ const Ingredient = sequelize.define(
         spoon_id: { type: DataTypes.STRING, allowNull: false },
         amount: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         unit: { type: DataTypes.STRING, allowNull: false },
-        possibleUnits: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-            get() {
-                return this.getDataValue('possibleUnits').split(';')
-            },
-            set(val) {
-                this.setDataValue('possibleUnits', val.join(';'))
-            },
-        },
-        image: { type: DataTypes.STRING, allowNull: false },
-        cals: { type: DataTypes.FLOAT, allowNull: false },
-        carbs: { type: DataTypes.FLOAT, allowNull: false },
-        protein: { type: DataTypes.FLOAT, allowNull: false },
-        fat: { type: DataTypes.FLOAT, allowNull: false },
+        image: { type: DataTypes.TEXT, allowNull: false },
+        cals: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        carbs: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        protein: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+        fat: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
@@ -32,4 +22,4 @@ const Ingredient = sequelize.define(
 Recipe.hasMany(Ingredient)
 Ingredient.belongsTo(Recipe)
 
-module.exports = Recipe
+module.exports = Ingredient

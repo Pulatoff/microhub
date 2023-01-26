@@ -17,7 +17,7 @@ const Program = sequelize.define(
         fat: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         carbs: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         weeks: { type: DataTypes.INTEGER, defaultValue: 1 },
-        total_recipes: { type: DataTypes.INTEGER },
+        total_recipes: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
     {
         timestamps: true,
@@ -33,31 +33,3 @@ Program.hasMany(Meal)
 Meal.belongsTo(Program)
 
 module.exports = Program
-
-//  example body to add program
-// const meal_plan = {
-//
-//     # programs table
-//     name: "First peogram",
-//     description: "Cool program submision",
-//     total_recipes: 6, # automaticly counted by backend
-//     weeks: 4, # automaticly counted by backend
-//     preference: "halal",
-//     meals: [
-//         # meals table
-//         {
-//             week: 1,
-//             day: 'Monday',
-//             # food_iems table
-//             food_items: [
-//                 {
-//                     recipe_id: 1,
-//                     course: 'breakfast',
-//                     title: '',
-//                     quantity: 12,
-//                     serving: '10g',
-//                 },
-//             ],
-//         },
-//     ],
-// }

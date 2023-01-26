@@ -17,14 +17,9 @@ const Recipe = sequelize.define(
         name: { type: DataTypes.STRING, allowNull: false },
         protein: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         image_url: { type: DataTypes.TEXT },
-        ingredients: { type: DataTypes.JSON, allowNull: false },
         method: { type: DataTypes.TEXT, allowNull: true },
     },
-    {
-        timestamps: true,
-        createdAt: true,
-        updatedAt: false,
-    }
+    { timestamps: true, createdAt: true, updatedAt: false }
 )
 
 Trainer.hasMany(Recipe)

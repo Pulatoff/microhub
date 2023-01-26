@@ -35,7 +35,10 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
         await ConsumerTrainer.create({ consumerId, nutritionistId: trainer.id, invate_side: 'profesional' })
     } else if (reference.status === -1) {
         reference.status = 0
-        reference.save()
+        await reference.save()
+    } else if (reference.status === 0) {
+        reference.status = 0
+        await reference.save()
     } else {
         next(
             new AppError(`Nutritioninst and Client by ids ${trainer.id} and ${consumer.id} already assigned each other`)

@@ -8,6 +8,7 @@ const AppError = require('../utils/AppError')
 // models
 const Trainer = require('../models/personalTrainerModel')
 const Recipe = require('../models/recipeModel')
+const Ingredient = require('../models/ingredientModel')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number, offset } = req.query
@@ -124,15 +125,19 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     let ingredients = req.body.ingredients
 
     ingredients = ingredients.map((val) => {
-        const { id, name, amount, unit, nutrients } = val
-        if (!id || !name || !amount || !unit || !nutrients)
-            next(new AppError(`You need enter all field ingredient`, 404))
-        return { id, name, amount, unit, nutrients }
+        const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = val
+        if (!spoon_id || !name || !amount || !unit) next(new AppError(`You need enter all field ingredient`, 404))
+        return { spoon_id, name, amount, unit, protein, fat, cals, carbs, image }
     })
 
     const trainer = await Trainer.findOne({ where: { userId } })
-    await Recipe.create({ ...req.body, nutritionistId: trainer.id, ingredients })
 
+    const recipe = await Recipe.create({ ...req.body, nutritionistId: trainer.id, ingredients })
+    for (let i = 0; i < ingredients.length; i++) {
+        const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = ingredients[i]
+
+        await Ingredient.create({ spoon_id, name, amount, unit, cals, carbs, protein, fat, recipeId: recipe.id, image })
+    }
     response(200, 'You are successfully created recipe', true, '', res)
 })
 
