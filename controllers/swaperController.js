@@ -16,17 +16,19 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
 })
 
 exports.searchSwapIngredints = CatchError(async (req, res, next) => {
-    let { ingredient_id, gap, swap_ingredient, offset, number } = req.body
+    let { ingredient_id, gap, swap_ingredient, offset, number } = req.query
     offset = offset || 0
     number = number || 1
     const ingredient = await Ingredient.findByPk(ingredient_id)
+
     const spoon = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.spoon_id}/information?amount=${ingredient.amount}`
+        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.spoon_id}/information?amount=${ingredient.amount}&apiKey=${SPOONACULAR_API_KEY}`
     )
 
     if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
-    // const macros = getMacros(spoon)
-    response(200, 'You are successfully get ingredient', true, { spoon }, res)
+    const macros = getMacros(spoon.data.nutrition.nutrients)
+
+    response(200, 'You are successfully get ingredient', true, { data: macros }, res)
 })
 
 function getMacros(nutrients) {
@@ -37,7 +39,7 @@ function getMacros(nutrients) {
         fat: 0,
     }
     for (let i = 0; i < nutrients.length; i++) {
-        const nutrient = nutrients[0]
+        const nutrient = nutrients[i]
         switch (nutrient.name.toLowerCase()) {
             case 'calories':
                 macros.cals = nutrient.amount
