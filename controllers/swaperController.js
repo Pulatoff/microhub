@@ -3,7 +3,9 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const { SPOONACULAR_API_KEY, SPOONACULAR_API_URL } = require('../configs/URL')
 const Consumer = require('../models/consumerModel')
+const Ingredient = require('../models/ingredientModel')
 const axios = require('axios')
+const AppError = require('../utils/AppError')
 
 exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const { ingredientId, swapIngredientId, foodItemId } = req.body
@@ -14,39 +16,44 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
 })
 
 exports.searchSwapIngredints = CatchError(async (req, res, next) => {
-    const { search } = req.query
-    const ingredients = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/search?metaInformation=true&offset=${0}&number=${1}&query=${search}&apiKey=${SPOONACULAR_API_KEY}`
+    let { ingredient_id, gap, swap_ingredient, offset, number } = req.body
+    offset = offset || 0
+    number = number || 1
+    const ingredient = await Ingredient.findByPk(ingredient_id)
+    const spoon = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.spoon_id}/information?amount=${ingredient.amount}`
     )
 
-    const ingredient = await axios(
-        `${SPOONACULAR_API_URL}/food/ingredients/${ingredients.data.results[0].id}/information?amount=1&unit=${ingredients.data.results[0].possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
-    )
-    const spoon_nutrients = ingredient.data.nutrition.nutrients
-    const nutrients = {
+    if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
+    // const macros = getMacros(spoon)
+    response(200, 'You are successfully get ingredient', true, { spoon }, res)
+})
+
+function getMacros(nutrients) {
+    let macros = {
         cals: 0,
-        protein: 0,
         carbs: 0,
+        protein: 0,
         fat: 0,
     }
-
-    spoon_nutrients.map((val) => {
-        if (val.name.toLowerCase() === 'calories') {
-            nutrients.cals = val.percentOfDailyNeeds
-        } else if (val.name.toLowerCase() === 'protein') {
-            nutrients.protein = val.percentOfDailyNeeds
-        } else if (val.name.toLowerCase() === 'carbohydrates') {
-            nutrients.carbs = val.percentOfDailyNeeds
-        } else if (val.name.toLowerCase() === 'fat') {
-            nutrients.fat = val.percentOfDailyNeeds
+    for (let i = 0; i < nutrients.length; i++) {
+        const nutrient = nutrients[0]
+        switch (nutrient.name.toLowerCase()) {
+            case 'calories':
+                macros.cals = nutrient.amount
+                break
+            case 'fat':
+                macros.fat = nutrient.amount
+                break
+            case 'protein':
+                macros.protein = nutrient.amount
+                break
+            case 'carbohydrates':
+                macros.carbs = nutrient.amount
+                break
+            default:
+                break
         }
-    })
-
-    const swap_ingredients = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/search?minProteinPercent=${
-            nutrients.protein - 0.1 * nutrients.protein
-        }&query=${search}&apiKey=${SPOONACULAR_API_KEY}`
-    )
-
-    response(200, 'You are successfully get ingredient', true, { ingredient: swap_ingredients.data }, res)
-})
+    }
+    return macros
+}
