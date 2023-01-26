@@ -22,13 +22,22 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     const ingredient = await Ingredient.findByPk(ingredient_id)
 
     const spoon = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.spoon_id}/information?amount=${ingredient.amount}&apiKey=${SPOONACULAR_API_KEY}`
+        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.spoon_id}/information?amount=${ingredient.amount}&apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient.unit}`
     )
 
     if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
     const macros = getMacros(spoon.data.nutrition.nutrients)
-
-    response(200, 'You are successfully get ingredient', true, { data: macros }, res)
+    console.log(macros)
+    const swap = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/search?query=${swap_ingredient}&apiKey=${SPOONACULAR_API_KEY}&minProteinPercent${
+            macros.protein - gap * macros.protein
+        }&maxProteinPercent=${macros.protein + gap * macros.protein}&minFatPercent=${
+            macros.fat - gap * macros.fat
+        }&maxFatPercent=${macros.fat + gap * macros.fat}&minCarbsPercent=${
+            macros.carbs - gap * macros.carbs
+        }&maxCarbsPercent=${macros.carbs + gap * macros.carbs}`
+    )
+    response(200, 'You are successfully get ingredient', true, { data: swap.data }, res)
 })
 
 function getMacros(nutrients) {
@@ -42,16 +51,16 @@ function getMacros(nutrients) {
         const nutrient = nutrients[i]
         switch (nutrient.name.toLowerCase()) {
             case 'calories':
-                macros.cals = nutrient.amount
+                macros.cals = nutrient.percentOfDailyNeeds
                 break
             case 'fat':
-                macros.fat = nutrient.amount
+                macros.fat = nutrient.percentOfDailyNeeds
                 break
             case 'protein':
-                macros.protein = nutrient.amount
+                macros.protein = nutrient.percentOfDailyNeeds
                 break
             case 'carbohydrates':
-                macros.carbs = nutrient.amount
+                macros.carbs = nutrient.percentOfDailyNeeds
                 break
             default:
                 break
