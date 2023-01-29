@@ -18,7 +18,6 @@ const createJwt = require('../utils/createJWT')
 const response = require('../utils/response')
 
 function UserType(user) {
-    console.log(user.consumer === true)
     return {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -214,8 +213,10 @@ exports.protect = CatchError(async (req, res, next) => {
 })
 
 exports.usersSelf = CatchError(async (req, res, next) => {
-    let user
-    if (req.user.role === 'consumer') {
+    let user = req.user
+    const oldUser = await User.findByPk(req.user.id, { include: [{ model: Consumer }] })
+
+    if (req.user.role === 'consumer' && oldUser.consumer) {
         const newUser = await User.findByPk(req.user.id, {
             include: [
                 {
@@ -233,7 +234,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
         })
 
         const requested_nutritionists = []
-        newUser.consumer.nutritionists.map((val) => {
+        newUser?.consumer?.nutritionists.map((val) => {
             const bindConsumer = val.consumer_trainers
             if (bindConsumer.status === 0 && bindConsumer.invate_side === 'profesional') {
                 const nutUser = val.user
