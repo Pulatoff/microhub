@@ -6,7 +6,6 @@ const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
 const Program = require('../models/programModel')
 const Questionnaire = require('../models/questionnaireModel')
-const Swap = require('../models/swaperModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')

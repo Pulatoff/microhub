@@ -18,6 +18,7 @@ const createJwt = require('../utils/createJWT')
 const response = require('../utils/response')
 
 function UserType(user) {
+    console.log(user.consumer === true)
     return {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -25,7 +26,7 @@ function UserType(user) {
         email: user.email,
         photo: user.photo,
         consumer: user.consumer ? ConsumerType(user.consumer) : undefined,
-        program: user.consumer.programs[0] ? ProgramType(user.consumer.programs[0]) : undefined,
+        program: user?.consumer?.programs[0] ? ProgramType(user?.consumer?.programs[0]) : undefined,
         createdAt: user.createdAt,
     }
 }
@@ -111,7 +112,7 @@ exports.signin = CatchError(async (req, res, next) => {
     if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
     let user
 
-    if (oldUser.role === 'consumer') {
+    if (oldUser.role === 'consumer' && oldUser?.consumer) {
         const newUser = await User.findByPk(oldUser.id, {
             include: [
                 {
@@ -181,6 +182,7 @@ exports.signin = CatchError(async (req, res, next) => {
             active_clients: count_consumer,
             createdAt: user.createdAt,
         }
+    } else if (oldUser.role === 'consumer' && !oldUser.consumer) {
     }
     const token = createJwt(oldUser.id)
     saveCookie(token, res)
