@@ -13,11 +13,7 @@ const QuestionnaireQuestion = sequelize.define(
         additional_answer: { type: DataTypes.STRING },
         details: { type: DataTypes.STRING },
     },
-    {
-        timestamps: true,
-        createdAt: true,
-        updatedAt: false,
-    }
+    { timestamps: true, createdAt: true, updatedAt: false }
 )
 
 Questionnaire.hasMany(QuestionnaireQuestion)
