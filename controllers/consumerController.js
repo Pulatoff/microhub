@@ -218,7 +218,7 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
         where: { nutritionistId, consumerId: req.consumer.id, status: 0 },
     })
 
-    if (!updateModel) next(new AppError('this requested nutritionist not found', 404))
+    if (!updateModel) next(new AppError('this not send request or HSQ at another stage', 404))
     updateModel.status = status
     await updateModel.save()
 
