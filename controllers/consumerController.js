@@ -219,8 +219,6 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
     })
 
     if (!updateModel) next(new AppError('this not send request or HSQ at another stage', 404))
-    updateModel.status = status
-    await updateModel.save()
 
     if (status === 1) {
         const questionnair = await Questionnaire.create({
@@ -252,9 +250,14 @@ exports.acceptNutritioinst = CatchError(async (req, res, next) => {
                 next(new AppError('You must enter question and Answer', 404))
             }
         }
+        updateModel.status = status
+        await updateModel.save()
 
         response(206, `Client accept Nutritionist by id ${nutritionistId}`, true, '', res)
     } else {
+        updateModel.status = status
+        await updateModel.save()
+
         response(206, `Client reject Nutritionist by id ${nutritionistId}`, true, '', res)
     }
 })

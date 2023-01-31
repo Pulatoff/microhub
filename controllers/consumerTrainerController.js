@@ -163,8 +163,9 @@ exports.approveConsumer = CatchError(async (req, res, next) => {
     const consumerTrainer = await ConsumerTrainer.findOne({
         where: { nutritionistId: trainer.id, consumerId, status: 1 },
     })
+
     if (!consumerTrainer) {
-        next(new AppError('This consumer dont send questionnaire', 404))
+        next(new AppError('This consumer dont send questionnaire', 400))
     } else {
         consumerTrainer.status = status
         await consumerTrainer.save()
