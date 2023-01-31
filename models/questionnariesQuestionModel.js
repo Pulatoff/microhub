@@ -7,8 +7,8 @@ const Questionnaire = require('./questionnaireModel')
 const QuestionnaireQuestion = sequelize.define(
     'questionnaire_options',
     {
-        question: { type: DataTypes.STRING, allowNull: false },
-        answer: { type: DataTypes.STRING, allowNull: false },
+        question: { type: DataTypes.TEXT, allowNull: false },
+        answer: { type: DataTypes.TEXT, allowNull: false },
         additional_question: { type: DataTypes.STRING },
         additional_answer: { type: DataTypes.STRING },
         details: { type: DataTypes.STRING },
