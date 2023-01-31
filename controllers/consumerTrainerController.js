@@ -112,7 +112,10 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
  */
 exports.getSendedQuestionnaire = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const trainer = await Trainer.findOne({ where: { userId }, include: [{ model: Consumer }] })
+    const trainer = await Trainer.findOne({
+        where: { userId },
+        include: [{ model: Consumer, include: [{ model: User, attributes: { exclude: ['password', 'isActive'] } }] }],
+    })
     const consumers = []
     for (let i = 0; i < trainer.consumers.length; i++) {
         const consumer = trainer.consumers[i]
@@ -127,6 +130,23 @@ exports.getSendedQuestionnaire = CatchError(async (req, res, next) => {
                 favorite_foods: consumer.favorite_foods,
                 least_favorite_foods: consumer.least_favorite_foods,
                 allergies: consumer.allergies,
+                weight: consumer.weight,
+                height: consumer.height,
+                wrist: consumer.wrist,
+                forearm: consumer.forearm,
+                waist: consumer.waist,
+                hip: consumer.hip,
+                user: consumer.user,
+                questionaire,
+                gender: consumer.gender,
+                activity_level: consumer.activity_level,
+                preferences: consumer.preferences,
+                body_fat: consumer.body_fat,
+                tdee: consumer.tdee,
+                body_frame: consumer.body_frame,
+                healthy_weight: consumer.healthy_weight,
+                bmi: consumer.bmi,
+                daily_targets: consumer.daily_targets,
             }
 
             consumers.push(obj)
