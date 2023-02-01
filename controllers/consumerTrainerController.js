@@ -160,8 +160,9 @@ exports.approveConsumer = CatchError(async (req, res, next) => {
     const { consumerId, status } = req.body
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
+
     const consumerTrainer = await ConsumerTrainer.findOne({
-        where: { nutritionistId: trainer.id, consumerId, status: 1 },
+        where: { nutritionistId: trainer.id, consumerId },
     })
 
     if (!consumerTrainer) {
