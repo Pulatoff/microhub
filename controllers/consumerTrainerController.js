@@ -160,7 +160,9 @@ exports.approveConsumer = CatchError(async (req, res, next) => {
     const { consumerId, status } = req.body
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
-
+    if (!trainer) {
+        next(new AppError('Profesional not found', 401))
+    }
     const consumerTrainer = await ConsumerTrainer.findOne({
         where: { nutritionistId: trainer.id, consumerId },
     })
