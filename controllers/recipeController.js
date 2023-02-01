@@ -180,6 +180,9 @@ exports.deleteRecipe = CatchError(async (req, res, next) => {
 })
 
 exports.randomRecipes = CatchError(async (req, res, next) => {
-    const recipes = await axios.get(`${SPOONACULAR_API_URL}/recipes/random?apiKey=${SPOONACULAR_API_KEY}`)
-    response(200, `You get random ${recipes.length} recipes`, true, { recipes })
+    let { number } = req.body
+    number = number || 1
+    const resp = await axios.get(`${SPOONACULAR_API_URL}/recipes/random?apiKey=${SPOONACULAR_API_KEY}&${number}`)
+
+    response(200, `You get random ${resp.data.length} recipes`, true, { recipes: resp.data.data }, res)
 })
