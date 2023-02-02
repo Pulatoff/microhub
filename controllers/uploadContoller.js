@@ -16,11 +16,11 @@ exports.uploadFile = CatchAsync(async (req, res, next) => {
     const userId = req.user.id
     const file = req.file
     const title = req.body.title
+    const file_type = req.file.mimetype.split('/')[1]
     const trainer = await Trainer.findOne({ where: { userId } })
 
     const generateFilename = (byte = 32) => crypto.randomBytes(byte).toString('hex')
     const fileBuffer = file.buffer
-
     const filename = generateFilename()
 
     await s3Client.send(
@@ -32,17 +32,13 @@ exports.uploadFile = CatchAsync(async (req, res, next) => {
         })
     )
 
-    const upload = await Upload.create({
-        title,
-        filename,
-        nutritionistId: trainer.id,
-    })
+    const upload = await Upload.create({ title, filename, file_type, nutritionistId: trainer.id })
 
     response(
         201,
         'your file successfully uploaded to server',
         true,
-        { upload: { file_url: upload.file_url, createadAt: upload.createadAt } },
+        { upload: { file_url: upload.file_url, createadAt: upload.createadAt, file_type: upload.file_type } },
         res
     )
 })
