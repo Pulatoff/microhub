@@ -12,6 +12,7 @@ const Upload = sequelize.define(
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         title: { type: DataTypes.STRING, allowNull: false },
         filename: { type: DataTypes.STRING, allowNull: false },
+        file_type: { type: DataTypes.STRING, allowNull: false },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
