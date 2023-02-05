@@ -43,33 +43,6 @@ function DayToNumber(day) {
     return dayNumber
 }
 
-// const meal_plan = {
-//
-//     # programs table
-//     name: "First peogram",
-//     description: "Cool program submision",
-//     total_recipes: 6, # automaticly counted by backend
-//     weeks: 4, # automaticly counted by backend
-//     preference: "halal",
-//     meals: [
-//         # meals table
-//         {
-//             week: 1,
-//             day: 'Monday',
-//             # food_iems table
-//             food_items: [
-//                 {
-//                     recipe_id: 1,
-//                     course: 'breakfast',
-//                     title: '',
-//                     quantity: 12,
-//                     serving: '10g',
-//                 },
-//             ],
-//         },
-//     ],
-// }
-
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
     let macros = {
@@ -79,9 +52,15 @@ exports.addProgram = CatchError(async (req, res, next) => {
         fat: 0,
     }
     let total_recipes = 0
+    let trainer
+    let consumer
+    if (req.user.role === 'consumer') {
+        trainer = await Trainer.findByPk(1)
+        consumer = await Consumer.findOne({ where: { userId } })
+    } else trainer = await Trainer.findOne({ where: { userId } })
 
-    const trainer = await Trainer.findOne({ where: { userId } })
     if (!trainer) throw new Error('Nutritionist is not exist')
+
     const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
@@ -123,7 +102,12 @@ exports.addProgram = CatchError(async (req, res, next) => {
     program.protein = macros.protein
     program.fat = macros.fat
     program.total_recipes = total_recipes || 0
+    if (req.user.role === 'consumer') {
+        consumer.programId = program.id
+        await consumer.save()
+    }
     await program.save()
+
     response(201, 'You are successfully added to program', true, '', res)
 })
 
