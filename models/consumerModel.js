@@ -17,7 +17,7 @@ const Consumer = sequlize.define(
         weight: { type: DataTypes.FLOAT, allowNull: false, validate: { isPositive } }, // unit in kg
         height: { type: DataTypes.FLOAT, allowNull: false, validate: { isPositive } }, // unit in cm
         favorite_foods: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             get() {
                 return this.getDataValue('favorite_foods').split(';')
             },
@@ -26,7 +26,7 @@ const Consumer = sequlize.define(
             },
         },
         least_favorite_foods: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             get() {
                 return this.getDataValue('least_favorite_foods').split(';')
             },

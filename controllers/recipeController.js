@@ -138,6 +138,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 
         await Ingredient.create({ spoon_id, name, amount, unit, cals, carbs, protein, fat, recipeId: recipe.id, image })
     }
+
     response(200, 'You are successfully created recipe', true, '', res)
 })
 
