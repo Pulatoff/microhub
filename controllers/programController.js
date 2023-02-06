@@ -112,10 +112,14 @@ exports.addProgram = CatchError(async (req, res, next) => {
 })
 
 exports.getAllPrograms = CatchError(async (req, res, next) => {
+    let { offset, number } = req.query
+    offset = +offset || undefined
+    number = +number || undefined
+
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
     if (!trainer) next(new AppError("You can't allowed this method", 404))
-    const programs = await Program.findAll({ where: { nutritionistId: trainer.id } })
+    const programs = await Program.findAll({ where: { nutritionistId: trainer.id }, offset, limit: number })
     response(200, 'You are successfully geting programs', true, { programs }, res)
 })
 
