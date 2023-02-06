@@ -84,7 +84,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     offset = offset || 0
     number = number || 1
     amount = amount || 1
-    unit = unit || 'oz'
+    unit = unit || 'g'
 
     const ingredients = []
 
