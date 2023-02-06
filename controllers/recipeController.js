@@ -94,7 +94,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     for (let i = 0; i < data?.data.results.length; i++) {
         const ingredient = data.data.results[i]
         const resp = await axios.get(
-            `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=${amount}&unit=${ingredient.possibleUnits[0]}&apiKey=${SPOONACULAR_API_KEY}`
+            `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=${amount}&unit=${unit}&apiKey=${SPOONACULAR_API_KEY}`
         )
         const nutrients = []
         resp.data.nutrition.nutrients.map((val) => {
