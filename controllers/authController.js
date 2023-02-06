@@ -25,7 +25,7 @@ function UserType(user) {
         email: user.email,
         photo: user.photo,
         consumer: user.consumer ? ConsumerType(user.consumer) : undefined,
-        program: user?.consumer?.programs[0] ? ProgramType(user?.consumer?.programs[0]) : undefined,
+        // program: user?.consumer?.programs[0] ? ProgramType(user?.consumer?.programs[0]) : undefined,
         createdAt: user.createdAt,
     }
 }
