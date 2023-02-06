@@ -175,7 +175,7 @@ exports.updateRecipes = CatchError(async (req, res, next) => {
 
 exports.deleteRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
-    await Recipe.destroy(id)
+    await Recipe.destroy({ where: { id }, truncate: false })
     response(200, 'You are successfully delete user', true, '', res)
 })
 
