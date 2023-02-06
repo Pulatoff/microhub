@@ -22,7 +22,7 @@ exports.addNotes = CatchError(async (req, res, next) => {
 })
 
 exports.getAllNotes = CatchError(async (req, res, next) => {
-    let { number, offset } = req.body
+    let { number, offset } = req.query
     number = number || undefined
     offset = offset || undefined
 
