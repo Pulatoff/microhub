@@ -241,7 +241,10 @@ exports.getMeals = CatchError(async (req, res, next) => {
     })
     const meal = []
     const meals = []
-    consumer.programs.map((val) => {
+    if (!consumer) {
+        next('You are not assign to this consumer program', 400)
+    }
+    consumer?.programs.map((val) => {
         meal.push(val.meals)
     })
     meal.map((val) => {

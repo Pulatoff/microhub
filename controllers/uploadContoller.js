@@ -56,7 +56,13 @@ exports.getUploads = CatchAsync(async (req, res, next) => {
             { expiresIn: 3600 * 24 }
         )
 
-        files.push({ id: upload.id, title: upload.title, file_url, createdAt: upload.createdAt })
+        files.push({
+            id: upload.id,
+            file_type: upload.file_type,
+            title: upload.title,
+            file_url,
+            createdAt: upload.createdAt,
+        })
     }
     response(200, 'You are successfully get own uploads', true, { uploads: files }, res)
 })
