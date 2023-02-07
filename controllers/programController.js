@@ -229,7 +229,7 @@ exports.getMeals = CatchError(async (req, res, next) => {
         include: [
             {
                 model: Program,
-                where: { nutritionistId },
+                where: { nutritionistId: trainer.id },
                 include: [
                     {
                         model: Meal,
@@ -239,9 +239,15 @@ exports.getMeals = CatchError(async (req, res, next) => {
             },
         ],
     })
+    const meal = []
     const meals = []
     consumer.programs.map((val) => {
-        meals.push(val.meals)
+        meal.push(val.meals)
+    })
+    meal.map((val) => {
+        for (let i = 0; i < val.length; i++) {
+            meals.push(val[i])
+        }
     })
     response(200, 'You are get all meals', true, meals, res)
 })

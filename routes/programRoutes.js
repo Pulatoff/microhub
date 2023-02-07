@@ -15,7 +15,7 @@ router.route('/consumer').post(auth.protect, auth.role(['nutritionist', 'admin']
 
 router.route('/search').get(auth.protect, auth.role(['nutritionist']), controller.searchPrograms)
 
-router.route('/meals/:consumerId').get(auth.protect, auth.role('nutrititionistId'), controller.getMeals)
+router.route('/meals/:consumerId').get(auth.protect, auth.role(['nutritionist']), controller.getMeals)
 
 router
     .route('/swaps')
