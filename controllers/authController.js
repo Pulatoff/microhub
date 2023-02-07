@@ -10,6 +10,8 @@ const Program = require('../models/programModel')
 const Food = require('../models/mealModel')
 const Meal = require('../models/programTimeModel')
 const Swap = require('../models/swaperModel')
+const Ingredient = require('../models/ingredientModel')
+const Recipe = require('../models/recipeModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -126,7 +128,10 @@ exports.signin = CatchError(async (req, res, next) => {
                                     include: [
                                         {
                                             model: Food,
-                                            include: [{ model: Swap, where: { consumerId: oldUser.consumer.id } }],
+                                            include: [
+                                                { model: Swap, where: { consumerId: oldUser.consumer.id } },
+                                                { model: Recipe, include: Ingredient },
+                                            ],
                                         },
                                     ],
                                 },
@@ -225,7 +230,17 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                         { model: Personal_Trainer, include: [{ model: User }] },
                         {
                             model: Program,
-                            include: [{ model: Meal, include: [{ model: Food, include: [{ model: Swap }] }] }],
+                            include: [
+                                {
+                                    model: Meal,
+                                    include: [
+                                        {
+                                            model: Food,
+                                            include: [{ model: Swap }, { model: Recipe, include: Ingredient }],
+                                        },
+                                    ],
+                                },
+                            ],
                         },
                     ],
                 },
