@@ -20,6 +20,7 @@ const createJwt = require('../utils/createJWT')
 const response = require('../utils/response')
 
 function UserType(user) {
+    console.log(user.consumer.programs)
     return {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -27,7 +28,7 @@ function UserType(user) {
         email: user.email,
         photo: user.photo,
         consumer: user.consumer ? ConsumerType(user.consumer) : undefined,
-        // program: user?.consumer?.programs[0] ? ProgramType(user?.consumer?.programs[0]) : undefined,
+        program: user?.consumer?.programs[0] ? ProgramType(user?.consumer?.programs[1]) : undefined,
         createdAt: user.createdAt,
     }
 }
