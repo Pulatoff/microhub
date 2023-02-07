@@ -136,7 +136,7 @@ function isPositive(val) {
 User.hasOne(Consumer)
 Consumer.belongsTo(User)
 
-Program.hasOne(Consumer)
-Consumer.belongsTo(Program)
+// Program.hasOne(Consumer)
+// Consumer.belongsTo(Program)
 
 module.exports = Consumer

@@ -79,14 +79,23 @@ exports.addProgram = CatchError(async (req, res, next) => {
                         course,
                         title,
                         image_url,
-                        recipeId,
+                        recipe_id,
                         fat,
                         cals,
                         carbs,
                         protein,
                     } = food_items[k]
                     const mealId = meal.id
-                    await Food.create({ food_id, serving, quantity, course, image_url, mealId, title, recipeId })
+                    await Food.create({
+                        food_id,
+                        serving,
+                        quantity,
+                        course,
+                        image_url,
+                        mealId,
+                        title,
+                        recipeId: recipe_id,
+                    })
                     total_recipes++
                     macros.cals += cals
                     macros.carbs += carbs
