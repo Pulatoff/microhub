@@ -10,6 +10,8 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const AppError = require('../utils/AppError')
 const response = require('../utils/response')
 const Swap = require('../models/swaperModel')
+const Recipe = require('../models/recipeModel')
+const Ingredient = require('../models/ingredientModel')
 
 function DayToNumber(day) {
     const dayLower = day.toLowerCase()
@@ -217,4 +219,29 @@ exports.searchPrograms = CatchError(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId } })
     const program = await Program.findOne({ where: { name: search, nutritionistId: trainer.id } })
     response(200, 'Your search program', true, program, res)
+})
+
+exports.getMeals = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const consumerId = req.params.consumerId
+    const trainer = await Trainer.findOne({ where: { userId } })
+    const consumer = await Consumer.findByPk(consumerId, {
+        include: [
+            {
+                model: Program,
+                where: { nutritionistId },
+                include: [
+                    {
+                        model: Meal,
+                        include: [{ model: Food, include: [{ model: Recipe, include: [{ model: Ingredient }] }] }],
+                    },
+                ],
+            },
+        ],
+    })
+    const meals = []
+    consumer.programs.map((val) => {
+        meals.push(val.meals)
+    })
+    response(200, 'You are get all meals', true, meals, res)
 })
