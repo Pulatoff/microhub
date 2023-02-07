@@ -239,6 +239,18 @@ exports.getMeals = CatchError(async (req, res, next) => {
             },
         ],
     })
-
-    response(200, 'You are get all meals', true, { programs: consumer?.programs }, res)
+    const meal = []
+    const meals = []
+    if (!consumer) {
+        next('You are not assign consumer to program', 400)
+    }
+    consumer?.programs.map((val) => {
+        meal.push(val.meals)
+    })
+    meal.map((val) => {
+        for (let i = 0; i < val.length; i++) {
+            meals.push(val[i])
+        }
+    })
+    response(200, 'You are get all meals', true, { meals }, res)
 })
