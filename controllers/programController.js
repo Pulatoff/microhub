@@ -131,7 +131,10 @@ exports.getProgram = CatchError(async (req, res, next) => {
 
     const program = await Program.findByPk(id, {
         include: [
-            { model: Meal, include: [{ model: Food, include: [{ model: Swap }] }] },
+            {
+                model: Meal,
+                include: [{ model: Food, include: [{ model: Swap }, { model: Recipe, include: Ingredient }] }],
+            },
             { model: Consumer, include: [{ model: User }] },
         ],
         where: { nutritionistId: trainer.id },
