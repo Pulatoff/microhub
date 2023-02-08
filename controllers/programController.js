@@ -125,6 +125,7 @@ exports.getAllPrograms = CatchError(async (req, res, next) => {
 
 exports.getProgram = CatchError(async (req, res, next) => {
     const { id } = req.params
+
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
     if (!trainer) next(new AppError("You can't allowed this method", 404))
