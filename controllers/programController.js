@@ -256,5 +256,6 @@ exports.getMeals = CatchError(async (req, res, next) => {
     //         meals.push(val[i])
     //     }
     // })
-    response(200, 'You are get all meals', true, { programs: consumer.programs }, res)
+
+    response(200, 'You are get all meals', true, { programs: consumer?.programs }, res)
 })
