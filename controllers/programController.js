@@ -13,7 +13,6 @@ const Swap = require('../models/swaperModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
 const multer = require('multer')
-const sharp = require('sharp')
 
 function DayToNumber(day) {
     const dayLower = day.toLowerCase()
@@ -164,6 +163,7 @@ exports.getProgram = CatchError(async (req, res, next) => {
 })
 
 exports.updatePrograms = CatchError(async (req, res, next) => {
+    const file = req.file
     const { name, description, weeks, preference } = req.body
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })

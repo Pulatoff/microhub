@@ -6,6 +6,7 @@ const Program = require('../models/programModel')
 const Meal = require('../models/mealModel')
 const ProgramTime = require('../models/programTimeModel')
 const Swap = require('../models/swaperModel')
+const CosumerDetailes = require('../models/consumerDetailsModel')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -14,6 +15,7 @@ const checkInvate = require('../utils/checkInvate')
 const AppError = require('../utils/AppError')
 const Questionnaire = require('../models/questionnaireModel')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
+const ConsumerDetails = require('../models/consumerDetailsModel')
 
 const resConsumerType = (consumer) => {
     return {
@@ -131,6 +133,12 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: userId })
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
+
+    if (weight || height) {
+        const newWeight = weight || consumer.weight
+        const newHeight = height || consumer.height
+        await ConsumerDetails.create({ weight: newWeight, height: newHeight, from_date: consumer.createdAt })
+    }
 
     consumer.height = height || consumer.height
     consumer.weight = weight || consumer.weight
