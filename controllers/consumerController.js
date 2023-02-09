@@ -143,6 +143,7 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
             height: newHeight,
             from_date: consumer.createdAt,
             to_date: date.toISOString(),
+            consumerId: consumer.id,
         })
     }
 
