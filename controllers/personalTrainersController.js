@@ -3,6 +3,7 @@ const Trainer = require('../models/personalTrainerModel')
 const Consumer = require('../models/consumerModel')
 const User = require('../models/userModel')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
+const ConsumerDetails = require('../models/consumerDetailsModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -20,7 +21,18 @@ exports.updateTrainer = async (req, res, next) => {
 
 exports.getConsumers = CatchError(async (req, res) => {
     const userId = req.user.id
-    const trainer = await Trainer.findOne({ where: { userId }, include: [{ model: Consumer, include: User }] })
+    const trainer = await Trainer.findOne({
+        where: { userId },
+        include: [
+            {
+                model: Consumer,
+                include: [
+                    { model: User, attributes: { exclude: ['password', 'isActive'] } },
+                    { model: ConsumerDetails },
+                ],
+            },
+        ],
+    })
 
     const consumers = []
     trainer.consumers = trainer.consumers?.map((e) => {
