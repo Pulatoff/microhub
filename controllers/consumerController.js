@@ -136,12 +136,15 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
 
     if (weight || height) {
         const date = new Date()
-        const last_track = await ConsumerDetails.findAll({ where: { consumerId: consumer.id } })
+        const last_track = await ConsumerDetails.findAll({
+            where: { consumerId: consumer.id },
+            order: [['id', 'DESC']],
+        })
         console.log(last_track)
         await ConsumerDetails.create({
             weight: consumer.weight,
             height: consumer.height,
-            from_date: last_track[0]?.createdAt,
+            from_date: last_track[0].createdAt || consumer.createdAt,
             to_date: date.toISOString(),
             consumerId: consumer.id,
         })
