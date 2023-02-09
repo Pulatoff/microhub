@@ -12,6 +12,7 @@ const response = require('../utils/response')
 const Swap = require('../models/swaperModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
+const multer = require('multer')
 
 function DayToNumber(day) {
     const dayLower = day.toLowerCase()
@@ -44,6 +45,23 @@ function DayToNumber(day) {
     }
     return dayNumber
 }
+
+const memoryStroge = multer.memoryStorage()
+
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image')) {
+        return cb(null, true)
+    } else {
+        return cb(new AppError('You only upload images!', 400))
+    }
+}
+
+const upload = multer({
+    storage: memoryStroge,
+    fileFilter: multerFilter,
+})
+
+exports.uploadImage = upload.single('photo')
 
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
@@ -145,6 +163,7 @@ exports.getProgram = CatchError(async (req, res, next) => {
 })
 
 exports.updatePrograms = CatchError(async (req, res, next) => {
+    const file = req.file
     const { name, description, weeks, preference } = req.body
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
@@ -248,14 +267,6 @@ exports.getMeals = CatchError(async (req, res, next) => {
     if (!consumer) {
         next(new AppError('You are not assign consumer to program', 400))
     }
-    // consumer?.programs.map((val) => {
-    //     meal.push(val.meals)
-    // })
-    // meal.map((val) => {
-    //     for (let i = 0; i < val.length; i++) {
-    //         meals.push(val[i])
-    //     }
-    // })
 
     response(200, 'You are get all meals', true, { programs: consumer?.programs }, res)
 })
