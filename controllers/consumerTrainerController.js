@@ -12,6 +12,7 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 const countClientStats = require('../utils/clientStats')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
+const ConsumerDetails = require('../models/consumerDetailsModel')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -101,6 +102,7 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
         include: [
             { model: User, attributes: { exclude: ['password', 'isActive'] } },
             { model: Program, where: { nutritionistId: trainer.id } },
+            { model: ConsumerDetails },
         ],
     })
 
