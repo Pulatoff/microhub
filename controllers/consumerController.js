@@ -137,7 +137,13 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     if (weight || height) {
         const newWeight = weight || consumer.weight
         const newHeight = height || consumer.height
-        await ConsumerDetails.create({ weight: newWeight, height: newHeight, from_date: consumer.createdAt })
+        const date = new Date()
+        await ConsumerDetails.create({
+            weight: newWeight,
+            height: newHeight,
+            from_date: consumer.createdAt,
+            to_date: date.toISOString(),
+        })
     }
 
     consumer.height = height || consumer.height
