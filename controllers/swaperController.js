@@ -15,6 +15,7 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const respon = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}`
     )
+    console.log(respon)
     await Swaper.create({
         ingredientId,
         swapIngredientId,
@@ -49,7 +50,6 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     )
 
     if (swap.data.results.length > 0) {
-        console.log(swap)
         for (let i = 0; i < swap.data.results.length; i++) {
             const ingredient = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/${swap.data.results[i].id}/information?apiKey=${SPOONACULAR_API_KEY}`
