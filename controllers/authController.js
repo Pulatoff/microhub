@@ -12,6 +12,7 @@ const Meal = require('../models/programTimeModel')
 const Swap = require('../models/swaperModel')
 const Ingredient = require('../models/ingredientModel')
 const Recipe = require('../models/recipeModel')
+const ConsumerDetails = require('../models/consumerDetailsModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -67,6 +68,7 @@ function ConsumerType(consumer) {
         healthy_weight: consumer.healthy_weight,
         bmi: consumer.bmi,
         daily_targets: consumer.daily_targets,
+        consumer_details: consumer?.consumer_details,
     }
 }
 
@@ -134,6 +136,7 @@ exports.signin = CatchError(async (req, res, next) => {
                                 },
                             ],
                         },
+                        { model: ConsumerDetails },
                     ],
                 },
             ],
@@ -239,6 +242,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                                 },
                             ],
                         },
+                        { model: ConsumerDetails },
                     ],
                 },
             ],
