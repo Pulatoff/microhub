@@ -11,7 +11,17 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const { ingredientId, swapIngredientId, foodItemId } = req.body
     const userId = req.user.id
     const consumer = await Consumer.findOne({ userId })
-    await Swaper.create({ ingredientId, swapIngredientId, foodItemId, consumerId: consumer.id })
+
+    const respon = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}`
+    )
+    await Swaper.create({
+        ingredientId,
+        swapIngredientId,
+        foodItemId,
+        consumerId: consumer.id,
+        ingredientInfo: JSON.stringify(respon.data),
+    })
     response(201, 'You are successfully swap ingredient', true, '', res)
 })
 
@@ -27,7 +37,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
 
     if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
     const macros = getMacros(spoon.data.nutrition.nutrients)
-
+    const swaps = []
     const swap = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/search?query=${swap_ingredient}&apiKey=${SPOONACULAR_API_KEY}&minProteinPercent${
             macros.protein - gap * macros.protein
@@ -35,8 +45,18 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
             macros.fat - gap * macros.fat
         }&maxFatPercent=${macros.fat + gap * macros.fat}&minCarbsPercent=${
             macros.carbs - gap * macros.carbs
-        }&maxCarbsPercent=${macros.carbs + gap * macros.carbs}`
+        }&maxCarbsPercent=${macros.carbs + gap * macros.carbs}&number=4`
     )
+
+    if (swap.data.results.length > 0) {
+        for (let i = 0; i < swap.data.results.length; i++) {
+            const ingredient = await axios.get(
+                `${SPOONACULAR_API_URL}/food/ingredients/${swap.data.results[i].id}/information?apiKey=${SPOONACULAR_API_KEY}`
+            )
+            swaps.push(ingredient)
+        }
+    }
+
     response(200, 'You are successfully get ingredient', true, { data: swap.data }, res)
 })
 

@@ -10,12 +10,9 @@ const Swaper = sequelize.define(
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
         ingredientId: { type: DataTypes.INTEGER, allowNull: false },
         swapIngredientId: { type: DataTypes.INTEGER, allowNull: false },
+        ingredient_info: { type: DataTypes.JSON, allowNull: true },
     },
-    {
-        timestamps: true,
-        createdAt: true,
-        updatedAt: false,
-    }
+    { timestamps: true, createdAt: true, updatedAt: false }
 )
 
 Food.hasMany(Swaper)
