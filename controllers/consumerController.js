@@ -140,7 +140,7 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
             where: { consumerId: consumer.id },
             order: [['id', 'DESC']],
         })
-        console.log(last_track)
+
         await ConsumerDetails.create({
             weight: consumer.weight,
             height: consumer.height,

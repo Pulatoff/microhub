@@ -28,7 +28,7 @@ exports.getAllNotes = CatchError(async (req, res, next) => {
 
     const consumerId = req.params.consumerId
     const userId = req.user.id
-    const trainer = await Trainer.findOne({ userId })
+    const trainer = await Trainer.findOne({ where: { userId } })
     const notes = await Notes.findAll({ where: { nutritionistId: trainer.id, consumerId }, offset, limit: number })
     response(200, 'You successfully get notes', true, { notes }, res, notes.length)
 })
