@@ -25,6 +25,8 @@ exports.bindConumer = CatchError(async (req, res, next) => {
     if (!checkRef) {
         next(new AppError(`Client by id ${consumerId} not assigned to nutritionist`, 404))
     } else {
+        checkRef.statusClient = 'active'
+        await checkRef.save()
         await ProgramConsumer.create({ programId, consumerId })
     }
     response(200, 'You are successfuly binded to program', true, '', res)
