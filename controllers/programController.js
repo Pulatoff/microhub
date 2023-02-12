@@ -72,18 +72,19 @@ exports.addProgram = CatchError(async (req, res, next) => {
         fat: 0,
     }
     let total_recipes = 0
-    let trainer
-    let consumer
-    if (req.user.role === 'consumer') {
-        trainer = await Trainer.findByPk(1)
-        consumer = await Consumer.findOne({ where: { userId } })
-    } else trainer = await Trainer.findOne({ where: { userId } })
+    const trainer = await Trainer.findOne({ where: { userId } })
 
-    if (!trainer) throw new Error('Nutritionist is not exist')
+    if (!trainer && req.user.role === 'nutritionist') throw new Error('Nutritionist is not exist')
 
     const { name, description, preference, weeks, meals } = req.body
 
-    const program = await Program.create({ nutritionistId: trainer.id, name, description, preference, weeks })
+    const program = await Program.create({
+        nutritionistId: trainer.id ? trainer.id : undefined,
+        name,
+        description,
+        preference,
+        weeks,
+    })
     if (meals) {
         for (let i = 0; i < meals.length; i++) {
             const { week, day, food_items } = meals[i]
@@ -158,7 +159,11 @@ exports.getProgram = CatchError(async (req, res, next) => {
         ],
         where: { nutritionistId: trainer.id },
     })
-
+    if (req.user.role === 'consumer') {
+        const consumer = await Consumer.findOne({ where: { userId } })
+        consumer.program_id = program.id
+        await consumer.save()
+    }
     response(200, 'You are successfully geted one program', true, { program }, res)
 })
 
