@@ -51,12 +51,33 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
 
     if (swap.data.results.length > 0) {
         for (let i = 0; i < swap.data.results.length; i++) {
-            const ingredient = await axios.get(
+            const responData = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/${
                     swap.data.results[i].id
                 }/information?apiKey=${SPOONACULAR_API_KEY}&unit=g&amount=${1}`
             )
-            swaps.push(ingredient.data)
+            const data = responData.data
+            const nutrients = data.nutrition.nutrients.filter((val) => {
+                if (
+                    val.name.toLowerCase() === 'fat' ||
+                    val.name.toLowerCase() === 'protein' ||
+                    val.name.toLowerCase() === 'calories' ||
+                    val.name.toLowerCase() === 'carbohydrates'
+                ) {
+                    return val
+                }
+            })
+            const ingredient = {
+                id: data.id,
+                name: data.name,
+                amount: data.amount,
+                unit: data.unit,
+                possibleUnits: data.possibleUnits,
+                image: data.image,
+                nutrients,
+            }
+
+            swaps.push(ingredient)
         }
     }
 
