@@ -118,6 +118,7 @@ const Consumer = sequlize.define(
             },
             set: set_error,
         },
+        program_id: { type: DataTypes.INTEGER },
     },
     {
         timestamps: true,
