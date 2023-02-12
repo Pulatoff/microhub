@@ -13,7 +13,7 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ userId })
 
     const respon = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}`
+        `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}&unit=g&amount=1`
     )
 
     const swap = await Swaper.create({
