@@ -31,9 +31,9 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     offset = offset || 0
     number = number || 1
     const ingredient = await Ingredient.findByPk(ingredient_id)
-
+    console.log(ingredient)
     const spoon = await axios.get(
-        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.spoon_id}/information?amount=${ingredient.amount}&apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient.unit}`
+        `${SPOONACULAR_API_URL}/food/ingredients/${ingredient?.spoon_id}/information?amount=${ingredient?.amount}&apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}`
     )
 
     if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
@@ -52,9 +52,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     if (swap.data.results.length > 0) {
         for (let i = 0; i < swap.data.results.length; i++) {
             const responData = await axios.get(
-                `${SPOONACULAR_API_URL}/food/ingredients/${
-                    swap.data.results[i].id
-                }/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient.unit}&amount=${ingredient.amount}`
+                `${SPOONACULAR_API_URL}/food/ingredients/${swap.data.results[i].id}/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}&amount=${ingredient?.amount}`
             )
             const data = responData.data
             const nutrients = data.nutrition.nutrients.filter((val) => {
@@ -67,7 +65,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
                     return val
                 }
             })
-            const ingredient = {
+            const ingredient1 = {
                 id: data.id,
                 name: data.name,
                 amount: data.amount,
@@ -77,7 +75,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
                 nutrients,
             }
 
-            swaps.push(ingredient)
+            swaps.push(ingredient1)
         }
     }
 
