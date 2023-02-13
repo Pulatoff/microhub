@@ -54,7 +54,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
             const responData = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/${
                     swap.data.results[i].id
-                }/information?apiKey=${SPOONACULAR_API_KEY}&unit=g&amount=${1}`
+                }/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient.unit}&amount=${ingredient.amount}`
             )
             const data = responData.data
             const nutrients = data.nutrition.nutrients.filter((val) => {
