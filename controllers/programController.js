@@ -72,6 +72,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
         fat: 0,
     }
     let total_recipes = 0
+
     const trainer = await Trainer.findOne({ where: { userId } })
 
     if (!trainer && req.user.role === 'nutritionist') throw new Error('Nutritionist is not exist')
@@ -79,7 +80,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
     const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({
-        nutritionistId: trainer.id ? trainer.id : undefined,
+        nutritionistId: trainer?.id ? trainer?.id : undefined,
         name,
         description,
         preference,
@@ -121,11 +122,12 @@ exports.addProgram = CatchError(async (req, res, next) => {
     program.protein = macros.protein
     program.fat = macros.fat
     program.total_recipes = total_recipes || 0
+    await program.save()
     if (req.user.role === 'consumer') {
-        consumer.programId = program.id
+        const consumer = await Consumer.findOne({ where: { userId } })
+        consumer.program_id = program.id
         await consumer.save()
     }
-    await program.save()
 
     response(201, 'You are successfully added to program', true, '', res)
 })
@@ -159,6 +161,7 @@ exports.getProgram = CatchError(async (req, res, next) => {
         ],
         where: { nutritionistId: trainer.id },
     })
+
     if (req.user.role === 'consumer') {
         const consumer = await Consumer.findOne({ where: { userId } })
         consumer.program_id = program.id
