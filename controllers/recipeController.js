@@ -148,6 +148,7 @@ exports.getAllRecipes = CatchError(async (req, res, next) => {
     const recipes = await Recipe.findAll({
         where: { nutritionistId: trainer.id },
         attributes: { exclude: ['nutritionistId'] },
+        include: [{ model: Ingredient }],
     })
     response(200, 'You are successfully get recipes', true, { recipes }, res)
 })

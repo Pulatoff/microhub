@@ -37,6 +37,7 @@ exports.getConsumers = CatchError(async (req, res) => {
     const consumers = []
     trainer.consumers = trainer?.consumers?.map((e) => {
         if (e?.consumer_trainers.status === 2) {
+            console.log
             consumers.push(e)
         }
     })
