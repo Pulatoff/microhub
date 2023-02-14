@@ -130,7 +130,7 @@ exports.getConsumers = CatchError(async (req, res, next) => {
 exports.updateConsumer = CatchError(async (req, res, next) => {
     const userId = req.user.id
 
-    const consumer = await Consumer.findOne({ where: userId })
+    const consumer = await Consumer.findOne({ where: { userId } })
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
 
