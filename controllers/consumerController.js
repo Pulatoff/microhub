@@ -144,7 +144,7 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
         await ConsumerDetails.create({
             weight: consumer.weight,
             height: consumer.height,
-            from_date: last_track[0].createdAt || consumer.createdAt,
+            from_date: last_track[0]?.createdAt || consumer?.createdAt || date.toISOString(),
             to_date: date.toISOString(),
             consumerId: consumer.id,
         })

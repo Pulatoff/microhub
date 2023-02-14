@@ -31,7 +31,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     offset = offset || 0
     number = number || 1
     const ingredient = await Ingredient.findByPk(ingredient_id)
-    console.log(ingredient)
+
     const spoon = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${ingredient?.spoon_id}/information?amount=${ingredient?.amount}&apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}`
     )

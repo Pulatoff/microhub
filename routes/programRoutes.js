@@ -6,7 +6,7 @@ const course = require('../controllers/courseController')
 const swap = require('../controllers/swaperController')
 router
     .route('/')
-    .post(auth.protect, auth.role(['admin', 'nutritionist']), controller.addProgram)
+    .post(auth.protect, auth.role(['admin', 'nutritionist', 'consumer']), controller.addProgram)
     .get(auth.protect, controller.getAllPrograms)
 
 router.route('/recipes').post(auth.protect, course.addCourse)

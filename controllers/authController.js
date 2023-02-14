@@ -69,6 +69,7 @@ function ConsumerType(consumer) {
         bmi: consumer.bmi,
         daily_targets: consumer.daily_targets,
         consumer_details: consumer?.consumer_details,
+        program_id: consumer.program_id,
     }
 }
 
@@ -162,6 +163,20 @@ exports.signin = CatchError(async (req, res, next) => {
         })
 
         user = UserType(newUser)
+        const own_program = await Program.findByPk(user.consumer.program_id, {
+            include: [
+                {
+                    model: Meal,
+                    include: [
+                        {
+                            model: Food,
+                            include: [{ model: Recipe, include: Ingredient }],
+                        },
+                    ],
+                },
+            ],
+        })
+        user.consumer.own_program = own_program
         if (requested_nutritionists.length !== 0) {
             user.requested_nutritionists = requested_nutritionists
         }
