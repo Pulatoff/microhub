@@ -161,7 +161,9 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     consumer.activity_level = activity_level || consumer.activity_level
 
     await consumer.save({ validate: true })
-    const newConsumer = await Consumer.findByPk(consumer.id, { include: [{ model: ConsumerDetails, limit: 1 }] })
+    const newConsumer = await Consumer.findByPk(consumer.id, {
+        include: [{ model: ConsumerDetails, limit: 1, order: [['id', 'DESC']] }],
+    })
 
     response(203, 'You are successfully update data', true, { consumer: newConsumer }, res)
 })
