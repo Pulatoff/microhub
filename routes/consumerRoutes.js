@@ -21,6 +21,8 @@ router
         controller.acceptNutritioinst
     )
 
+router.route('/program').get(authController.protect, authController.role(['consumer']), controller.getOnwProgram)
+
 router
     .route('/questionnaire')
     .post(authController.protect, authController.role(['consumer', 'admin']), questionaire.sendQuestionnaire)
