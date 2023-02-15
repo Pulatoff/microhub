@@ -3,11 +3,13 @@ const Consumer = require('../models/consumerModel')
 const Trainer = require('../models/personalTrainerModel')
 const User = require('../models/userModel')
 const Program = require('../models/programModel')
-const Meal = require('../models/mealModel')
-const ProgramTime = require('../models/programTimeModel')
+const Food = require('../models/mealModel')
+const Meal = require('../models/programTimeModel')
 const Swap = require('../models/swaperModel')
 const CosumerDetailes = require('../models/consumerDetailsModel')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
+const Ingredient = require('../models/ingredientModel')
+const Recipe = require('../models/recipeModel')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
@@ -320,4 +322,24 @@ exports.getOneConsumer = CatchError(async (req, res, next) => {
         user: consumer.user,
     }
     response(200, 'successfully consumer', true, { consumer: newUser }, res)
+})
+
+exports.getOnwProgram = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userId } })
+
+    const program = await Program.findByPk(consumer?.program_id, {
+        include: [
+            {
+                model: Meal,
+                include: [
+                    {
+                        model: Food,
+                        include: [{ model: Recipe, include: Ingredient }],
+                    },
+                ],
+            },
+        ],
+    })
+    response(200, 'You are successfully get own program', true, { program }, res)
 })
