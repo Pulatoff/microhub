@@ -6,7 +6,6 @@ const Program = require('../models/programModel')
 const Food = require('../models/mealModel')
 const Meal = require('../models/programTimeModel')
 const Swap = require('../models/swaperModel')
-const CosumerDetailes = require('../models/consumerDetailsModel')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 const Ingredient = require('../models/ingredientModel')
 const Recipe = require('../models/recipeModel')
@@ -162,7 +161,9 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     consumer.activity_level = activity_level || consumer.activity_level
 
     await consumer.save({ validate: true })
-    response(203, 'You are successfully update data', true, { consumer }, res)
+    const newConsumer = await findByPk(consumer.id, { include: ConsumerDetails })
+
+    response(203, 'You are successfully update data', true, { consumer: newConsumer }, res)
 })
 
 /* # GET /api/v1/consumers/trainers/request
@@ -335,7 +336,7 @@ exports.getOnwProgram = CatchError(async (req, res, next) => {
                 include: [
                     {
                         model: Food,
-                        include: [{ model: Recipe, include: Ingredient }],
+                        include: [{ model: Recipe, include: Ingredient }, { model: Swap }],
                     },
                 ],
             },
