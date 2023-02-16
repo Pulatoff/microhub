@@ -48,6 +48,10 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
             macros.carbs - gap * macros.carbs
         }&maxCarbsPercent=${macros.carbs + gap * macros.carbs}&number=4`
     )
+    let cals
+    let carbs
+    let fat
+    let protein
 
     if (swap.data.results.length > 0) {
         for (let i = 0; i < swap.data.results.length; i++) {
@@ -56,13 +60,14 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
             )
             const data = responData.data
             const nutrients = data.nutrition.nutrients.filter((val) => {
-                if (
-                    val.name.toLowerCase() === 'fat' ||
-                    val.name.toLowerCase() === 'protein' ||
-                    val.name.toLowerCase() === 'calories' ||
-                    val.name.toLowerCase() === 'carbohydrates'
-                ) {
-                    return val
+                if (val.name.toLowerCase() === 'fat') {
+                    fat = val.amount
+                } else if (val.name.toLowerCase() === 'protein') {
+                    protein = val.amount
+                } else if (val.name.toLowerCase() === 'calories') {
+                    cals = val.amount
+                } else if (val.name.toLowerCase() === 'carbohydrates') {
+                    carbs = val.amount
                 }
             })
             const ingredient1 = {
@@ -72,7 +77,10 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
                 unit: data.unit,
                 possibleUnits: data.possibleUnits,
                 image: data.image,
-                nutrients,
+                cals,
+                carbs,
+                fat,
+                protein,
             }
 
             swaps.push(ingredient1)
