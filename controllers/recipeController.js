@@ -80,11 +80,11 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
 })
 
 exports.searchIngredients = CatchError(async (req, res, next) => {
-    let { query, number, offset, unit, amount } = req.query
+    let { query, number, offset, amount } = req.query
     offset = offset || 0
     number = number || 1
     amount = amount || 1
-    unit = unit || 'g'
+    let unit = 'g'
 
     const ingredients = []
 
