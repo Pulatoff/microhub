@@ -94,7 +94,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
             const meal = await Meal.create({ week, day: numberDay, programId: program.id })
             if (food_items) {
                 for (let k = 0; k < food_items.length; k++) {
-                    const { serving, quantity, course, title, image_url, recipe_id, fat, cals, carbs, protein } =
+                    const { serving, quantity, course, title, image_url, recipe_id, fat, cals, carbs, protein, notes } =
                         food_items[k]
                     const mealId = meal.id
 
@@ -106,6 +106,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
                         mealId,
                         title,
                         recipeId: recipe_id,
+                        notes,
                     })
                     total_recipes++
                     macros.cals += cals

@@ -15,6 +15,7 @@ const Food = sequelize.define(
         cals: { type: DataTypes.FLOAT, defaultValue: 0 },
         carbs: { type: DataTypes.FLOAT, defaultValue: 0 },
         protein: { type: DataTypes.FLOAT, defaultValue: 0 },
+        notes: { type: DataTypes.TEXT },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
