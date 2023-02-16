@@ -9,7 +9,7 @@ const ConsumerDetails = sequelize.define(
         weight: { type: DataTypes.FLOAT, allowNull: false },
         height: { type: DataTypes.FLOAT, allowNull: false },
         from_date: { type: DataTypes.DATE, allowNull: false },
-        to_date: { type: DataTypes.DATE, allowNull: false },
+        to_date: { type: DataTypes.DATE },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )

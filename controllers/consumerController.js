@@ -134,21 +134,25 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId } })
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
-
+    console.log()
     if (weight || height) {
         const date = new Date()
-        const last_track = await ConsumerDetails.findAll({
+        const last_track = await ConsumerDetails.findOne({
             where: { consumerId: consumer.id },
             order: [['id', 'DESC']],
         })
 
-        await ConsumerDetails.create({
-            weight: consumer.weight,
-            height: consumer.height,
-            from_date: last_track[0]?.createdAt || consumer?.createdAt || date.toISOString(),
-            to_date: date.toISOString(),
+        const consumer_detail = await ConsumerDetails.create({
+            weight: weight,
+            height: height,
+            from_date: date.toISOString(),
+            to_date: null,
             consumerId: consumer.id,
         })
+        if (last_track) {
+            last_track.to_date = date.toISOString()
+            await last_track.save()
+        }
     }
 
     consumer.height = height || consumer.height
@@ -168,9 +172,6 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     response(203, 'You are successfully update data', true, { consumer: newConsumer }, res)
 })
 
-/* # GET /api/v1/consumers/trainers/request
- * role: consumer
- */
 exports.getRequestedTrainers = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId }, include: [{ model: Trainer, include: User }] })
