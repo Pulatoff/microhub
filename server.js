@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8000
 sequlize.sync()
 
 const io = new Server(server, {
-    cors: { origin: '*', methods: ['GET', 'POST'], credentials: true },
+    cors: { origin: '*', credentials: true },
 })
 
 io.on('connection', (socket) => {
