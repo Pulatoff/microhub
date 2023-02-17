@@ -10,9 +10,8 @@ const PORT = process.env.PORT || 8000
 sequlize.sync()
 
 const io = new Server(server, {
-    cors: { origin: 'localhost:3000', methods: ['GET', 'POST'], credentials: true },
+    cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'], credentials: true },
 })
-const users = []
 
 io.on('connection', (socket) => {
     socket.on('joinRoom', async (room) => {
