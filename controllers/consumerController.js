@@ -134,7 +134,6 @@ exports.updateConsumer = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId } })
     const { weight, height, favorite_foods, least_favorite_foods, allergies, preferences, gender, activity_level } =
         req.body
-    console.log()
     if (weight || height) {
         const date = new Date()
         const last_track = await ConsumerDetails.findOne({
