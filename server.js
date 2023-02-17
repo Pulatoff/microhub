@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8000
 sequlize.sync()
 
 const io = new Server(server, {
-    cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'], credentials: true },
+    cors: { origin: 'https://microhubbackend.microhubltd.com.au', methods: ['GET', 'POST'], credentials: true },
 })
 
 io.on('connection', (socket) => {
