@@ -20,9 +20,7 @@ app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
 var corsOptions = {
     credentials: true,
-    origin: function (origin, callback) {
-        callback(null, true)
-    },
+    origin: '*',
 }
 
 app.use(cors(corsOptions))
