@@ -9,7 +9,9 @@ const PORT = process.env.PORT || 8000
 
 sequlize.sync()
 
-const io = new Server(server)
+const io = new Server(server, {
+    cors: { origin: '*', methods: ['GET', 'POST'], credentials: true },
+})
 
 io.on('connection', (socket) => {
     socket.on('joinRoom', async (room) => {
@@ -19,6 +21,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('sendMessage', async (data) => {
+        console.log(data)
         const date = new Date()
         const message = await Message.create({
             message: data.message,
