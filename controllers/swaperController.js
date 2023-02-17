@@ -11,17 +11,43 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const { ingredientId, swapIngredientId, foodItemId } = req.body
     const userId = req.user.id
     const consumer = await Consumer.findOne({ userId })
+    let cals
+    let carbs
+    let fat
+    let protein
 
     const respon = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}&unit=g&amount=1`
     )
-
+    const data = respon.data
+    const nutrients = data.nutrition.nutrients.filter((val) => {
+        if (val.name.toLowerCase() === 'fat') {
+            fat = val.amount
+        } else if (val.name.toLowerCase() === 'protein') {
+            protein = val.amount
+        } else if (val.name.toLowerCase() === 'calories') {
+            cals = val.amount
+        } else if (val.name.toLowerCase() === 'carbohydrates') {
+            carbs = val.amount
+        }
+    })
     const swap = await Swaper.create({
         ingredientId,
         swapIngredientId,
         foodItemId,
         consumerId: consumer.id,
-        ingredientInfo: JSON.stringify(respon.data),
+        ingredientInfo: JSON.stringify({
+            id: data.id,
+            name: data.name,
+            amount: data.amount,
+            unit: data.unit,
+            possibleUnits: data.possibleUnits,
+            image: data.image,
+            cals,
+            carbs,
+            fat,
+            protein,
+        }),
     })
     response(201, 'You are successfully swap ingredient', true, { swap }, res)
 })
