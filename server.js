@@ -9,9 +9,7 @@ const PORT = process.env.PORT || 8000
 
 sequlize.sync()
 
-const io = new Server(server, {
-    cors: { origin: 'https://microhubbackend.microhubltd.com.au', methods: ['GET', 'POST'], credentials: true },
-})
+const io = new Server(server)
 
 io.on('connection', (socket) => {
     socket.on('joinRoom', async (room) => {
