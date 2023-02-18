@@ -44,7 +44,7 @@ router
     )
 
 router
-    .route('/trainer')
+    .route('/trainers')
     .post(
         authController.protect,
         authController.role(['consumer']),
