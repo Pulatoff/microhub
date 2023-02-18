@@ -43,6 +43,7 @@ function ConsumerType(consumer) {
         user: consumer?.user,
     }
 }
+
 exports.getConsumers = CatchError(async (req, res) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({

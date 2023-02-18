@@ -16,6 +16,7 @@ const DairyRouter = require('../routes/dairyRoutes')
 const GoalsRouter = require('../routes/goalRoutes')
 const GroupRouter = require('../routes/groupRoutes')
 const RecipeRouter = require('../routes/recipesRoutes')
+const messageRouter = require('../routes/messageRoutes')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
@@ -43,6 +44,7 @@ app.use('/api/v1/diaries', DairyRouter)
 app.use('/api/v1/goals', GoalsRouter)
 app.use('/api/v1/groups', GroupRouter)
 app.use('/api/v1/recipes', RecipeRouter)
+app.use('/api/v1/messages', messageRouter)
 
 if (process.env.NODE_ENV === 'development') {
     app.use('/test', (req, res) => {
