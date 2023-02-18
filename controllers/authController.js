@@ -157,6 +157,7 @@ exports.signin = CatchError(async (req, res, next) => {
                     email: nutUser.email,
                     linkToken: val.linkToken,
                     status: val.consumer_trainers.status,
+                    room: val.consumer_trainers.room_number,
                     createdAt: val.createdAt,
                 })
             }
@@ -277,6 +278,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     email: nutUser.email,
                     linkToken: val.linkToken,
                     status: val.consumer_trainers.status,
+                    room: val.consumer_trainers.room_number,
                     createdAt: val.createdAt,
                 })
             }
