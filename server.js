@@ -14,8 +14,12 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-    socket.on('join', (room) => {
-        socket.join(room)
+    socket.on('join', async (room) => {
+        try {
+            socket.join(room)
+            const messages = await Message.findAll({ where: { room_number: room } })
+            socket.to(room).emit('message', messages)
+        } catch (error) {}
     })
 
     socket.on('message', async (data) => {
