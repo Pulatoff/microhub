@@ -210,6 +210,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
                 email: val.user.email,
                 linkToken: val.linkToken,
                 status: val.consumer_trainers.status,
+                room: val.consumer_trainers.room_number,
                 createdAt: val.createdAt,
             }
         }
