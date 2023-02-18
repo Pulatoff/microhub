@@ -10,33 +10,59 @@ const PORT = process.env.PORT || 8000
 sequlize.sync()
 
 const io = new Server(server, {
-    cors: { origin: '*', credentials: true },
+    cors: { origin: '*', methods: ['GET', 'POST'], credentials: true },
 })
 
+// io.on('connection', (socket) => {
+//     socket.on('joinRoom', async (room) => {
+//         socket.join(room)
+//         const messages = await Message.findAll({ where: { room_number: room } })
+//         socket.broadcast.to(room).emit('message', messages)
+//     })
+
+//     socket.on('sendMessage', async (data) => {
+//         const date = new Date()
+//         const message = await Message.create({
+//             message: data.message,
+//             room_number: data.room,
+//             send_date: date.toISOString(),
+//             send_side: data.send_date,
+//             consumerId: data.consumerId,
+//             nutritionistId: data.nutritionistId,
+//         })
+
+//         socket.to(data.room).emit(message)
+//     })
+
+//     socket.on('disconnect', function () {
+//         console.log('user disconnected')
+//     })
+// })
+
 io.on('connection', (socket) => {
-    socket.on('joinRoom', async (room) => {
+    socket.on('join', (room) => {
         socket.join(room)
-        const messages = await Message.findAll({ where: { room_number: room } })
-        socket.broadcast.to(room).emit('message', messages)
     })
 
-    socket.on('sendMessage', async (data) => {
-        console.log(data)
-        const date = new Date()
-        const message = await Message.create({
-            message: data.message,
-            room_number: data.room,
-            send_date: date.toISOString(),
-            send_side: data.send_date,
-            consumerId: data.consumerId,
-            nutritionistId: data.nutritionistId,
-        })
+    socket.on('message', async (data) => {
+        try {
+            const { message, consumerId, nutritionistId, send_side, room } = data
 
-        socket.to(data.room).emit(message)
-    })
+            const newMessage = await Message.create({
+                message,
+                send_side,
+                consumerId,
+                nutritionistId: nutritionistId,
+                room_number: room,
+                send_date: new Date(),
+            })
 
-    socket.on('disconnect', function () {
-        console.log('user disconnected')
+            console.log(newMessage)
+
+            io.to(room).emit('message', newMessage)
+        } catch (error) {
+            console.error(error)
+        }
     })
 })
 

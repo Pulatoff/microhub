@@ -20,22 +20,24 @@ app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
 var corsOptions = {
     credentials: true,
-    origin: '*',
+    origin: function (origin, callback) {
+        callback(null, true)
+    },
 }
 
 app.use(cors(corsOptions))
 app.use(cookieParser())
-// app.use(function (req, res, next) {
-//     res.header('Access-Control-Allow-Credentials', true)
-//     res.header('Access-Control-Allow-Origin', 'http://localhost:8080/')
-//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
-//     next()
-// })
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Credentials', true)
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080/')
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
+    next()
+})
 
 // for fetching request body
 app.use(express.json({ limit: '1000kb' }))
-app.use(urlencoded({ limit: '1000kb' }))
+app.use(urlencoded({ extended: true }))
 app.use(express.static('public'))
 
 // const limit = rateLimit({
