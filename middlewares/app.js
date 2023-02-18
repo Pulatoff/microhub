@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const { urlencoded } = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+
 // app routes
 const userRouter = require('../routes/userRoutes')
 const consumerRouter = require('../routes/consumerRoutes')
@@ -27,26 +28,11 @@ var corsOptions = {
 
 app.use(cors(corsOptions))
 app.use(cookieParser())
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Credentials', true)
-    res.header('Access-Control-Allow-Origin', 'http://localhost:8080/')
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
-    next()
-})
 
 // for fetching request body
 app.use(express.json({ limit: '1000kb' }))
 app.use(urlencoded({ extended: true }))
 app.use(express.static('public'))
-
-// const limit = rateLimit({
-//     max: 10,
-//     windowMs: 1 * 60 * 60 * 1000,
-//     message: 'Too many requests from this IP, Please try again later',
-// })
-
-// app.use('/api', limit)
 
 // main routes
 app.use('/api/v1/users', userRouter)
