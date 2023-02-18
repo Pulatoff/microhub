@@ -13,6 +13,8 @@ const Message = sequelize.define('messages', {
 
 Consumer.hasMany(Message)
 Message.belongsTo(Consumer)
+
 Trainer.hasMany(Message)
 Message.belongsTo(Trainer)
+
 module.exports = Message
