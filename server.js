@@ -17,9 +17,12 @@ io.on('connection', (socket) => {
     socket.on('join', async (room) => {
         try {
             socket.join(room)
+            console.log(room)
             const messages = await Message.findAll({ where: { room_number: room } })
-            socket.to(room).emit('message', messages)
-        } catch (error) {}
+            socket.to(room).emit('messages', messages)
+        } catch (error) {
+            console.log(error)
+        }
     })
 
     socket.on('message', async (data) => {
@@ -35,7 +38,7 @@ io.on('connection', (socket) => {
                 send_date: new Date(),
             })
 
-            io.to(room).emit('message', newMessage)
+            io.to(room).emit('new:message', newMessage)
         } catch (error) {
             console.error(error)
         }
