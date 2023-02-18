@@ -17,7 +17,6 @@ io.on('connection', (socket) => {
     socket.on('join', async (room) => {
         try {
             socket.join(room)
-            console.log(room)
             const messages = await Message.findAll({ where: { room_number: room } })
             socket.to(room).emit('messages', messages)
         } catch (error) {
