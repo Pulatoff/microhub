@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const { urlencoded } = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const session = require('express-session')
 
 // app routes
 const userRouter = require('../routes/userRoutes')
@@ -26,9 +27,24 @@ var corsOptions = {
         callback(null, true)
     },
 }
+const sessionConfig = {
+    secret: process.env.SESSION_SECRET,
+    name: 'microhub',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        sameSite: 'strict',
+    },
+}
 
 app.use(cors(corsOptions))
 app.use(cookieParser())
+
+if (process.env.NODE_ENV === 'production') {
+    app.use('trust proxy', 1)
+    sessionConfig.cookie.secure = true
+}
+app.use(session(sessionConfig))
 
 // for fetching request body
 app.use(express.json({ limit: '1000kb' }))
