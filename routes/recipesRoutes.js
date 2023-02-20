@@ -5,8 +5,8 @@ const controller = require('../controllers/recipeController')
 
 router
     .route('/')
-    .get(auth.protect, auth.role(['nutritionist', 'admin']), controller.getAllRecipes)
-    .post(auth.protect, auth.role(['nutritionist', 'admin']), controller.addRecipe)
+    .get(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.getAllRecipes)
+    .post(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.addRecipe)
 
 router.route('/random').get(controller.randomRecipes)
 router.route('/search').get(auth.protect, controller.searchRecipes)
@@ -16,8 +16,8 @@ router.route('/ingredients/info').get(controller.searchIngredients)
 
 router
     .route('/:id')
-    .get(auth.protect, auth.role(['nutritionist', 'admin']), controller.getOneRecipe)
-    .patch(auth.protect, auth.role(['nutritionist', 'admin']), controller.updateRecipes)
-    .delete(auth.protect, auth.role(['nutritionist', 'admin']), controller.deleteRecipe)
+    .get(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.getOneRecipe)
+    .patch(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.updateRecipes)
+    .delete(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.deleteRecipe)
 
 module.exports = router
