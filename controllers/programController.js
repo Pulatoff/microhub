@@ -281,8 +281,13 @@ exports.getMeals = CatchError(async (req, res, next) => {
 exports.createSelfPorgam = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
-    const program = await Program.findByPk(consumer?.program_id)
+    const program = await Program.findByPk(consumer?.program_id, { include: [{ model: Meal }] })
     const { name, description, preference, weeks, meals } = req.body
+    if (program.meals) {
+        for (let i = 0; i < program.meals.length; i++) {
+            await Meal.destroy({ where: { id: program.meals[i]?.id } })
+        }
+    }
     let macros = {
         cals: 0,
         carbs: 0,
@@ -351,5 +356,14 @@ exports.createSelfPorgam = CatchError(async (req, res, next) => {
             }
         }
     }
+    program.name = name || program.name
+    program.weeks = weeks || program.weeks
+    program.preference = preference
+    program.cals = macros.cals
+    program.carbs = macros.carbs
+    program.protein = macros.protein
+    program.fat = macros.fat
+    program.total_recipes = total_recipes || 0
+    await program.save()
     response(201, 'You are successfully added to program', true, '', res)
 })
