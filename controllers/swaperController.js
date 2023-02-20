@@ -11,6 +11,7 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const { ingredientId, swapIngredientId, foodItemId } = req.body
     const userId = req.user.id
     const consumer = await Consumer.findOne({ userId })
+
     let cals
     let carbs
     let fat
@@ -19,8 +20,9 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const respon = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}&unit=g&amount=1`
     )
+
     const data = respon.data
-    const nutrients = data.nutrition.nutrients.filter((val) => {
+    data.nutrition.nutrients.filter((val) => {
         if (val.name.toLowerCase() === 'fat') {
             fat = val.amount
         } else if (val.name.toLowerCase() === 'protein') {
@@ -74,6 +76,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
             macros.carbs - gap * macros.carbs
         }&maxCarbsPercent=${macros.carbs + gap * macros.carbs}&number=4`
     )
+
     let cals
     let carbs
     let fat

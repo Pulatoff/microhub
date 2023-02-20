@@ -80,7 +80,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
     const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({
-        nutritionistId: trainer?.id ? trainer?.id : undefined,
+        nutritionistId: trainer?.id ? trainer?.id : +process.env.DEFAULT_NUTRITIONIST,
         name,
         description,
         preference,
@@ -276,4 +276,80 @@ exports.getMeals = CatchError(async (req, res, next) => {
     }
 
     response(200, 'You are get all meals', true, { programs: consumer?.programs }, res)
+})
+
+exports.createSelfPorgam = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userId } })
+    const program = await Program.findByPk(consumer?.program_id)
+    const { name, description, preference, weeks, meals } = req.body
+    let macros = {
+        cals: 0,
+        carbs: 0,
+        protein: 0,
+        fat: 0,
+    }
+    let total_recipes = 0
+    if (meals) {
+        for (let i = 0; i < meals.length; i++) {
+            const { week, day, food_items } = meals[i]
+
+            const numberDay = DayToNumber(day)
+            const meal = await Meal.create({ week, day: numberDay, programId: program.id })
+            if (food_items) {
+                for (let k = 0; k < food_items.length; k++) {
+                    const {
+                        serving,
+                        quantity,
+                        course,
+                        title,
+                        image_url,
+                        recipe_id,
+                        fat,
+                        cals,
+                        carbs,
+                        protein,
+                        notes,
+                        recipe,
+                    } = food_items[k]
+                    const mealId = meal.id
+
+                    const newRecipe = await Recipe.create({ ...recipe })
+                    for (let i = 0; i < recipe.ingredients.length; i++) {
+                        const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = recipe.ingredients[i]
+
+                        await Ingredient.create({
+                            spoon_id,
+                            name,
+                            amount,
+                            unit,
+                            cals,
+                            carbs,
+                            protein,
+                            fat,
+                            recipeId: newRecipe.id,
+                            image,
+                        })
+                    }
+
+                    await Food.create({
+                        serving,
+                        quantity,
+                        course,
+                        image_url,
+                        mealId,
+                        title,
+                        recipeId: newRecipe.id,
+                        notes,
+                    })
+                    total_recipes++
+                    macros.cals += cals
+                    macros.carbs += carbs
+                    macros.protein += protein
+                    macros.fat += fat
+                }
+            }
+        }
+    }
+    response(201, 'You are successfully added to program', true, '', res)
 })
