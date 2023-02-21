@@ -197,3 +197,12 @@ exports.randomRecipes = CatchError(async (req, res, next) => {
 
     response(200, `You get random ${resp.data.length} recipes`, true, { recipes: resp.data }, res)
 })
+
+exports.getConsumerRecipes = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({ where: { userId } })
+    const recipes = await Recipe.findAll({
+        where: { consumerId: consumer.id, attributes: { exclude: ['nutritionistId'] } },
+        include: [{ model: Ingredient }],
+    })
+})
