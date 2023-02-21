@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize')
 const sequlize = require('../configs/db')
 // models
 const User = require('../models/userModel')
-const Program = require('../models/programModel')
+const Recipe = require('./recipeModel')
 // utils
 const set_error = require('../utils/errorModel')
 const { body_fat, tdee, find_body_frame, healthy_weight, bmi, get_daily_targets } = require('../utils/FitnessPage')
@@ -137,7 +137,7 @@ function isPositive(val) {
 User.hasOne(Consumer)
 Consumer.belongsTo(User)
 
-// Program.hasOne(Consumer)
-// Consumer.belongsTo(Program)
+Consumer.hasMany(Recipe)
+Recipe.belongsTo(Consumer)
 
 module.exports = Consumer
