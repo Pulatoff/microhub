@@ -9,6 +9,7 @@ const AppError = require('../utils/AppError')
 const Trainer = require('../models/personalTrainerModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
+const Consumer = require('../models/consumerModel')
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number, offset } = req.query
@@ -121,7 +122,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
 })
 
 exports.addRecipe = CatchError(async (req, res, next) => {
-    const userId = req.user.role === 'nutritionist' ? req.user.id : 3
+    const userId = req.user.id
     let ingredients = req.body.ingredients
 
     ingredients = ingredients.map((val) => {
@@ -131,8 +132,14 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     })
 
     const trainer = await Trainer.findOne({ where: { userId } })
+    const consumer = await Consumer.findOne({ where: { userId } })
 
-    const recipe = await Recipe.create({ ...req.body, nutritionistId: trainer.id, ingredients })
+    const recipe = await Recipe.create({
+        ...req.body,
+        nutritionistId: trainer?.id,
+        ingredients,
+        consumerId: consumer?.id,
+    })
     for (let i = 0; i < ingredients.length; i++) {
         const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = ingredients[i]
 

@@ -26,7 +26,4 @@ const Recipe = sequelize.define(
 Trainer.hasMany(Recipe)
 Recipe.belongsTo(Trainer)
 
-Consumer.hasMany(Recipe)
-Recipe.belongsTo(Consumer)
-
 module.exports = Recipe
