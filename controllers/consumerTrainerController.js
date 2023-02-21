@@ -13,6 +13,7 @@ const response = require('../utils/response')
 const countClientStats = require('../utils/clientStats')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 const ConsumerDetails = require('../models/consumerDetailsModel')
+const crypto = require('crypto')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -31,8 +32,14 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     if (!trainer) next(new AppError('this nutritionist is not exist', 404))
     if (!consumer) next(new AppError('This consumer is not exist', 404))
     const reference = await ConsumerTrainer.findOne({ where: { consumerId, nutritionistId: trainer.id } })
+    const random = crypto.randomUUID() + '-' + Math.random() * 10000
     if (!reference) {
-        await ConsumerTrainer.create({ consumerId, nutritionistId: trainer.id, invate_side: 'profesional' })
+        await ConsumerTrainer.create({
+            consumerId,
+            nutritionistId: trainer.id,
+            invate_side: 'profesional',
+            room_number: random,
+        })
     } else if (reference.status === -1) {
         reference.status = 0
         await reference.save()
