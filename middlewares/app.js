@@ -44,7 +44,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use('trust proxy', 1)
     sessionConfig.cookie.secure = true
 }
-app.use(session(sessionConfig))
+// app.use(session(sessionConfig))
 
 // for fetching request body
 app.use(express.json({ limit: '1000kb' }))
