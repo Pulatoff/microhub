@@ -9,7 +9,7 @@ const ConsumerTrainer = sequelize.define(
     {
         status: { type: DataTypes.INTEGER, defaultValue: 0 },
         statusClient: { type: DataTypes.ENUM('active', 'inactive', 'awaiting meals'), defaultValue: 'awaiting meals' },
-        room_number: { type: DataTypes.STRING, defaultValue: crypto.randomUUID() },
+        room_number: { type: DataTypes.STRING },
         invate_side: { type: DataTypes.ENUM('profesional', 'client') },
     },
     { timestamps: false }
