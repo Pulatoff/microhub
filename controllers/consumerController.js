@@ -55,7 +55,12 @@ exports.addConsumer = CatchError(async (req, res, next) => {
 
     const oldConsumer = await Consumer.findOne({ where: { userId: req.user.id } })
     if (oldConsumer) next(new AppError('This consumer details already exists', 403))
-
+    const program = await Program.create({
+        name: 'My Meal Program',
+        description: '',
+        preference: preferences,
+        weeks: 0,
+    })
     const consumer = await Consumer.create({
         weight,
         height,
@@ -70,6 +75,7 @@ exports.addConsumer = CatchError(async (req, res, next) => {
         waist,
         hip,
         forearm,
+        program_id: program.id,
     })
 
     const { invitationToken } = req.cookies
@@ -210,6 +216,7 @@ exports.getTrainers = CatchError(async (req, res, next) => {
                 email: val.user.email,
                 linkToken: val.linkToken,
                 status: val.consumer_trainers.status,
+                room: val.consumer_trainers.room_number,
                 createdAt: val.createdAt,
             }
         }

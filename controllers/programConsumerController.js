@@ -49,3 +49,17 @@ exports.getPrograms = CatchError(async (req, res, next) => {
 
     response(200, 'You successfully got assign programs', true, { programs: consumer.programs }, res)
 })
+
+exports.bindConumerSelf = CatchError(async (req, res, next) => {
+    const { programId } = req.body
+    const userId = req.user.id
+    const consumer = await Consumer.findByPk({ where: { userId } })
+
+    if (!consumer) next(new AppError('This consumer is not exist', 400))
+
+    await ProgramConsumer.create({ programId, consumerId: consumer.id })
+    consumer.program_id = programId
+    await consumer.save()
+
+    response(200, 'You are successfuly binded to program', true, '', res)
+})

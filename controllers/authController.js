@@ -105,13 +105,13 @@ exports.signupCLient = CatchError(async (req, res, next) => {
 
 exports.signin = CatchError(async (req, res, next) => {
     const { password, email } = req.body
-    if (!password || !email) next(new AppError('Email or Password could not be empty', 404))
+    if (!password || !email) next(new AppError('Email or Password could not be empty', 400))
     const oldUser = await User.findOne({
         where: { email, isActive: 1 },
         include: [{ model: Consumer }],
     })
 
-    if (!oldUser) next(new AppError('Wrong password or email, Please try again', 404))
+    if (!oldUser) next(new AppError('Wrong password or email, Please try again', 400))
     // comparing passwords
     const compare = await bcrypt.compare(password, oldUser.password)
     if (!compare) next(new AppError('Wrong password or email, Please try again', 401))
@@ -158,6 +158,7 @@ exports.signin = CatchError(async (req, res, next) => {
                     email: nutUser.email,
                     linkToken: val.linkToken,
                     status: val.consumer_trainers.status,
+                    room: val.consumer_trainers.room_number,
                     createdAt: val.createdAt,
                 })
             }
@@ -278,6 +279,7 @@ exports.usersSelf = CatchError(async (req, res, next) => {
                     email: nutUser.email,
                     linkToken: val.linkToken,
                     status: val.consumer_trainers.status,
+                    room: val.consumer_trainers.room_number,
                     createdAt: val.createdAt,
                 })
             }
@@ -325,7 +327,7 @@ exports.role = (roles) => {
             }
             next()
         } catch (error) {
-            next(new AppError(error.message, 404))
+            next(new AppError(error.message, 400))
         }
     }
 }
@@ -334,7 +336,7 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
     const { first_name, last_name, email, password, passwordConfirm } = req.body
 
     if (!first_name || !last_name || !email || !password || !passwordConfirm)
-        next(new AppError('You need to enter all required fields', 404))
+        next(new AppError('You need to enter all required fields', 400))
 
     // checking the saming => password and passwordConfirm
     if (password !== passwordConfirm) throw new Error('password not the same')

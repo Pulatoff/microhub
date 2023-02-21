@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const { urlencoded } = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const session = require('express-session')
 
 // app routes
 const userRouter = require('../routes/userRoutes')
@@ -16,6 +17,7 @@ const DairyRouter = require('../routes/dairyRoutes')
 const GoalsRouter = require('../routes/goalRoutes')
 const GroupRouter = require('../routes/groupRoutes')
 const RecipeRouter = require('../routes/recipesRoutes')
+const messageRouter = require('../routes/messageRoutes')
 
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common'))
 
@@ -25,9 +27,24 @@ var corsOptions = {
         callback(null, true)
     },
 }
+const sessionConfig = {
+    secret: process.env.SESSION_SECRET,
+    name: 'microhub',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        sameSite: 'strict',
+    },
+}
 
 app.use(cors(corsOptions))
 app.use(cookieParser())
+
+if (process.env.NODE_ENV === 'production') {
+    app.use('trust proxy', 1)
+    sessionConfig.cookie.secure = true
+}
+app.use(session(sessionConfig))
 
 // for fetching request body
 app.use(express.json({ limit: '1000kb' }))
@@ -43,6 +60,7 @@ app.use('/api/v1/diaries', DairyRouter)
 app.use('/api/v1/goals', GoalsRouter)
 app.use('/api/v1/groups', GroupRouter)
 app.use('/api/v1/recipes', RecipeRouter)
+app.use('/api/v1/messages', messageRouter)
 
 if (process.env.NODE_ENV === 'development') {
     app.use('/test', (req, res) => {

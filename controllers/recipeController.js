@@ -121,7 +121,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
 })
 
 exports.addRecipe = CatchError(async (req, res, next) => {
-    const userId = req.user.id
+    const userId = req.user.role === 'nutritionist' ? req.user.id : 3
     let ingredients = req.body.ingredients
 
     ingredients = ingredients.map((val) => {
@@ -143,7 +143,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 })
 
 exports.getAllRecipes = CatchError(async (req, res, next) => {
-    const userId = req.user.id
+    const userId = req.user.role === 'nutritionist' ? req.user.id : 1
     const trainer = await Trainer.findOne({ where: { userId }, attributes: { exclude: ['nutritionistId'] } })
     const recipes = await Recipe.findAll({
         where: { nutritionistId: trainer.id },

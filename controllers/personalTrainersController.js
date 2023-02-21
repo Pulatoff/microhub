@@ -19,6 +19,31 @@ exports.updateTrainer = async (req, res, next) => {
     }
 }
 
+function ConsumerType(consumer) {
+    return {
+        id: consumer.id,
+        weight: consumer.weight,
+        height: consumer.height,
+        wrist: consumer.wrist,
+        forearm: consumer.forearm,
+        hip: consumer.hip,
+        gender: consumer.gender,
+        activity_level: consumer.activity_level,
+        preferences: consumer.preferences,
+        least_favorite_foods: consumer.least_favorite_foods,
+        favorite_foods: consumer.favorite_foods,
+        allergies: consumer.allergies,
+        body_fat: consumer.body_fat,
+        tdee: consumer.tdee,
+        body_frame: consumer.body_frame,
+        healthy_weight: consumer.healthy_weight,
+        bmi: consumer.bmi,
+        daily_targets: consumer.daily_targets,
+        consumer_details: consumer?.consumer_details,
+        user: consumer?.user,
+    }
+}
+
 exports.getConsumers = CatchError(async (req, res) => {
     const userId = req.user.id
     const trainer = await Trainer.findOne({
@@ -37,8 +62,9 @@ exports.getConsumers = CatchError(async (req, res) => {
     const consumers = []
     trainer.consumers = trainer?.consumers?.map((e) => {
         if (e?.consumer_trainers.status === 2) {
-            console.log
-            consumers.push(e)
+            const consumer = ConsumerType(e)
+            consumer.room = e.consumer_trainers.room_number
+            consumers.push(consumer)
         }
     })
 
