@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize')
 // configs
 const sequelize = require('../configs/db')
+const Consumer = require('./consumerModel')
 // models
 const Trainer = require('./personalTrainerModel')
 
@@ -24,5 +25,8 @@ const Recipe = sequelize.define(
 
 Trainer.hasMany(Recipe)
 Recipe.belongsTo(Trainer)
+
+Consumer.hasMany(Recipe)
+Recipe.belongsTo(Consumer)
 
 module.exports = Recipe

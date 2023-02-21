@@ -4,7 +4,14 @@ const sequelize = require('../configs/db')
 const Consumer = require('./consumerModel')
 const Program = require('./programModel')
 
-const ProgramConsumer = sequelize.define('consumer_programs', {}, { timestamps: false })
+const ProgramConsumer = sequelize.define(
+    'consumer_programs',
+    {
+        isAssigned: { type: DataTypes.BOOLEAN, defaultValue: false },
+        sideAssign: { type: DataTypes.STRING, allowNull: true, defaultValue: 'nutritionist' },
+    },
+    { timestamps: false }
+)
 
 Consumer.belongsToMany(Program, { through: ProgramConsumer })
 Program.belongsToMany(Consumer, { through: ProgramConsumer })
