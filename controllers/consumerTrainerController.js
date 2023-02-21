@@ -13,7 +13,7 @@ const response = require('../utils/response')
 const countClientStats = require('../utils/clientStats')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 const ConsumerDetails = require('../models/consumerDetailsModel')
-import { v4 as uuidv4 } from 'uuid'
+const { v4: uuidv4 } = require('uuid')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
