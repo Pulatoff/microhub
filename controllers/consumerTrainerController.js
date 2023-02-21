@@ -13,6 +13,7 @@ const response = require('../utils/response')
 const countClientStats = require('../utils/clientStats')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 const ConsumerDetails = require('../models/consumerDetailsModel')
+import { v4 as uuidv4 } from 'uuid'
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -32,7 +33,12 @@ exports.bindNutritionist = CatchError(async (req, res, next) => {
     if (!consumer) next(new AppError('This consumer is not exist', 404))
     const reference = await ConsumerTrainer.findOne({ where: { consumerId, nutritionistId: trainer.id } })
     if (!reference) {
-        await ConsumerTrainer.create({ consumerId, nutritionistId: trainer.id, invate_side: 'profesional' })
+        await ConsumerTrainer.create({
+            consumerId,
+            nutritionistId: trainer.id,
+            room_number: uuidv4(),
+            invate_side: 'profesional',
+        })
     } else if (reference.status === -1) {
         reference.status = 0
         await reference.save()

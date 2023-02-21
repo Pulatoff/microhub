@@ -19,6 +19,7 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const saveCookie = require('../utils/sendCookieJWT')
 const createJwt = require('../utils/createJWT')
 const response = require('../utils/response')
+const ConsumerTrainer = require('../models/consumerTrainerModel')
 
 function UserType(user) {
     return {
