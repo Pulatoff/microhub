@@ -8,6 +8,7 @@ router
     .get(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.getAllRecipes)
     .post(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.addRecipe)
 
+router.route('/self').get(auth.protect, auth.role(['consumer']), controller.getConsumerRecipes)
 router.route('/random').get(controller.randomRecipes)
 router.route('/search').get(auth.protect, controller.searchRecipes)
 router.route('/ingredients/subsitutes').get(controller.subsituteIngredients)

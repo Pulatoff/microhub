@@ -205,4 +205,5 @@ exports.getConsumerRecipes = CatchError(async (req, res, next) => {
         where: { consumerId: consumer.id, attributes: { exclude: ['nutritionistId'] } },
         include: [{ model: Ingredient }],
     })
+    response(200, `You are successfully get recipes`, true, { recipes }, res)
 })
