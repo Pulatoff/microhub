@@ -81,7 +81,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
     const { name, description, preference, weeks, meals } = req.body
 
     const program = await Program.create({
-        nutritionistId: trainer?.id ? trainer?.id : +process.env.DEFAULT_NUTRITIONIST,
+        nutritionistId: trainer?.id ? trainer?.id : null,
         name,
         description,
         preference,
