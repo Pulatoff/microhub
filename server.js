@@ -18,12 +18,14 @@ io.on('connection', (socket) => {
         try {
             socket.join(room)
             const messages = await Message.findAll({ where: { room_number: room } })
-            socket.to(room).emit('messages', messages)
         } catch (error) {
             console.log(error)
         }
     })
-
+    socket.on('messages', async (room) => {
+        const messages = await Message.findAll({ where: { room_number: room } })
+        socket.broadcast.to(room).emit('newMessages', messages)
+    })
     socket.on('message', async (data) => {
         try {
             const { message, consumerId, nutritionistId, send_side, room } = data
