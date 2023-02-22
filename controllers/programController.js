@@ -380,7 +380,7 @@ exports.getAllProgramsConsumer = CatchError(async (req, res, next) => {
         include: [
             {
                 model: Program,
-                where: { isAssigned: false, sideAssign: 'consumer' },
+
                 include: [
                     { model: Meal, include: [{ model: Food, include: [{ model: Recipe, include: Ingredient }] }] },
                 ],
