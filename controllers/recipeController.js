@@ -202,7 +202,7 @@ exports.getConsumerRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
     const recipes = await Recipe.findAll({
-        where: { consumerId: consumer.id, attributes: { exclude: ['nutritionistId'] } },
+        where: { consumerId: consumer.id },
         include: [{ model: Ingredient }],
     })
     response(200, `You are successfully get recipes`, true, { recipes }, res)
