@@ -57,9 +57,14 @@ exports.bindConumerSelf = CatchError(async (req, res, next) => {
 
     if (!consumer) next(new AppError('This consumer is not exist', 400))
 
-    await ProgramConsumer.create({ programId, consumerId: consumer.id })
-    consumer.program_id = programId
-    await consumer.save()
+    const consumer_program = await ProgramConsumer.findOne({
+        where: { isAssigned: false, programId, consumerId: consumer.id },
+    })
+
+    if (consumer_program) {
+        consumer_program.isAssigned = true
+        await consumer_program.save()
+    }
 
     response(200, 'You are successfuly binded to program', true, '', res)
 })

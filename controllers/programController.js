@@ -13,6 +13,7 @@ const Swap = require('../models/swaperModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
 const multer = require('multer')
+const ProgramConsumer = require('../models/programConsumerModel')
 
 function DayToNumber(day) {
     const dayLower = day.toLowerCase()
@@ -126,8 +127,12 @@ exports.addProgram = CatchError(async (req, res, next) => {
     await program.save()
     if (req.user.role === 'consumer') {
         const consumer = await Consumer.findOne({ where: { userId } })
-        consumer.program_id = program.id
-        await consumer.save()
+        await ProgramConsumer.create({
+            programId: program.id,
+            consumerId: consumer.id,
+            isAssigned: false,
+            sideAssign: 'consumer',
+        })
     }
 
     response(201, 'You are successfully added to program', true, '', res)
@@ -366,4 +371,21 @@ exports.createSelfPorgam = CatchError(async (req, res, next) => {
     program.total_recipes = total_recipes || 0
     await program.save()
     response(201, 'You are successfully added to program', true, '', res)
+})
+
+exports.getAllProgramsConsumer = CatchError(async (req, res, next) => {
+    const userId = req.user.id
+    const consumer = await Consumer.findOne({
+        where: { userId },
+        include: [
+            {
+                model: Program,
+                where: { isAssigned: false, sideAssign: 'consumer' },
+                include: [
+                    { model: Meal, include: [{ model: Food, include: [{ model: Recipe, include: Ingredient }] }] },
+                ],
+            },
+        ],
+    })
+    response(200, 'You are successfully get programs', true, { programs: consumer?.programs }, res)
 })

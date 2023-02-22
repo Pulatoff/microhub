@@ -10,7 +10,10 @@ router
     .post(auth.protect, auth.role(['admin', 'nutritionist', 'consumer']), controller.addProgram)
     .get(auth.protect, controller.getAllPrograms)
 
-router.route('/self').post(auth.protect, auth.role(['consumer']), controller.createSelfPorgam)
+router
+    .route('/self')
+    .post(auth.protect, auth.role(['consumer']), controller.createSelfPorgam)
+    .get(auth.protect, auth.role(['consumer']), controller.getAllProgramsConsumer)
 
 router.route('/recipes').post(auth.protect, course.addCourse)
 
