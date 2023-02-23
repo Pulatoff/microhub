@@ -53,7 +53,7 @@ exports.getPrograms = CatchError(async (req, res, next) => {
 exports.bindConumerSelf = CatchError(async (req, res, next) => {
     const { programId } = req.body
     const userId = req.user.id
-    const consumer = await Consumer.findByPk({ where: { userId } })
+    const consumer = await Consumer.findOne({ where: { userId } })
 
     if (!consumer) next(new AppError('This consumer is not exist', 400))
 

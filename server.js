@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
     })
     socket.on('messages', async (room) => {
         const messages = await Message.findAll({ where: { room_number: room } })
-        socket.broadcast.to(room).emit('newMessages', messages)
+        socket.to(room).emit('newMessages', messages)
     })
     socket.on('message', async (data) => {
         try {
