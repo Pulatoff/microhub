@@ -65,6 +65,8 @@ exports.bindConumerSelf = CatchError(async (req, res, next) => {
         consumer_program.isAssigned = true
         await consumer_program.save()
     }
-
-    response(200, 'You are successfuly binded to program', true, '', res)
+    const program = await Program.findByPk(programId, {
+        include: [{ model: Meal, include: [{ model: Food, include: [{ model: Recipe, include: Ingredient }] }] }],
+    })
+    response(200, 'You are successfuly binded to program', true, { program }, res)
 })
