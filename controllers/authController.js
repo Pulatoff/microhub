@@ -22,7 +22,7 @@ const response = require('../utils/response')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 
 function UserType(user) {
-    const program_number = consumer?.programs?.length - 1
+    const program_number = user?.consumer?.programs?.length - 1
     return {
         first_name: user.first_name,
         last_name: user.last_name,
