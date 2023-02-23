@@ -22,6 +22,7 @@ const response = require('../utils/response')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 
 function UserType(user) {
+    const program_number = consumer?.programs?.length - 1
     return {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -29,7 +30,7 @@ function UserType(user) {
         email: user.email,
         photo: user.photo,
         consumer: user.consumer ? ConsumerType(user.consumer) : undefined,
-        program: user?.consumer?.programs[0] ? ProgramType(user?.consumer?.programs[0]) : undefined,
+        program: user?.consumer?.programs[program_number] ? ProgramType(user?.consumer?.programs[0]) : undefined,
         createdAt: user.createdAt,
     }
 }
