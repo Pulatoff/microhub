@@ -5,8 +5,11 @@ const ConsumerTrainer = require('../models/consumerTrainerModel')
 const Trainer = require('../models/personalTrainerModel')
 const Program = require('../models/programModel')
 const User = require('../models/userModel')
-const ProgramTime = require('../models/programTimeModel')
-const Meal = require('../models/mealModel')
+const Food = require('../models/mealModel')
+const Meal = require('../models/programTimeModel')
+const Swap = require('../models/swaperModel')
+const Ingredient = require('../models/ingredientModel')
+const Recipe = require('../models/recipeModel')
 
 // utils
 const AppError = require('../utils/AppError')
