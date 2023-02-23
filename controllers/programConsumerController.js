@@ -21,9 +21,11 @@ exports.bindConumer = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findByPk(consumerId)
     const nutritionist = await Trainer.findOne({ where: { userId } })
+
     const checkRef = await ConsumerTrainer.findOne({
         where: { consumerId, nutritionistId: nutritionist.id, status: 2 },
     })
+
     if (!consumer) next(new AppError('This consumer is not exist', 404))
     if (!checkRef) {
         next(new AppError(`Client by id ${consumerId} not assigned to nutritionist`, 404))
