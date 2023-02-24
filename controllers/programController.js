@@ -14,6 +14,7 @@ const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
 const multer = require('multer')
 const ProgramConsumer = require('../models/programConsumerModel')
+const s3Client = require('../configs/s3Client')
 
 function DayToNumber(day) {
     const dayLower = day.toLowerCase()
@@ -57,12 +58,9 @@ const multerFilter = (req, file, cb) => {
     }
 }
 
-const upload = multer({
+exports.upload = multer({
     storage: memoryStroge,
-    fileFilter: multerFilter,
 })
-
-exports.uploadImage = upload.single('photo')
 
 exports.addProgram = CatchError(async (req, res, next) => {
     const userId = req.user.id
@@ -72,14 +70,15 @@ exports.addProgram = CatchError(async (req, res, next) => {
         protein: 0,
         fat: 0,
     }
+
     let total_recipes = 0
 
     const trainer = await Trainer.findOne({ where: { userId } })
 
     if (!trainer && req.user.role === 'nutritionist') throw new Error('Nutritionist is not exist')
 
-    const { name, description, preference, weeks, meals } = req.body
-
+    const { name, description, preference, weeks } = req.body
+    let meals = req.body.meals
     const program = await Program.create({
         nutritionistId: trainer?.id ? trainer?.id : null,
         name,
@@ -87,7 +86,9 @@ exports.addProgram = CatchError(async (req, res, next) => {
         preference,
         weeks,
     })
+
     if (meals) {
+        meals = JSON.parse(meals)
         for (let i = 0; i < meals.length; i++) {
             const { week, day, food_items } = meals[i]
 

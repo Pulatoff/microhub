@@ -2,11 +2,12 @@ const express = require('express')
 const app = express()
 const AppError = require('../utils/AppError')
 const morgan = require('morgan')
-const { urlencoded } = require('express')
+const bodyParser = require('body-parser')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-
+const multer = require('multer')
+const upload = multer()
 // app routes
 const userRouter = require('../routes/userRoutes')
 const consumerRouter = require('../routes/consumerRoutes')
@@ -27,6 +28,7 @@ var corsOptions = {
         callback(null, true)
     },
 }
+
 const sessionConfig = {
     secret: process.env.SESSION_SECRET,
     name: 'microhub',
@@ -44,11 +46,11 @@ if (process.env.NODE_ENV === 'production') {
     app.use('trust proxy', 1)
     sessionConfig.cookie.secure = true
 }
-// app.use(session(sessionConfig))
+app.use(session(sessionConfig))
 
 // for fetching request body
 app.use(express.json({ limit: '1000kb' }))
-app.use(urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('public'))
 
 // main routes

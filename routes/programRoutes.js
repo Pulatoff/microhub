@@ -7,7 +7,12 @@ const swap = require('../controllers/swaperController')
 
 router
     .route('/')
-    .post(auth.protect, auth.role(['admin', 'nutritionist', 'consumer']), controller.addProgram)
+    .post(
+        auth.protect,
+        auth.role(['admin', 'nutritionist', 'consumer']),
+        controller.upload.single('recfile'),
+        controller.addProgram
+    )
     .get(auth.protect, controller.getAllPrograms)
 
 router
