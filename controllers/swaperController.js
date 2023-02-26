@@ -81,7 +81,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     let carbs
     let fat
     let protein
-    console.log(swap?.data?.results?.length)
+
     if (swap?.data?.results?.length > 0) {
         for (let i = 0; i < swap.data.results.length; i++) {
             const responData = await axios.get(
@@ -121,21 +121,20 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         const resp = await axios.get(
             `${SPOONACULAR_API_URL}/food/ingredients/substitutes?ingredientName=${ingredient.name}&apiKey=${SPOONACULAR_API_KEY}`
         )
+        const substitutes = resp.data?.substitutes
+        if (substitutes) {
+            for (let i = 0; i < substitutes.length; i++) {
+                const subsitute = substitutes[i]
+                const subIngredientName = subsitute.split(' ')
+                const ingredientResponse = await axios.get(
+                    `${SPOONACULAR_API_URL}/food/ingredients/search?query=${subIngredientName[5]}&apiKey=${SPOONACULAR_API_KEY}`
+                )
 
-        const substitutes = resp.data.substitutes
-
-        for (let i = 0; i < substitutes.length; i++) {
-            const subsitute = substitutes[i]
-            const subIngredientName = subsitute.split(' ')
-            console.log(subIngredientName)
-            const ingredientResponse = await axios.get(
-                `${SPOONACULAR_API_URL}/food/ingredients/search?query=${subIngredientName[5]}&apiKey=${SPOONACULAR_API_KEY}`
-            )
-
-            const respona = await axios.get(
-                `${SPOONACULAR_API_URL}/food/ingredients/${ingredientResponse.data.results[0].id}/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}&amount=${ingredient?.amount}`
-            )
-            swaps.push(respona.data)
+                const respona = await axios.get(
+                    `${SPOONACULAR_API_URL}/food/ingredients/${ingredientResponse.data.results[0].id}/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}&amount=${ingredient?.amount}`
+                )
+                swaps.push(respona.data)
+            }
         }
     }
 
