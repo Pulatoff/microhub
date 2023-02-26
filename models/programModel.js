@@ -19,7 +19,7 @@ const Program = sequelize.define(
         weeks: { type: DataTypes.INTEGER, defaultValue: 1 },
         total_recipes: { type: DataTypes.INTEGER, defaultValue: 0 },
         image: { type: DataTypes.STRING, allowNull: true },
-        image_url: { type: DataTypes.STRING, allowNull: true },
+        image_url: { type: DataTypes.TEXT, allowNull: true },
     },
     {
         timestamps: true,
