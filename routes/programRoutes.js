@@ -10,7 +10,7 @@ router
     .post(
         auth.protect,
         auth.role(['admin', 'nutritionist', 'consumer']),
-        controller.upload.single('recfile'),
+        controller.upload.single('image'),
         controller.addProgram
     )
     .get(auth.protect, controller.getAllPrograms)

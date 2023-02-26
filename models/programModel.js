@@ -18,6 +18,8 @@ const Program = sequelize.define(
         carbs: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         weeks: { type: DataTypes.INTEGER, defaultValue: 1 },
         total_recipes: { type: DataTypes.INTEGER, defaultValue: 0 },
+        image: { type: DataTypes.STRING, allowNull: true },
+        image_url: { type: DataTypes.STRING, allowNull: true },
     },
     {
         timestamps: true,
