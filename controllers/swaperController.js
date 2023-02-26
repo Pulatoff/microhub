@@ -88,7 +88,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
                 `${SPOONACULAR_API_URL}/food/ingredients/${swap.data.results[i].id}/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}&amount=${ingredient?.amount}`
             )
             const data = responData.data
-            const nutrients = data.nutrition.nutrients.filter((val) => {
+            data.nutrition.nutrients.filter((val) => {
                 if (val.name.toLowerCase() === 'fat') {
                     fat = val.amount
                 } else if (val.name.toLowerCase() === 'protein') {
@@ -99,7 +99,8 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
                     carbs = val.amount
                 }
             })
-            const ingredient1 = {
+
+            const structured_ingredient = {
                 id: data.id,
                 name: data.name,
                 amount: data.amount,
@@ -112,11 +113,22 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
                 protein,
             }
 
-            swaps.push(ingredient1)
+            swaps.push(structured_ingredient)
         }
     }
 
-    response(200, 'You are successfully get ingredient', true, { data: swaps }, res)
+    if (swaps.length === 0) {
+        const resp = await axios.get(
+            `${SPOONACULAR_API_URL}/food/ingredients/substitutes?ingredientName=${ingredient.name}&apiKey=${SPOONACULAR_API_KEY}`
+        )
+
+        const substitutes = resp.data.substitutes
+        for (let i = 0; i < substitutes.length; i++) {
+            const subsitute = substitutes[i]
+            console.log(subsitute)
+        }
+    }
+    response(200, `Found ${swaps.length} substitutes for the ingredient`, true, { data: swaps }, res)
 })
 
 function getMacros(nutrients) {

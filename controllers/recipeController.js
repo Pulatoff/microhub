@@ -86,6 +86,7 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
         image: data.image,
         nutrients,
     }
+
     response(200, 'successfully geted inforomation' + data.original, true, { ingredient }, res)
 })
 
@@ -145,6 +146,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
             })
         )
     }
+
     const image_url = await getSignedUrl(
         s3Client,
         new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
