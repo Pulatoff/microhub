@@ -81,8 +81,8 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     let carbs
     let fat
     let protein
-
-    if (swap.data.results.length > 0) {
+    console.log(swap?.data?.results?.length)
+    if (swap?.data?.results?.length > 0) {
         for (let i = 0; i < swap.data.results.length; i++) {
             const responData = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/${swap.data.results[i].id}/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}&amount=${ingredient?.amount}`
@@ -127,6 +127,7 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         for (let i = 0; i < substitutes.length; i++) {
             const subsitute = substitutes[i]
             const subIngredientName = subsitute.split(' ')
+            console.log(subIngredientName)
             const ingredientResponse = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/search?query=${subIngredientName[5]}&apiKey=${SPOONACULAR_API_KEY}`
             )
