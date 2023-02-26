@@ -59,7 +59,6 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     offset = offset || 0
     number = number || 1
     const ingredient = await Ingredient.findByPk(ingredient_id)
-
     const spoon = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${ingredient?.spoon_id}/information?amount=${ingredient?.amount}&apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}`
     )
@@ -123,8 +122,10 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         )
 
         const substitutes = resp.data.substitutes
+        
         for (let i = 0; i < substitutes.length; i++) {
             const subsitute = substitutes[i]
+            console.log(subsitute)
             const subIngredientName = subsitute.split(' ')
             const ingredientResponse = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/search?query=${subIngredientName[5]}&apiKey=${SPOONACULAR_API_KEY}`
