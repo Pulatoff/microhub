@@ -122,10 +122,9 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         )
 
         const substitutes = resp.data.substitutes
-        
+
         for (let i = 0; i < substitutes.length; i++) {
             const subsitute = substitutes[i]
-            console.log(subsitute)
             const subIngredientName = subsitute.split(' ')
             const ingredientResponse = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/search?query=${subIngredientName[5]}&apiKey=${SPOONACULAR_API_KEY}`

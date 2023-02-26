@@ -152,8 +152,9 @@ exports.addRecipe = CatchError(async (req, res, next) => {
         new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
         { expiresIn: 3600 * 24 }
     )
-
-    ingredients = JSON.parse(ingredients)
+    if (typeof ingredients === 'string') {
+        ingredients = JSON.parse(ingredients)
+    }
     ingredients = ingredients.map((val) => {
         const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = val
         if (!spoon_id || !name || !amount || !unit) next(new AppError(`You need enter all field ingredient`, 404))
