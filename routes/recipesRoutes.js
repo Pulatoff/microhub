@@ -6,7 +6,12 @@ const controller = require('../controllers/recipeController')
 router
     .route('/')
     .get(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.getAllRecipes)
-    .post(auth.protect, auth.role(['consumer', 'nutritionist', 'admin']), controller.addRecipe)
+    .post(
+        auth.protect,
+        auth.role(['consumer', 'nutritionist', 'admin']),
+        controller.upload.single('image'),
+        controller.addRecipe
+    )
 
 router.route('/self').get(auth.protect, auth.role(['consumer']), controller.getConsumerRecipes)
 router.route('/random').get(controller.randomRecipes)

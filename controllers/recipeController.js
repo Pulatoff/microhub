@@ -1,6 +1,8 @@
 const axios = require('axios')
+const multer = require('multer')
 // configs
 const { SPOONACULAR_API_URL, SPOONACULAR_API_KEY } = require('../configs/URL')
+const s3Client = require('../configs/s3Client')
 // utils
 const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
@@ -10,6 +12,10 @@ const Trainer = require('../models/personalTrainerModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
 const Consumer = require('../models/consumerModel')
+
+const storage = multer.memoryStorage()
+
+exports.upload = multer({ storage })
 
 exports.searchRecipes = CatchError(async (req, res, next) => {
     let { search, number, offset } = req.query
@@ -125,6 +131,24 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     const userId = req.user.id
     let ingredients = req.body.ingredients
 
+    const filename = crypto.randomUUID()
+    if (req.file) {
+        await s3Client.send(
+            new PutObjectCommand({
+                Key: filename,
+                Bucket: process.env.DO_SPACE_BUCKET,
+                Body: req.file.buffer,
+                ContentType: req.file.mimetype,
+            })
+        )
+    }
+    const image_url = await getSignedUrl(
+        s3Client,
+        new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
+        { expiresIn: 3600 * 24 }
+    )
+
+    ingredients = JSON.parse(ingredients)
     ingredients = ingredients.map((val) => {
         const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = val
         if (!spoon_id || !name || !amount || !unit) next(new AppError(`You need enter all field ingredient`, 404))
@@ -136,6 +160,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 
     const recipe = await Recipe.create({
         ...req.body,
+        image_url: req.body.image_url ? undefined : image_url,
         nutritionistId: trainer?.id,
         ingredients,
         consumerId: consumer?.id,
