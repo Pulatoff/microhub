@@ -1,5 +1,8 @@
 const axios = require('axios')
 const multer = require('multer')
+const crypto = require('crypto')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const { PutObjectCommand, GetObjectCommand, DeleteObjectsCommand } = require('@aws-sdk/client-s3')
 // configs
 const { SPOONACULAR_API_URL, SPOONACULAR_API_KEY } = require('../configs/URL')
 const s3Client = require('../configs/s3Client')
