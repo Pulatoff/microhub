@@ -92,6 +92,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
                 ContentType: req.file.mimetype,
             })
         )
+
         image_url = await getSignedUrl(
             s3Client,
             new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
