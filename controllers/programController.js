@@ -82,20 +82,22 @@ exports.addProgram = CatchError(async (req, res, next) => {
 
     const { name, description, preference, weeks } = req.body
     let meals = req.body.meals
-
-    await s3Client.send(
-        new PutObjectCommand({
-            Key: filename,
-            Bucket: process.env.DO_SPACE_BUCKET,
-            Body: req.file.buffer,
-            ContentType: req.file.mimetype,
-        })
-    )
-    const image_url = await getSignedUrl(
-        s3Client,
-        new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
-        { expiresIn: 3600 * 24 }
-    )
+    let image_url = ''
+    if (req.file) {
+        await s3Client.send(
+            new PutObjectCommand({
+                Key: filename,
+                Bucket: process.env.DO_SPACE_BUCKET,
+                Body: req.file.buffer,
+                ContentType: req.file.mimetype,
+            })
+        )
+        image_url = await getSignedUrl(
+            s3Client,
+            new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
+            { expiresIn: 3600 * 24 }
+        )
+    }
     const program = await Program.create({
         nutritionistId: trainer?.id ? trainer?.id : null,
         name,
