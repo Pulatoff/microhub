@@ -83,6 +83,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
     const { name, description, preference, weeks } = req.body
     let meals = req.body.meals
     let image_url = ''
+    console.log(req.file)
     if (req.file) {
         await s3Client.send(
             new PutObjectCommand({
@@ -99,6 +100,7 @@ exports.addProgram = CatchError(async (req, res, next) => {
             { expiresIn: 3600 * 24 }
         )
     }
+
     const program = await Program.create({
         nutritionistId: trainer?.id ? trainer?.id : null,
         name,
@@ -112,7 +114,9 @@ exports.addProgram = CatchError(async (req, res, next) => {
     if (meals) {
         if (typeof meals === 'string') {
             meals = JSON.parse(meals)
+            console.log(meals)
         }
+
         for (let i = 0; i < meals.length; i++) {
             const { week, day, food_items } = meals[i]
 
@@ -395,7 +399,7 @@ exports.createSelfPorgam = CatchError(async (req, res, next) => {
     program.fat = macros.fat
     program.total_recipes = total_recipes || 0
     await program.save()
-    
+
     response(201, 'You are successfully added to program', true, '', res)
 })
 
