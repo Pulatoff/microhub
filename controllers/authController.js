@@ -22,8 +22,8 @@ const response = require('../utils/response')
 const ConsumerTrainer = require('../models/consumerTrainerModel')
 
 function UserType(user) {
-    const program_number = user?.consumer?.programs?.length - 1
-    console.log(user.consumer.programs)
+    const program_number = user?.consumer?.programs?.findIndex((val) => val.id === user.consumer.program_id)
+
     return {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -31,9 +31,10 @@ function UserType(user) {
         email: user.email,
         photo: user.photo,
         consumer: user.consumer ? ConsumerType(user.consumer) : undefined,
-        program: user?.consumer?.programs[program_number]
-            ? ProgramType(user?.consumer?.programs[program_number])
-            : undefined,
+        program:
+            user?.consumer?.programs[program_number] && program_number !== -1
+                ? ProgramType(user?.consumer?.programs[program_number])
+                : undefined,
         createdAt: user.createdAt,
     }
 }
