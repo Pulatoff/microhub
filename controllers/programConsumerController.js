@@ -66,10 +66,10 @@ exports.bindConumerSelf = CatchError(async (req, res, next) => {
         where: { isAssigned: false, programId, consumerId: consumer.id },
     })
 
-    if (consumer_program) {
-        consumer_program.isAssigned = true
-        await consumer_program.save()
-    }
+    if (!consumer_program) throw new Error(`program by id ${programId} is not your program`)
+    consumer_program.isAssigned = true
+    await consumer_program.save()
+
     const program = await Program.findByPk(programId, {
         include: [{ model: Meal, include: [{ model: Food, include: [{ model: Recipe, include: Ingredient }] }] }],
     })
