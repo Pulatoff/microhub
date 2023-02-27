@@ -110,7 +110,9 @@ exports.addProgram = CatchError(async (req, res, next) => {
     })
 
     if (meals) {
-        meals = JSON.parse(meals)
+        if (typeof meals === 'string') {
+            meals = JSON.parse(meals)
+        }
         for (let i = 0; i < meals.length; i++) {
             const { week, day, food_items } = meals[i]
 
