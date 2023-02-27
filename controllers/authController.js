@@ -23,6 +23,7 @@ const ConsumerTrainer = require('../models/consumerTrainerModel')
 
 function UserType(user) {
     const program_number = user?.consumer?.programs?.length - 1
+    console.log(program_number)
     return {
         first_name: user.first_name,
         last_name: user.last_name,
