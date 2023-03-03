@@ -103,6 +103,7 @@ exports.signupCLient = CatchError(async (req, res, next) => {
                 photo: user.photo,
                 createdAt: user.createdAt,
             },
+            accessToken: token,
         },
         res
     )
@@ -212,7 +213,7 @@ exports.signin = CatchError(async (req, res, next) => {
     }
     const token = createJwt(oldUser.id)
     saveCookie(token, res)
-    response(201, 'You are logged in successfully', true, { user }, res)
+    response(201, 'You are logged in successfully', true, { user, accessToken: token }, res)
 })
 
 exports.logout = CatchError(async (req, res, next) => {
@@ -370,6 +371,7 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
         true,
         {
             nutritionist: trainer,
+            accessToken: token,
         },
         res
     )
