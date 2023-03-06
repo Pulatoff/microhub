@@ -326,7 +326,7 @@ exports.role = (roles) => {
             if (!roles.includes(req.user.role)) {
                 return next(
                     new AppError(
-                        `This process only for ${roles.join(', ')} roles. (your role is a ${req.user.role})`,
+                        `This process only for ${roles.join(',')} roles. (your role is a ${req.user.role})`,
                         405
                     )
                 )
