@@ -365,14 +365,5 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
     }
     // sending cookies
     saveCookie(token, res)
-    response(
-        201,
-        'You are logged successfully',
-        true,
-        {
-            nutritionist: trainer,
-            accessToken: token,
-        },
-        res
-    )
+    response(201, 'You are logged successfully', true, { nutritionist: trainer, accessToken: token }, res)
 })
