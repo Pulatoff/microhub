@@ -409,3 +409,18 @@ exports.resetPassword = CatchError(async (req, res, next) => {
     await user.save({ validate: false })
     response(200, 'You are successfully changed password', true, '', res)
 })
+
+exports.updatePassword = CatchError(async (req, res, next) => {
+    const { password, newPassword, newPasswordConfirm } = req.body
+    if (password === newPassword) {
+        next(new AppError('new password and old password dont need to be same', 400))
+    }
+    const user = await User.findByPk(req.user.id)
+
+    if (!(await bcrypt.compare(password, user.password))) {
+        next(new AppError('wrong password, please try again', 401))
+    }
+    user.password = newPassword
+    await user.save({ validate: false })
+    response(200, 'You are successfully changed your password', true, '', res)
+})
