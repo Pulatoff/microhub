@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 // models
 const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
@@ -366,4 +367,23 @@ exports.signupNutritionist = CatchError(async (req, res, next) => {
     // sending cookies
     saveCookie(token, res)
     response(201, 'You are logged successfully', true, { nutritionist: trainer, accessToken: token }, res)
+})
+
+exports.forgotPassword = CatchError(async (req, res, next) => {
+    const email = req.body.email
+    if (!email) {
+        next(new AppError('You must need enter email for reset password', 400))
+    }
+
+    const user = await User.findOne({ where: { email } })
+    if (!user) {
+        next(new AppError(`User not found by email ${email}`, 400))
+    }
+    const token = crypto.randomBytes(32).toString('hex')
+    const resetToken = crypto.createHash('sha256').update(token).digest('hex')
+    user.resetToken = resetToken
+    user.resetTokenDate = Date.now() + 10 * 60 * 1000
+    await user.save({ validate: false })
+    const resetLink = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${token}`
+    response(200, `to email ${email} sended reset url`, true, { resetLink }, res)
 })
