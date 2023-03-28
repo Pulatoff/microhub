@@ -63,8 +63,12 @@ const User = sequelize.define(
 
 // hashing password before create
 User.addHook('beforeSave', async (user) => {
-    const hashedPassword = await bcrypt.hash(user.password, 12)
-    user.password = hashedPassword
+    if (user.password.length >= 8 && user.password.length <= 20) {
+        const hashedPassword = await bcrypt.hash(user.password, 12)
+        user.password = hashedPassword
+    } else {
+        console.log('You are stonger man')
+    }
 })
 
 module.exports = User

@@ -385,5 +385,27 @@ exports.forgotPassword = CatchError(async (req, res, next) => {
     user.resetTokenDate = Date.now() + 10 * 60 * 1000
     await user.save({ validate: false })
     const resetLink = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${token}`
-    response(200, `to email ${email} sended reset url`, true, { resetLink }, res)
+    response(200, `to email ${email} sended reset url`, true, { token }, res)
+})
+
+exports.resetPassword = CatchError(async (req, res, next) => {
+    const token = req.params.token
+    const { password, passwordConfirm } = req.body
+    const resetToken = crypto.createHash('sha256').update(token).digest('hex')
+    const user = await User.findOne({ where: { resetToken } })
+
+    if (!user) {
+        next(new AppError('Invalid token', 400))
+    }
+
+    if (!password || !passwordConfirm) {
+        next(new AppError('You need enter passwords', 400))
+    }
+    if (password !== passwordConfirm) {
+        next(new AppError('You must enter same passwords', 400))
+    }
+
+    user.password = password
+    await user.save({ validate: false })
+    response(200, 'You are successfully changed password', true, '', res)
 })
