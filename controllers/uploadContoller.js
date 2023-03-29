@@ -16,31 +16,26 @@ exports.uploadFile = CatchAsync(async (req, res, next) => {
     const userId = req.user.id
     const file = req.file
     const title = req.body.title
-    const file_type = req.file.mimetype.split('/')[1]
+    const fileType = req.file.mimetype.split('/')[1]
     const trainer = await Trainer.findOne({ where: { userId } })
 
     const generateFilename = (byte = 32) => crypto.randomBytes(byte).toString('hex')
     const fileBuffer = file.buffer
-    const filename = generateFilename()
+    const filename = generateFilename() + '.' + fileType
 
     await s3Client.send(
         new PutObjectCommand({
+            ACL: 'public-read-write',
             Key: filename,
             Bucket: process.env.DO_SPACE_BUCKET,
             Body: fileBuffer,
             ContentType: file.mimetype,
         })
     )
+    const fileUrl = process.env.DO_SPACE_URL + '/' + filename
+    const upload = await Upload.create({ title, filename, fileType, nutritionistId: trainer.id, fileUrl })
 
-    const upload = await Upload.create({ title, filename, file_type, nutritionistId: trainer.id })
-
-    response(
-        201,
-        'your file successfully uploaded to server',
-        true,
-        { upload: { file_url: upload.file_url, createadAt: upload.createadAt, file_type: upload.file_type } },
-        res
-    )
+    response(201, 'your file successfully uploaded to server', true, { upload }, res)
 })
 
 exports.getUploads = CatchAsync(async (req, res, next) => {
@@ -48,23 +43,8 @@ exports.getUploads = CatchAsync(async (req, res, next) => {
     const trainer = await Trainer.findOne({ where: { userId } })
 
     const uploads = await Upload.findAll({ where: { nutritionistId: trainer.id } })
-    const files = []
-    for (let upload of uploads) {
-        const file_url = await getSignedUrl(
-            s3Client,
-            new GetObjectCommand({ Key: upload.filename, Bucket: process.env.DO_SPACE_BUCKET }),
-            { expiresIn: 3600 * 24 }
-        )
 
-        files.push({
-            id: upload.id,
-            file_type: upload.file_type,
-            title: upload.title,
-            file_url,
-            createdAt: upload.createdAt,
-        })
-    }
-    response(200, 'You are successfully get own uploads', true, { uploads: files }, res)
+    response(200, 'You are successfully get own uploads', true, { uploads }, res)
 })
 
 exports.updateUploads = CatchAsync(async (req, res, next) => {
