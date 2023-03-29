@@ -66,8 +66,6 @@ User.addHook('beforeSave', async (user) => {
     if (user.password.length >= 8 && user.password.length <= 20) {
         const hashedPassword = await bcrypt.hash(user.password, 12)
         user.password = hashedPassword
-    } else {
-        console.log('You are stonger man')
     }
 })
 
