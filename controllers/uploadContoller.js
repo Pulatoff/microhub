@@ -21,7 +21,7 @@ exports.uploadFile = CatchAsync(async (req, res, next) => {
 
     const generateFilename = (byte = 32) => crypto.randomBytes(byte).toString('hex')
     const fileBuffer = file.buffer
-    const filename = generateFilename() + '.' + fileType
+    const filename = 'trainer-files/' + generateFilename() + '.' + fileType
 
     await s3Client.send(
         new PutObjectCommand({
