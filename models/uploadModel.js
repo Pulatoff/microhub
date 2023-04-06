@@ -7,12 +7,13 @@ const { GetObjectCommand } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 const Upload = sequelize.define(
-    'trainer_uploads',
+    'trainerUploads',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         title: { type: DataTypes.STRING, allowNull: false },
         filename: { type: DataTypes.STRING, allowNull: false },
-        file_type: { type: DataTypes.STRING, allowNull: false },
+        fileType: { type: DataTypes.STRING, allowNull: false },
+        fileUrl: { type: DataTypes.STRING, allowNull: false },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )

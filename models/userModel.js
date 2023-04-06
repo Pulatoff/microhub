@@ -19,7 +19,10 @@ const User = sequelize.define(
                 },
             },
         },
-        photo: { type: DataTypes.STRING, defaultValue: 'default.jpg ' },
+        photo: {
+            type: DataTypes.STRING,
+            defaultValue: 'https://microhub.sgp1.digitaloceanspaces.com/user-photos%2Fprofile.webp',
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -44,6 +47,8 @@ const User = sequelize.define(
             allowNull: false,
             defaultValue: 'consumer',
         },
+        resetToken: { type: DataTypes.STRING, allowNull: true },
+        resetTokenDate: { type: DataTypes.DATE, allowNull: true },
         isActive: { type: DataTypes.INTEGER, defaultValue: 1 },
     },
     {
@@ -61,8 +66,10 @@ const User = sequelize.define(
 
 // hashing password before create
 User.addHook('beforeSave', async (user) => {
-    const hashedPassword = await bcrypt.hash(user.password, 12)
-    user.password = hashedPassword
+    if (user.password.length >= 8 && user.password.length <= 20) {
+        const hashedPassword = await bcrypt.hash(user.password, 12)
+        user.password = hashedPassword
+    }
 })
 
 module.exports = User
