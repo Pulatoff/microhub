@@ -65,17 +65,18 @@ exports.uploadPhoto = CatchError(async (req, res, next) => {
     const user = await User.findByPk(id)
     const generateFilename = (byte = 32) => crypto.randomBytes(byte).toString('hex')
 
-    const filename = 'user-photos/' + generateFilename() + '.' + req.filename.split('/')[1]
+    const filename = 'user-photos/' + generateFilename() + '.' + file.mimetype.split('/')[1]
+
     await s3Client.send(
         new PutObjectCommand({
             ACL: 'public-read-write',
             Key: filename,
             Bucket: process.env.DO_SPACE_BUCKET,
-            Body: file.fileBuffer,
+            Body: file.buffer,
             ContentType: file.mimetype,
         })
     )
-    const photo = process.env.DO_SPACE_URL + filename
+    const photo = process.env.DO_SPACE_URL + '/' + filename
     user.photo = photo
     await user.save({ validate: false })
     response(200, 'You are successfully upload photo', true, { photo }, res)
