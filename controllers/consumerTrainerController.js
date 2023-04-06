@@ -14,6 +14,7 @@ const countClientStats = require('../utils/clientStats')
 const QuestionnaireQuestion = require('../models/questionnariesQuestionModel')
 const ConsumerDetails = require('../models/consumerDetailsModel')
 const crypto = require('crypto')
+const { Op } = require('sequelize')
 
 exports.bindConsumer = CatchError(async (req, res, next) => {
     const { nutritionistId } = req.body
@@ -83,15 +84,16 @@ exports.searchEngine = CatchError(async (req, res, next) => {
 exports.searchConsumer = CatchError(async (req, res, next) => {
     const { search } = req.query
 
-    const consumer = await Consumer.findOne({
+    const consumer = await Consumer.findAll({
         include: [
             {
                 model: User,
-                where: { email: search },
+                where: { email: { [Op.like]: '%' + search + '%' } },
                 attributes: ['first_name', 'last_name', 'email', 'role'],
             },
         ],
     })
+
     if (!consumer) next(new AppError(`client by this email:${search} not found`, 404))
 
     response(200, 'Your searched consumer', true, { consumer }, res)

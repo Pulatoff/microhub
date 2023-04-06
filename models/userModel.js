@@ -19,7 +19,10 @@ const User = sequelize.define(
                 },
             },
         },
-        photo: { type: DataTypes.STRING, defaultValue: 'default.jpg ' },
+        photo: {
+            type: DataTypes.STRING,
+            defaultValue: 'https://microhub.sgp1.digitaloceanspaces.com/user-photos%2Fprofile.webp',
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,

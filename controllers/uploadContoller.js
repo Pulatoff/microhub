@@ -6,7 +6,6 @@ const response = require('../utils/response')
 const crypto = require('crypto')
 const Trainer = require('../models/personalTrainerModel')
 const Upload = require('../models/uploadModel')
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 const storage = multer.memoryStorage()
 
