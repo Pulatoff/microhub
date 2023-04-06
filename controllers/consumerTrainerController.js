@@ -84,7 +84,7 @@ exports.searchEngine = CatchError(async (req, res, next) => {
 exports.searchConsumer = CatchError(async (req, res, next) => {
     const { search } = req.query
 
-    const consumer = await Consumer.findAll({
+    const consumers = await Consumer.findAll({
         include: [
             {
                 model: User,
@@ -94,9 +94,7 @@ exports.searchConsumer = CatchError(async (req, res, next) => {
         ],
     })
 
-    if (!consumer) next(new AppError(`client by this email:${search} not found`, 404))
-
-    response(200, 'Your searched consumer', true, { consumer }, res)
+    response(200, 'Your searched consumer', true, { consumers }, res)
 })
 
 exports.getOneConsumer = CatchError(async (req, res, next) => {

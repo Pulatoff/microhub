@@ -1,5 +1,6 @@
 const User = require('../models/userModel')
 const s3Client = require('../configs/s3Client')
+const crypto = require('crypto')
 const { PutObjectCommand } = require('@aws-sdk/client-s3')
 
 const multer = require('multer')
@@ -64,7 +65,7 @@ exports.uploadPhoto = CatchError(async (req, res, next) => {
     const user = await User.findByPk(id)
     const generateFilename = (byte = 32) => crypto.randomBytes(byte).toString('hex')
 
-    const filename = 'user-photos/' + generateFilename()
+    const filename = 'user-photos/' + generateFilename() + '.' + req.filename.split('/')[1]
     await s3Client.send(
         new PutObjectCommand({
             ACL: 'public-read-write',
