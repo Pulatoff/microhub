@@ -233,7 +233,7 @@ exports.updatePrograms = CatchError(async (req, res, next) => {
 exports.deletePrograms = CatchError(async (req, res, next) => {
     const { id } = req.params
     await Program.destroy({ where: { id } })
-    response(204, 'You deleted program', true, '', res)
+    response(200, 'You deleted program', true, '', res)
 })
 
 exports.addMealToProgram = CatchError(async (req, res, next) => {
