@@ -12,12 +12,12 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 
 exports.addDairy = CatchError(async (req, res, next) => {
-    const { programId, course, foods } = req.body
+    const { foodItemId, course, foods } = req.body
     const userId = req.user.id
 
     const consumer = await Consumer.findOne({ where: { userId } })
 
-    const diary = await Dairy.create({ course, programId, consumerId: consumer.id })
+    const diary = await Dairy.create({ course, food_itemId: foodItemId, consumerId: consumer.id })
 
     for (let i = 0; i < foods?.length; i++) {
         const food = foods[i]
