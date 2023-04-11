@@ -17,7 +17,7 @@ exports.addDairy = CatchError(async (req, res, next) => {
     })
     const checkAssign = await ConsumerProgram.findOne({ where: { programId, consumerId: consumer.id } })
     if (!checkAssign) {
-        next(new AppError(`You are not assigned to program by id ${programId}`, 404))
+        next(new AppError(`You are not assigned to program by id ${programId}`, 400))
     }
     await Dairy.create({ quantity, serving, programId, date, food_id, course, consumerId: consumer.id })
     response(201, 'you successfully add your diaries', true, {}, res)
@@ -30,19 +30,22 @@ exports.getDairy = CatchError(async (req, res, next) => {
     const diaries = await Dairy.findAll({
         where: { consumerId: consumer.id },
         attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
-        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }, { model: Swaper }],
+        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
     })
+
     response(200, 'You are successfuly getting your diaries', true, { diaries }, res)
 })
 
 exports.getOneDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
+
     const diary = await Dairy.findByPk(req.params.id, {
         where: { consumerId: consumer.id },
         attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
         include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }, { model: Swaper }],
     })
+
     if (!diary) next("This diary don't belongs to you")
     response(200, 'You are successfully geting one diary', true, { diary }, res)
 })

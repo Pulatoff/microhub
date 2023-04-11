@@ -317,17 +317,20 @@ exports.createSelfPorgam = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId } })
     const program = await Program.findByPk(consumer?.program_id, { include: [{ model: Meal }] })
     const { name, description, preference, weeks, meals } = req.body
+
     if (program.meals) {
         for (let i = 0; i < program.meals.length; i++) {
             await Meal.destroy({ where: { id: program.meals[i]?.id } })
         }
     }
+
     let macros = {
         cals: 0,
         carbs: 0,
         protein: 0,
         fat: 0,
     }
+
     let total_recipes = 0
     if (meals) {
         for (let i = 0; i < meals.length; i++) {

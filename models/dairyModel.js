@@ -14,11 +14,7 @@ const Dairy = sequelize.define(
         date: { type: DataTypes.DATE, allowNull: false },
         course: { type: DataTypes.STRING, allowNull: false },
     },
-    {
-        timestamps: true,
-        createdAt: true,
-        updatedAt: false,
-    }
+    { timestamps: true, createdAt: true, updatedAt: false }
 )
 
 Program.hasMany(Dairy)
