@@ -17,6 +17,12 @@ const Ingredient = require('../models/ingredientModel')
 exports.addDairy = CatchError(async (req, res, next) => {
     const { foodItemId, course, foods } = req.body
     const userId = req.user.id
+    let macros = {
+        cals: 0,
+        carbs: 0,
+        protein: 0,
+        fat: 0,
+    }
 
     const consumer = await Consumer.findOne({ where: { userId } })
 
@@ -34,8 +40,17 @@ exports.addDairy = CatchError(async (req, res, next) => {
             unit: food.unit,
             diaryId: diary.id,
         })
-    }
 
+        macros.fat += food.fat
+        macros.cals += food.cals
+        macros.carbs += food.carbs
+        macros.protein += food.protein
+    }
+    diary.fat = macros.fat
+    diary.cals = macros.cals
+    diary.carbs = macros.carbs
+    diary.protein = macros.protein
+    await diary.save()
     response(201, 'you successfully add your diary', true, {}, res)
 })
 
