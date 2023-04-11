@@ -25,9 +25,14 @@ exports.addDairy = CatchError(async (req, res, next) => {
     }
 
     const consumer = await Consumer.findOne({ where: { userId } })
+    const foodItem = await Food.findByPk(foodItemId, { include: Recipe })
+
+    macros.cals += foodItem.recipe.calories
+    macros.fat += foodItem.recipe.fat
+    macros.carbs += foodItem.recipe.carbohydrates
+    macros.protein += foodItem.recipe.protein
 
     const diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
-
     for (let i = 0; i < foods.length; i++) {
         const food = foods[i]
         await FoodConsumer.create({
