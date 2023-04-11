@@ -10,6 +10,9 @@ const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
 
 const response = require('../utils/response')
+const Food = require('../models/mealModel')
+const Recipe = require('../models/recipeModel')
+const Ingredient = require('../models/ingredientModel')
 
 exports.addDairy = CatchError(async (req, res, next) => {
     const { foodItemId, course, foods } = req.body
@@ -17,9 +20,9 @@ exports.addDairy = CatchError(async (req, res, next) => {
 
     const consumer = await Consumer.findOne({ where: { userId } })
 
-    const diary = await Dairy.create({ course, food_itemId: foodItemId, consumerId: consumer.id })
+    const diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
 
-    for (let i = 0; i < foods?.length; i++) {
+    for (let i = 0; i < foods.length; i++) {
         const food = foods[i]
         await FoodConsumer.create({
             title: food.title,
@@ -39,7 +42,12 @@ exports.addDairy = CatchError(async (req, res, next) => {
 exports.getDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
-    const dairy = await Dairy.findAll({ where: { consumerId: consumer.id } })
+
+    const dairy = await Dairy.findAll({
+        where: { consumerId: consumer.id },
+        include: [{ model: FoodConsumer }, { model: Food, include: [{ model: Recipe, include: Ingredient }] }],
+    })
+
     response(200, 'You are successfuly getting your diaries', true, { dairy }, res)
 })
 

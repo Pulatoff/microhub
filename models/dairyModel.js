@@ -1,20 +1,18 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../configs/db')
 // models
-const Program = require('./programModel')
 const Consumer = require('./consumerModel')
-const Recipe = require('./recipeModel')
-const Meal = require('./programTimeModel')
+const Food = require('./mealModel')
 
 const Dairy = sequelize.define(
     'diaries',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         course: { type: DataTypes.STRING, allowNull: false },
-        cals: { type: DataTypes.INTEGER, allowNull: false },
-        carbs: { type: DataTypes.INTEGER, allowNull: false },
-        fat: { type: DataTypes.INTEGER, allowNull: false },
-        protein: { type: DataTypes.INTEGER, allowNull: false },
+        cals: { type: DataTypes.FLOAT, defaultValue: 0 },
+        carbs: { type: DataTypes.FLOAT, defaultValue: 0 },
+        fat: { type: DataTypes.FLOAT, defaultValue: 0 },
+        protein: { type: DataTypes.FLOAT, defaultValue: 0 },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
@@ -22,7 +20,7 @@ const Dairy = sequelize.define(
 Consumer.hasMany(Dairy)
 Dairy.belongsTo(Consumer)
 
-Meal.hasMany(Dairy)
-Dairy.belongsTo(Meal)
+Food.hasMany(Dairy)
+Dairy.belongsTo(Food)
 
 module.exports = Dairy
