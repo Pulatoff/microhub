@@ -6,7 +6,7 @@ const FoodConsumer = sequelize.define(
     'food_clients',
     {
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        name: { type: DataTypes.STRING, allowNull: false },
+        title: { type: DataTypes.STRING, allowNull: false },
         cals: { type: DataTypes.INTEGER, allowNull: false },
         carbs: { type: DataTypes.INTEGER, allowNull: false },
         protein: { type: DataTypes.INTEGER, allowNull: false },

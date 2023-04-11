@@ -4,7 +4,7 @@ const Dairy = require('../models/dairyModel')
 const Program = require('../models/programModel')
 const Swaper = require('../models/swaperModel')
 const ConsumerProgram = require('../models/programConsumerModel')
-const Food = require('../models/mealModel')
+const FoodConsumer = require('../models/foodConsumerModel')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -12,23 +12,35 @@ const CatchError = require('../utils/catchErrorAsyncFunc')
 const response = require('../utils/response')
 
 exports.addDairy = CatchError(async (req, res, next) => {
-    const { date, programId, serving, quantity, course, foods } = req.body
+    const { programId, course, foods } = req.body
     const userId = req.user.id
 
-    response(201, 'you successfully add your diaries', true, {}, res)
+    const consumer = await Consumer.findOne({ where: { userId } })
+
+    const diary = await Dairy.create({ course, programId, consumerId: consumer.id })
+
+    for (let i = 0; i < foods?.length; i++) {
+        const food = foods[i]
+        await FoodConsumer.create({
+            title: food.title,
+            cals: food.cals,
+            carbs: food.carbs,
+            protein: food.protein,
+            fat: food.fat,
+            amount: food.amount,
+            unit: food.unit,
+            diaryId: diary.id,
+        })
+    }
+
+    response(201, 'you successfully add your diary', true, {}, res)
 })
 
 exports.getDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
-
-    const diaries = await Dairy.findAll({
-        where: { consumerId: consumer.id },
-        attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
-        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }],
-    })
-
-    response(200, 'You are successfuly getting your diaries', true, { diaries }, res)
+    const dairy = await Dairy.findAll({ where: { consumerId: consumer.id } })
+    response(200, 'You are successfuly getting your diaries', true, { dairy }, res)
 })
 
 exports.getOneDairy = CatchError(async (req, res, next) => {
