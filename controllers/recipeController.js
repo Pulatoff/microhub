@@ -147,7 +147,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
         )
     }
 
-    const image_url = await getSignedUrl(
+    const imageUrl = await getSignedUrl(
         s3Client,
         new GetObjectCommand({ Key: filename, Bucket: process.env.DO_SPACE_BUCKET }),
         { expiresIn: 3600 * 24 }
@@ -166,14 +166,14 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 
     const recipe = await Recipe.create({
         ...req.body,
-        image_url: req.body.image_url ? undefined : image_url,
+        imageUrl: req.body.image_url ? undefined : imageUrl,
         nutritionistId: trainer?.id,
         ingredients,
         consumerId: consumer?.id,
     })
+    
     for (let i = 0; i < ingredients.length; i++) {
         const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = ingredients[i]
-
         await Ingredient.create({ spoon_id, name, amount, unit, cals, carbs, protein, fat, recipeId: recipe.id, image })
     }
 
