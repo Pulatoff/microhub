@@ -17,7 +17,8 @@ const Recipe = sequelize.define(
         proteinPercentage: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
         name: { type: DataTypes.STRING, allowNull: false },
         protein: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
-        image_url: { type: DataTypes.TEXT },
+        imageUrl: { type: DataTypes.TEXT },
+        isSaved: { type: DataTypes.BOOLEAN, defaultValue: true },
         method: { type: DataTypes.TEXT, allowNull: true },
     },
     { timestamps: true, createdAt: true, updatedAt: false }

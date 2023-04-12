@@ -5,7 +5,10 @@
     "main": "server.js",
     "scripts": {
         "dev": "nodemon server.js",
-        "lint": "eslint . --ext .js"
+        "lint": "eslint . --ext .js",
+        "start": "node server.js",
+        "db:dev": "node database.js development",
+        "db:prod": "node database.js production"
     },
     "author": "",
     "license": "ISC",
