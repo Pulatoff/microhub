@@ -77,11 +77,9 @@ exports.getOneDairy = CatchError(async (req, res, next) => {
 
     const diary = await Dairy.findByPk(req.params.id, {
         where: { consumerId: consumer.id },
-        attributes: ['id', 'serving', 'course', 'quantity', 'course', 'date', 'createdAt'],
-        include: [{ model: Program, attributes: ['id', 'name', 'description', 'createdAt'] }, { model: Swaper }],
+        include: [{ model: FoodConsumer }, { model: Food, include: [{ model: Recipe, include: Ingredient }] }],
     })
 
-    if (!diary) next("This diary don't belongs to you")
     response(200, 'You are successfully geting one diary', true, { diary }, res)
 })
 
@@ -93,12 +91,9 @@ exports.updateDairy = CatchError(async (req, res, next) => {
         where: { id: req.params.id, consumerId: consumer.id },
         attributes: ['id', 'date', 'course', 'food_id', 'quantity', 'serving'],
     })
-    if (!diary) next(new AppError('this diary not found,please try again'))
+    if (!diary) next(new AppError('this diary not found,please try again', 400))
     diary.date = date || diary.date
     diary.course = course || diary.course
-    diary.food_id = food_id || diary.food_id
-    diary.quantity = quantity || diary.quantity
-    diary.serving = serving || diary.serving
     await diary.save()
     response(203, 'You are successfully update your diary', true, { diary }, res)
 })
