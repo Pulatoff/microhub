@@ -28,7 +28,32 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
         `${SPOONACULAR_API_URL}/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&query=${search}&addRecipeNutrition=true&number=${number}&offset=${offset}`
     )
     if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
-    response(200, 'You successfuly recieved recipes', true, results?.data, res)
+    if (!results?.data) next(new AppError('recipes not found', 400))
+    const recipes = []
+    results.data.results.forEach((val) => {
+        const macros = { cals: 0, fat: 0, carbs: 0, protein: 0 }
+        val.nutrition.nutrients.map((value) => {
+            if (value.name.toLowerCase() === 'fat') {
+                macros.fat = value.amount
+            } else if (value.name.toLowerCase() === 'protein') {
+                macros.protein = value.amount
+            } else if (value.name.toLowerCase() === 'calories') {
+                macros.cals = value.amount
+            } else if (value.name.toLowerCase() === 'carbohydrates') {
+                macros.carbs = value.amount
+            }
+        })
+
+        const recipe = {
+            name: val.title,
+            imageUrl: val.image,
+            ...macros,
+            method: null,
+            isSaved: 0,
+        }
+        recipes.push(recipe)
+    })
+    response(200, 'You successfuly recieved recipes', true, { results: recipes }, res)
 })
 
 exports.getOneRecipe = CatchError(async (req, res, next) => {
@@ -167,9 +192,9 @@ exports.addRecipe = CatchError(async (req, res, next) => {
     const recipe = await Recipe.create({
         ...req.body,
         imageUrl: req.body.image_url ? undefined : imageUrl,
-        nutritionistId: trainer?.id,
+        nutritionistId: req.user.role == 'nutritionist' ? trainer?.id : null,
         ingredients,
-        consumerId: consumer?.id,
+        consumerId: req.user.role == 'consumer' ? consumer?.id : null,
     })
 
     for (let i = 0; i < ingredients.length; i++) {
@@ -183,30 +208,28 @@ exports.addRecipe = CatchError(async (req, res, next) => {
 exports.getAllRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.role === 'nutritionist' ? req.user.id : 1
     const trainer = await Trainer.findOne({ where: { userId }, attributes: { exclude: ['nutritionistId'] } })
+
     const recipes = await Recipe.findAll({
         where: { nutritionistId: trainer.id },
         attributes: { exclude: ['nutritionistId'] },
         include: [{ model: Ingredient }],
     })
+
     response(200, 'You are successfully get recipes', true, { recipes }, res)
 })
 
 exports.updateRecipes = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const id = req.params.id
-    const { name, fat, protein, calories, carbohydrates, proteinPercentage, fatPercentage, carbohydratesPercentage } =
-        req.body
+    const { name, fat, protein, calories, method } = req.body
 
     const trainer = await Trainer.findOne({ where: { userId } })
     const recipe = await Recipe.findByPk(id, { where: { nutritionistId: trainer.id } })
     recipe.name = name || recipe.name
     recipe.fat = fat || recipe.fat
-    recipe.calories = calories || recipe.calories
-    recipe.carbohydrates = carbohydrates || recipe.carbohydrates
-    recipe.carbohydratesPercentage = carbohydratesPercentage || recipe.carbohydratesPercentage
+    recipe.cals = calories || recipe.calories
     recipe.protein = protein || recipe.protein
-    recipe.fatPercentage = fatPercentage || recipe.fatPercentage
-    recipe.proteinPercentage = proteinPercentage || recipe.proteinPercentage
+    recipe.method = method || recipe.method
 
     await recipe.save()
 
@@ -225,14 +248,15 @@ exports.randomRecipes = CatchError(async (req, res, next) => {
     const resp = await axios.get(
         `${SPOONACULAR_API_URL}/recipes/random?apiKey=${SPOONACULAR_API_KEY}&number=${number}&includeNutrition=true`
     )
-    const resipes = []
-    resp.data.recipes.forEach((val) => {
-        const recipe = {
-            id: null,
-            name: val.sourceName,
-            imageUrl: val.sourceUrl,
-        }
-    })
+    // const resipes = []
+    // resp.data.recipes.forEach((val) => {
+    //     const recipe = {
+    //         id: null,
+    //         name: val.sourceName,
+    //         imageUrl: val.sourceUrl,
+    //         cals: val.as,
+    //     }
+    // })
     response(200, `You get random ${resp.data.length} recipes`, true, { recipes }, res)
 })
 
