@@ -171,7 +171,7 @@ exports.addRecipe = CatchError(async (req, res, next) => {
         ingredients,
         consumerId: consumer?.id,
     })
-    
+
     for (let i = 0; i < ingredients.length; i++) {
         const { spoon_id, name, amount, unit, protein, fat, cals, carbs, image } = ingredients[i]
         await Ingredient.create({ spoon_id, name, amount, unit, cals, carbs, protein, fat, recipeId: recipe.id, image })
@@ -225,8 +225,15 @@ exports.randomRecipes = CatchError(async (req, res, next) => {
     const resp = await axios.get(
         `${SPOONACULAR_API_URL}/recipes/random?apiKey=${SPOONACULAR_API_KEY}&number=${number}&includeNutrition=true`
     )
-
-    response(200, `You get random ${resp.data.length} recipes`, true, { recipes: resp.data }, res)
+    const resipes = []
+    resp.data.recipes.forEach((val) => {
+        const recipe = {
+            id: null,
+            name: val.sourceName,
+            imageUrl: val.sourceUrl,
+        }
+    })
+    response(200, `You get random ${resp.data.length} recipes`, true, { recipes }, res)
 })
 
 exports.getConsumerRecipes = CatchError(async (req, res, next) => {
@@ -238,3 +245,5 @@ exports.getConsumerRecipes = CatchError(async (req, res, next) => {
     })
     response(200, `You are successfully get recipes`, true, { recipes }, res)
 })
+
+// https://spoonacular.com/cdn/ingredients_500x500/
