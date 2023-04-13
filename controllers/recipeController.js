@@ -127,7 +127,7 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     const data = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/search?metaInformation=true&offset=${offset}&number=${number}&query=${query}&apiKey=${SPOONACULAR_API_KEY}`
     )
-    console.log(data.data.results.length)
+
     for (let i = 0; i < data?.data.results.length; i++) {
         const ingredient = data.data.results[i]
         const resp = await axios.get(
