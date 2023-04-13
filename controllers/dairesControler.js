@@ -64,12 +64,12 @@ exports.getDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
     const consumer = await Consumer.findOne({ where: { userId } })
 
-    const dairy = await Dairy.findAll({
+    const diaries = await Dairy.findAll({
         where: { consumerId: consumer.id },
         include: [{ model: FoodConsumer }, { model: Food, include: [{ model: Recipe, include: Ingredient }] }],
     })
 
-    response(200, 'You are successfuly getting your diaries', true, { diary }, res)
+    response(200, 'You are successfuly getting your diaries', true, { diaries }, res)
 })
 
 exports.getOneDairy = CatchError(async (req, res, next) => {
