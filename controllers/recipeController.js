@@ -118,7 +118,7 @@ exports.getIngredientInfo = CatchError(async (req, res, next) => {
 exports.searchIngredients = CatchError(async (req, res, next) => {
     let { query, number, offset, amount } = req.query
     offset = offset || 0
-    number = number || 1
+    number = number || 2
     amount = amount || process.env.DEFAULT_AMOUNT_OF_MEALS
     const unit = process.env.DEFAULT_UNIT_OF_MEALS
 
@@ -127,30 +127,32 @@ exports.searchIngredients = CatchError(async (req, res, next) => {
     const data = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/search?metaInformation=true&offset=${offset}&number=${number}&query=${query}&apiKey=${SPOONACULAR_API_KEY}`
     )
+    console.log(data.data.results.length)
     for (let i = 0; i < data?.data.results.length; i++) {
         const ingredient = data.data.results[i]
         const resp = await axios.get(
             `${SPOONACULAR_API_URL}/food/ingredients/${ingredient.id}/information?amount=${amount}&unit=${unit}&apiKey=${SPOONACULAR_API_KEY}`
         )
-        const nutrients = []
+        const macros = { cals: 0, carbs: 0, protein: 0, fat: 0 }
         resp.data.nutrition.nutrients.map((val) => {
-            if (
-                val.name.toLowerCase() === 'fat' ||
-                val.name.toLowerCase() === 'protein' ||
-                val.name.toLowerCase() === 'calories' ||
-                val.name.toLowerCase() === 'carbohydrates'
-            ) {
-                nutrients.push(val)
+            if (val.name.toLowerCase() === 'fat') {
+                macros.fat = val.amount
+            } else if (val.name.toLowerCase() === 'protein') {
+                macros.protein = val.amount
+            } else if (val.name.toLowerCase() === 'calories') {
+                macros.cals = val.amount
+            } else if (val.name.toLowerCase() === 'carbohydrates') {
+                macros.carbs = val.amount
             }
         })
         ingredients.push({
-            id: resp.data.id,
+            spoon_id: resp.data.id,
             name: resp.data.name,
             amount: resp.data.amount,
             unit: resp.data.unit,
             possibleUnits: resp.data.possibleUnits,
-            image: resp.data.image,
-            nutrients,
+            image: 'https://spoonacular.com/cdn/ingredients_500x500/' + resp.data.image,
+            ...macros,
         })
     }
     response(200, 'You are successfully got data', true, { ingredients }, res)
@@ -269,5 +271,3 @@ exports.getConsumerRecipes = CatchError(async (req, res, next) => {
     })
     response(200, `You are successfully get recipes`, true, { recipes }, res)
 })
-
-// https://spoonacular.com/cdn/ingredients_500x500/
