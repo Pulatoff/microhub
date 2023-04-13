@@ -101,8 +101,14 @@ exports.updateDairy = CatchError(async (req, res, next) => {
 
 exports.getDairyDaily = CatchError(async (req, res, next) => {
     const date = req.body.date
+    const userId = req.user.id
     const startDate = moment(date).format('YYYY-MM-DD 00:00')
     const endDate = moment(date).format('YYYY-MM-DD 23:59')
-    const diary = await Dairy.findAll({ where: { createdAt: { [Op.between]: [startDate, endDate] } } })
+
+    const consumer = await Consumer.findOne({ where: { userId } })
+
+    const diary = await Dairy.findAll({
+        where: { consumerId: consumer.id, createdAt: { [Op.between]: [startDate, endDate] } },
+    })
     response(200, 'You are successfully get diary', true, { diary }, res)
 })
