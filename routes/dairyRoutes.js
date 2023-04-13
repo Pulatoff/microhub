@@ -7,6 +7,9 @@ router
     .route('/')
     .post(auth.protect, auth.role(['consumer', 'admin']), controller.addDairy)
     .get(auth.protect, auth.role(['consumer', 'admin']), controller.getDairy)
+
+router.route('/daily').post(auth.protect, auth.role(['consumer']), controller.getDairyDaily)
+
 router
     .route('/:id')
     .get(auth.protect, auth.role(['consumer']), controller.getOneDairy)

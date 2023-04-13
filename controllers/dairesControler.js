@@ -5,14 +5,15 @@ const Program = require('../models/programModel')
 const Swaper = require('../models/swaperModel')
 const ConsumerProgram = require('../models/programConsumerModel')
 const FoodConsumer = require('../models/foodConsumerModel')
+const moment = require('moment')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
-
 const response = require('../utils/response')
 const Food = require('../models/mealModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
+const { Op } = require('sequelize')
 
 exports.addDairy = CatchError(async (req, res, next) => {
     const { foodItemId, course, foods } = req.body
@@ -27,9 +28,9 @@ exports.addDairy = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId } })
     const foodItem = await Food.findByPk(foodItemId, { include: Recipe })
 
-    macros.cals += foodItem.recipe.calories
+    macros.cals += foodItem.recipe.cals
     macros.fat += foodItem.recipe.fat
-    macros.carbs += foodItem.recipe.carbohydrates
+    macros.carbs += foodItem.recipe.carbs
     macros.protein += foodItem.recipe.protein
 
     const diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
@@ -68,7 +69,7 @@ exports.getDairy = CatchError(async (req, res, next) => {
         include: [{ model: FoodConsumer }, { model: Food, include: [{ model: Recipe, include: Ingredient }] }],
     })
 
-    response(200, 'You are successfuly getting your diaries', true, { dairy }, res)
+    response(200, 'You are successfuly getting your diaries', true, { diary }, res)
 })
 
 exports.getOneDairy = CatchError(async (req, res, next) => {
@@ -96,4 +97,12 @@ exports.updateDairy = CatchError(async (req, res, next) => {
     diary.course = course || diary.course
     await diary.save()
     response(203, 'You are successfully update your diary', true, { diary }, res)
+})
+
+exports.getDairyDaily = CatchError(async (req, res, next) => {
+    const date = req.body.date
+    const startDate = moment(date).format('YYYY-MM-DD 00:00')
+    const endDate = moment(date).format('YYYY-MM-DD 23:59')
+    const diary = await Dairy.findAll({ where: { createdAt: { [Op.between]: [startDate, endDate] } } })
+    response(200, 'You are successfully get diary', true, { diary }, res)
 })
