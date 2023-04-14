@@ -93,7 +93,6 @@ exports.updateDairy = CatchError(async (req, res, next) => {
         attributes: ['id', 'date', 'course', 'food_id', 'quantity', 'serving'],
     })
     if (!diary) next(new AppError('this diary not found,please try again', 400))
-    diary.date = date || diary.date
     diary.course = course || diary.course
     await diary.save()
     response(203, 'You are successfully update your diary', true, { diary }, res)
@@ -111,4 +110,9 @@ exports.getDairyDaily = CatchError(async (req, res, next) => {
         where: { consumerId: consumer.id, createdAt: { [Op.between]: [startDate, endDate] } },
     })
     response(200, 'You are successfully get diary', true, { diary }, res)
+})
+exports.deleteDairy = CatchError(async (req, res, next) => {
+    const id = req.params.id
+    await Dairy.destroy({ where: { id } })
+    response(200, 'You are successfully delete diary', true, {}, res)
 })
