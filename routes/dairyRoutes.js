@@ -14,5 +14,6 @@ router
     .route('/:id')
     .get(auth.protect, auth.role(['consumer']), controller.getOneDairy)
     .patch(auth.protect, auth.role(['consumer']), controller.updateDairy)
+    .delete(auth.protect, controller.deleteDairy)
 
 module.exports = router
