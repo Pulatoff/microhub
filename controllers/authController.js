@@ -5,8 +5,6 @@ const crypto = require('crypto')
 const User = require('../models/userModel')
 const Consumer = require('../models/consumerModel')
 const Personal_Trainer = require('../models/personalTrainerModel')
-const Questionaire = require('../models/questionnaireModel')
-const Questions = require('../models/questionnariesQuestionModel')
 const Program = require('../models/programModel')
 const Food = require('../models/mealModel')
 const Meal = require('../models/programTimeModel')
@@ -14,6 +12,7 @@ const Swap = require('../models/swaperModel')
 const Ingredient = require('../models/ingredientModel')
 const Recipe = require('../models/recipeModel')
 const ConsumerDetails = require('../models/consumerDetailsModel')
+const SendMessageToMail = require('../utils/sendGrid')
 // utils
 const AppError = require('../utils/AppError')
 const CatchError = require('../utils/catchErrorAsyncFunc')
@@ -383,8 +382,10 @@ exports.forgotPassword = CatchError(async (req, res, next) => {
     const resetToken = crypto.createHash('sha256').update(token).digest('hex')
     user.resetToken = resetToken
     user.resetTokenDate = Date.now() + 10 * 60 * 1000
-    await user.save({ validate: false })
     const resetLink = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${token}`
+    await SendMessageToMail(user.email, resetLink)
+    await user.save({ validate: false })
+
     response(200, `to email ${email} sended reset url`, true, { token }, res)
 })
 
