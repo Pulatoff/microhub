@@ -83,7 +83,6 @@ exports.addProgram = CatchError(async (req, res, next) => {
     const { name, description, preference, weeks } = req.body
     let meals = req.body.meals
     let image_url = ''
-    console.log(req.file)
     if (req.file) {
         await s3Client.send(
             new PutObjectCommand({
@@ -114,7 +113,6 @@ exports.addProgram = CatchError(async (req, res, next) => {
     if (meals) {
         if (typeof meals === 'string') {
             meals = JSON.parse(meals)
-            console.log(meals)
         }
 
         for (let i = 0; i < meals.length; i++) {
