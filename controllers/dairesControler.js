@@ -123,7 +123,9 @@ exports.getDairyDaily = CatchError(async (req, res, next) => {
 
 exports.deleteDairy = CatchError(async (req, res, next) => {
     const id = req.params.id
+
     await Dairy.destroy({ where: { id } })
+
     response(200, 'You are successfully delete diary', true, {}, res)
 })
 
