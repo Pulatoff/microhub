@@ -28,29 +28,34 @@ exports.addDairy = CatchError(async (req, res, next) => {
     const consumer = await Consumer.findOne({ where: { userId } })
     const foodItem = await Food.findByPk(foodItemId, { include: Recipe })
 
-    macros.cals += foodItem.recipe.cals
-    macros.fat += foodItem.recipe.fat
-    macros.carbs += foodItem.recipe.carbs
-    macros.protein += foodItem.recipe.protein
+    if (foodItem) {
+        macros.cals += foodItem.recipe.cals
+        macros.fat += foodItem.recipe.fat
+        macros.carbs += foodItem.recipe.carbs
+        macros.protein += foodItem.recipe.protein
+    }
 
     const diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
-    for (let i = 0; i < foods.length; i++) {
-        const food = foods[i]
-        await FoodConsumer.create({
-            title: food.title,
-            cals: food.cals,
-            carbs: food.carbs,
-            protein: food.protein,
-            fat: food.fat,
-            amount: food.amount,
-            unit: food.unit,
-            diaryId: diary.id,
-        })
+    if (foods) {
+        for (let i = 0; i < foods.length; i++) {
+            const food = foods[i]
+            await FoodConsumer.create({
+                title: food.title,
+                cals: food.cals,
+                carbs: food.carbs,
+                protein: food.protein,
+                fat: food.fat,
+                amount: food.amount,
+                unit: food.unit,
+                diaryId: diary.id,
+            })
 
-        macros.fat += food.fat
-        macros.cals += food.cals
-        macros.carbs += food.carbs
-        macros.protein += food.protein
+            macros.fat += food.fat
+            macros.cals += food.cals
+            macros.carbs += food.carbs
+            macros.protein += food.protein
+        }
+    } else {
     }
     diary.fat = macros.fat
     diary.cals = macros.cals
