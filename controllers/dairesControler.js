@@ -40,7 +40,7 @@ exports.addDairy = CatchError(async (req, res, next) => {
         for (let i = 0; i < foods.length; i++) {
             const food = foods[i]
             await FoodConsumer.create({
-                title: food.name,
+                name: food.name,
                 cals: food.cals,
                 carbs: food.carbs,
                 protein: food.protein,
