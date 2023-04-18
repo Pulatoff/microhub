@@ -40,7 +40,7 @@ exports.addDairy = CatchError(async (req, res, next) => {
         for (let i = 0; i < foods.length; i++) {
             const food = foods[i]
             await FoodConsumer.create({
-                title: food.title,
+                title: food.name,
                 cals: food.cals,
                 carbs: food.carbs,
                 protein: food.protein,
@@ -48,6 +48,7 @@ exports.addDairy = CatchError(async (req, res, next) => {
                 amount: food.amount,
                 unit: food.unit,
                 diaryId: diary.id,
+                image: food.image,
             })
 
             macros.fat += food.fat
