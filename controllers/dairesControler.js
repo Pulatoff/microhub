@@ -114,11 +114,26 @@ exports.getDairyDaily = CatchError(async (req, res, next) => {
 
     const consumer = await Consumer.findOne({ where: { userId } })
 
-    const diary = await Dairy.findAll({
+    const diaries = await Dairy.findAll({
         where: { consumerId: consumer.id, createdAt: { [Op.between]: [startDate, endDate] } },
         include: [{ model: FoodConsumer }, { model: Food, include: [{ model: Recipe, include: Ingredient }] }],
     })
-    response(200, 'You are successfully get diary', true, { diary }, res)
+    const diariesRes = []
+    diaries.map((diary) => {
+        diariesRes.push({
+            id: diary.id,
+            cals: diary.cals,
+            carbs: diary.carbs,
+            protein: diary.protein,
+            fat: diary.fat,
+            course: diary.course,
+            foodItem: diary.food_item,
+            foods: diary.food_clients,
+            createdAt: diary.createdAt,
+        })
+    })
+
+    response(200, 'You are successfully get diary', true, { diaries: diariesRes }, res)
 })
 
 exports.deleteDairy = CatchError(async (req, res, next) => {
