@@ -116,6 +116,7 @@ exports.getDairyDaily = CatchError(async (req, res, next) => {
 
     const diary = await Dairy.findAll({
         where: { consumerId: consumer.id, createdAt: { [Op.between]: [startDate, endDate] } },
+        include: [{ model: FoodConsumer }, { model: Food, include: [{ model: Recipe, include: Ingredient }] }],
     })
     response(200, 'You are successfully get diary', true, { diary }, res)
 })
