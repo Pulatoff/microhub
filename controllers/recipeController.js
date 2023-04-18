@@ -25,7 +25,7 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
     number = number || 1
     offset = offset || 0
     const results = await axios.get(
-        `${SPOONACULAR_API_URL}/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&query=${search}&addRecipeNutrition=true&number=${number}&offset=${offset}`
+        `${SPOONACULAR_API_URL}/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&query=${search}&addRecipeNutrition=true&number=${number}&offset=${offset}&fillIngredients=true`
     )
     if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
     if (!results?.data) next(new AppError('recipes not found', 400))
@@ -53,7 +53,7 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
         }
         recipes.push(recipe)
     })
-    response(200, 'You successfuly recieved recipes', true, { results: recipes }, res)
+    response(200, 'You successfuly recieved recipes', true, { results: results.data }, res)
 })
 
 exports.getOneRecipe = CatchError(async (req, res, next) => {

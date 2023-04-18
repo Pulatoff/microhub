@@ -52,11 +52,12 @@ exports.addDairy = CatchError(async (req, res, next) => {
                 diaryId: diary.id,
                 image: food.image,
             })
+            const macro = await ingredintGetMacros(food.spoon_id, food.amount)
 
-            macros.fat += food.fat
-            macros.cals += food.cals
-            macros.carbs += food.carbs
-            macros.protein += food.protein
+            macros.fat += macro.fat
+            macros.cals += macro.cals
+            macros.carbs += macro.carbs
+            macros.protein += macro.protein
         }
     } else {
     }
@@ -126,9 +127,20 @@ exports.deleteDairy = CatchError(async (req, res, next) => {
 })
 
 async function ingredintGetMacros(id, amount, unit) {
+    const macro = { cals: 0, carbs: 0, protein: 0, fat: 0 }
     const ingredient = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${id}/information?apiKey=${SPOONACULAR_API_KEY}&amount=${amount}&unit=${unit}`
     )
-    console.log(ingredient)
-    return { cals: 0, carbs: 0, protein: 0, fat: 0 }
+    ingredient.data.nutrition.nutrients.map((val) => {
+        if (val.name.toLowerCase() === 'calories') {
+            macro.cals = val.amount
+        } else if (val.name.toLowerCase() === 'carbohydrates') {
+            macro.carbs = val.amount
+        } else if (val.name.toLowerCase() === 'fat') {
+            macro.fat = val.amount
+        } else if (val.name.toLowerCase() === 'protein') {
+            macro.protein = val.amount
+        }
+    })
+    return macro
 }
