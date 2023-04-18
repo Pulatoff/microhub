@@ -30,7 +30,8 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
     if (results.statusText !== 'OK') next(new AppError('Bad request', 400))
     if (!results?.data) next(new AppError('recipes not found', 400))
     const recipes = []
-    results.data.results.forEach((val) => {
+    for (let i = 0; i < results.data.results.length; i++) {
+        const val = results.data.results[i]
         const macros = { cals: 0, fat: 0, carbs: 0, protein: 0 }
         val.nutrition.nutrients.map((value) => {
             if (value.name.toLowerCase() === 'fat') {
@@ -44,6 +45,12 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
             }
         })
 
+        for (let k = 0; k < val.extendedIngredients.length; k++) {
+            const value = val.extendedIngredients[k]
+            const macros = await ingredintGetMacros(value.id, value.amount)
+            console.log(macros)
+        }
+
         const recipe = {
             name: val.title,
             imageUrl: val.image,
@@ -52,7 +59,7 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
             isSaved: 0,
         }
         recipes.push(recipe)
-    })
+    }
     response(200, 'You successfuly recieved recipes', true, { results: results.data }, res)
 })
 
@@ -60,6 +67,7 @@ exports.getOneRecipe = CatchError(async (req, res, next) => {
     const { id } = req.params
     const userId = req.user.id
     const trainer = await Trainer.findOne({ where: { userId } })
+
     const recipe = await Recipe.findByPk(id, {
         attributes: { exclude: ['nutritionistId'] },
         where: { nutritionistId: trainer.id },
@@ -271,3 +279,22 @@ exports.getConsumerRecipes = CatchError(async (req, res, next) => {
     })
     response(200, `You are successfully get recipes`, true, { recipes }, res)
 })
+
+async function ingredintGetMacros(id, amount, unit) {
+    const macro = { cals: 0, carbs: 0, protein: 0, fat: 0 }
+    const ingredient = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/${id}/information?apiKey=${SPOONACULAR_API_KEY}&amount=${amount}&unit=${unit}`
+    )
+    ingredient.data.nutrition.nutrients.map((val) => {
+        if (val.name.toLowerCase() === 'calories') {
+            macro.cals = val.amount
+        } else if (val.name.toLowerCase() === 'carbohydrates') {
+            macro.carbs = val.amount
+        } else if (val.name.toLowerCase() === 'fat') {
+            macro.fat = val.amount
+        } else if (val.name.toLowerCase() === 'protein') {
+            macro.protein = val.amount
+        }
+    })
+    return macro
+}
