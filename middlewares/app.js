@@ -64,6 +64,25 @@ app.use('/api/v1/groups', GroupRouter)
 app.use('/api/v1/recipes', RecipeRouter)
 app.use('/api/v1/messages', messageRouter)
 
+app.get('/api/v1/units', (req, res, next) => {
+    const appUnits = process.env.APP_UNITS.split(',')
+    let units = []
+    appUnits.map((val) => {
+        if (val === 'g') {
+            units.push({ name: 'gramm', value: 'g' })
+        } else if (val === 'liter') {
+            units.push({ name: 'liter', value: 'liter' })
+        }
+    })
+    if (units.length === 0)
+        units = [
+            { name: 'gramm', value: 'g' },
+            { name: 'liter', value: 'liter' },
+        ]
+
+    res.status(200).json({ isOk: true, status: 'success', data: { units }, message: 'You are successfully get units' })
+})
+
 if (process.env.NODE_ENV === 'development') {
     app.use('/test', (req, res) => {
         res.cookie('jwt', 'Bearer sdsfsdfadgfadgadgafdg', {

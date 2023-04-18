@@ -1,3 +1,6 @@
+const { Op } = require('sequelize')
+const axios = require('axios')
+const { SPOONACULAR_API_KEY, SPOONACULAR_API_URL } = require('../configs/URL')
 // models
 const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
@@ -13,7 +16,6 @@ const response = require('../utils/response')
 const Food = require('../models/mealModel')
 const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
-const { Op } = require('sequelize')
 
 exports.addDairy = CatchError(async (req, res, next) => {
     const { foodItemId, course, foods } = req.body
@@ -116,8 +118,17 @@ exports.getDairyDaily = CatchError(async (req, res, next) => {
     })
     response(200, 'You are successfully get diary', true, { diary }, res)
 })
+
 exports.deleteDairy = CatchError(async (req, res, next) => {
     const id = req.params.id
     await Dairy.destroy({ where: { id } })
     response(200, 'You are successfully delete diary', true, {}, res)
 })
+
+async function ingredintGetMacros(id, amount, unit) {
+    const ingredient = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/${id}/information?apiKey=${SPOONACULAR_API_KEY}&amount=${amount}&unit=${unit}`
+    )
+    console.log(ingredient)
+    return { cals: 0, carbs: 0, protein: 0, fat: 0 }
+}
