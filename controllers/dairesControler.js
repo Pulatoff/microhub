@@ -4,9 +4,6 @@ const { SPOONACULAR_API_KEY, SPOONACULAR_API_URL } = require('../configs/URL')
 // models
 const Consumer = require('../models/consumerModel')
 const Dairy = require('../models/dairyModel')
-const Program = require('../models/programModel')
-const Swaper = require('../models/swaperModel')
-const ConsumerProgram = require('../models/programConsumerModel')
 const FoodConsumer = require('../models/foodConsumerModel')
 const moment = require('moment')
 // utils
@@ -18,8 +15,12 @@ const Recipe = require('../models/recipeModel')
 const Ingredient = require('../models/ingredientModel')
 
 exports.addDairy = CatchError(async (req, res, next) => {
-    const { foodItemId, course, foods } = req.body
+    const { foodItemId, course, foods, date } = req.body
     const userId = req.user.id
+    let diary
+    const startDate = moment(date).format('YYYY-MM-DD 00:00')
+    const endDate = moment(date).format('YYYY-MM-DD 23:59')
+
     let macros = {
         cals: 0,
         carbs: 0,
@@ -28,39 +29,18 @@ exports.addDairy = CatchError(async (req, res, next) => {
     }
 
     const consumer = await Consumer.findOne({ where: { userId } })
-    const foodItem = await Food.findByPk(foodItemId, { include: Recipe })
 
-    if (foodItem) {
-        macros.cals += foodItem.recipe.cals
-        macros.fat += foodItem.recipe.fat
-        macros.carbs += foodItem.recipe.carbs
-        macros.protein += foodItem.recipe.protein
+    diary = await Dairy.findOne({
+        where: { course, createdAt: { [Op.between]: [startDate, endDate] }, consumerId: consumer.id },
+    })
+
+    if (diary) {
+        diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
     }
 
-    const diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
-    if (foods) {
-        for (let i = 0; i < foods.length; i++) {
-            const food = foods[i]
-            await FoodConsumer.create({
-                name: food.name,
-                cals: food.cals,
-                carbs: food.carbs,
-                protein: food.protein,
-                fat: food.fat,
-                amount: food.amount,
-                unit: food.unit,
-                diaryId: diary.id,
-                image: food.image,
-            })
-            const macro = await ingredintGetMacros(food.spoon_id, food.amount)
+    const macrosFoodItems = await getFoodItem(foodItemId)
+    const macroFoods = await addFood(foods, diary.id)
 
-            macros.fat += macro.fat
-            macros.cals += macro.cals
-            macros.carbs += macro.carbs
-            macros.protein += macro.protein
-        }
-    } else {
-    }
     diary.fat = macros.fat
     diary.cals = macros.cals
     diary.carbs = macros.carbs
@@ -161,4 +141,41 @@ async function ingredintGetMacros(id, amount, unit) {
         }
     })
     return macro
+}
+
+async function addFood(foods, diaryId) {
+    const macros = { cals: 0, carbs: 0, fat: 0, protein: 0 }
+    if (foods) {
+        for (let i = 0; i < foods.length; i++) {
+            const food = foods[i]
+            await FoodConsumer.create({
+                name: food.name,
+                cals: food.cals,
+                carbs: food.carbs,
+                protein: food.protein,
+                fat: food.fat,
+                amount: food.amount,
+                unit: food.unit,
+                diaryId,
+                image: food.image,
+            })
+            const macro = await ingredintGetMacros(food.spoon_id, food.amount)
+
+            macros.fat += macro.fat
+            macros.cals += macro.cals
+            macros.carbs += macro.carbs
+            macros.protein += macro.protein
+        }
+    }
+    return macros
+}
+
+async function getFoodItem(foodItemId) {
+    const macros = { cals: 0, carbs: 0, fat: 0, protein: 0 }
+    const foodItem = await Food.findOne(foodItemId, { include: [{ model: Recipe }] })
+    macros.cals = foodItem.recipe.cals
+    macros.carbs = foodItem.recipe.carbs
+    macros.fat = foodItem.recipe.fat
+    macros.protein = foodItem.recipe.protein
+    return macros
 }
