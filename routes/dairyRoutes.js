@@ -16,4 +16,9 @@ router
     .patch(auth.protect, auth.role(['consumer']), controller.updateDairy)
     .delete(auth.protect, controller.deleteDairy)
 
+router
+    .route('/foods/:id')
+    .patch(auth.protect, auth.role(['consumer']), controller.updateDairyFood)
+    .delete(auth.protect, auth.role(['consumer']), controller.deleteDairyFood)
+
 module.exports = router

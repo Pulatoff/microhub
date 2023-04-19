@@ -75,7 +75,7 @@ exports.getOneDairy = CatchError(async (req, res, next) => {
 
 exports.updateDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const { date, course, food_id, quantity, serving, foodItemId } = req.body
+    const { course, foodItemId } = req.body
     const consumer = await Consumer.findOne({ where: { userId } })
     const diary = await Dairy.findOne({
         where: { id: req.params.id, consumerId: consumer.id },
@@ -85,6 +85,23 @@ exports.updateDairy = CatchError(async (req, res, next) => {
     diary.foodItemId = foodItemId || diary.foodItemId
     await diary.save()
     response(203, 'You are successfully update your diary', true, { diary }, res)
+})
+
+exports.updateDairyFood = CatchError(async (req, res, next) => {
+    const id = req.params.id
+    const { amount, unit } = req.body
+    const food = await FoodConsumer.findByPk(id)
+    const foodMacros = await ingredintGetMacros(food.spoon_id, amount || food.amount, unit || 'g')
+
+    food.cals = foodMacros.cals
+    food.carbs = foodMacros.carbs
+    food.fat = foodMacros.fat
+    food.protein = foodMacros.protein
+    food.amount = amount || food.amount
+    food.unit = unit || food.unit
+    await food.save()
+
+    response(203, 'You are successfully updated food', true, '', res)
 })
 
 exports.getDairyDaily = CatchError(async (req, res, next) => {
@@ -125,6 +142,12 @@ exports.deleteDairy = CatchError(async (req, res, next) => {
     response(200, 'You are successfully delete diary', true, {}, res)
 })
 
+exports.deleteDairyFood = CatchError(async (req, res, next) => {
+    const id = req.params.id
+    await FoodConsumer.destroy({ where: { id } })
+    response(200, 'You are successfully delete food in diary', true, '', res)
+})
+
 async function ingredintGetMacros(id, amount, unit) {
     const macro = { cals: 0, carbs: 0, protein: 0, fat: 0 }
     const ingredient = await axios.get(
@@ -149,7 +172,7 @@ async function addFood(foods, diaryId) {
     if (foods) {
         for (let i = 0; i < foods.length; i++) {
             const food = foods[i]
-            const foodClient = FoodConsumer.findOne({ diaryId, spoon_id: food.spoon_id })
+            const foodClient = await FoodConsumer.findOne({ where: { diaryId, spoon_id: food.spoon_id } })
             if (!foodClient) {
                 await FoodConsumer.create({
                     name: food.name,
@@ -161,6 +184,7 @@ async function addFood(foods, diaryId) {
                     unit: food.unit,
                     diaryId,
                     image: food.image,
+                    spoon_id: food.spoon_id,
                 })
             }
 

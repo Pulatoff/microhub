@@ -48,7 +48,6 @@ exports.searchRecipes = CatchError(async (req, res, next) => {
         for (let k = 0; k < val.extendedIngredients.length; k++) {
             const value = val.extendedIngredients[k]
             const macros = await ingredintGetMacros(value.id, value.amount)
-            console.log(macros)
         }
 
         const recipe = {
