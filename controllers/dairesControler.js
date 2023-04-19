@@ -34,7 +34,7 @@ exports.addDairy = CatchError(async (req, res, next) => {
         where: { course, createdAt: { [Op.between]: [startDate, endDate] }, consumerId: consumer.id },
     })
 
-    if (diary) {
+    if (!diary) {
         diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
     }
 
@@ -75,13 +75,14 @@ exports.getOneDairy = CatchError(async (req, res, next) => {
 
 exports.updateDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const { date, course, food_id, quantity, serving } = req.body
+    const { date, course, food_id, quantity, serving, foodItemId } = req.body
     const consumer = await Consumer.findOne({ where: { userId } })
     const diary = await Dairy.findOne({
         where: { id: req.params.id, consumerId: consumer.id },
     })
     if (!diary) next(new AppError('this diary not found,please try again', 400))
     diary.course = course || diary.course
+    diary.foodItemId = foodItemId || diary.foodItemId
     await diary.save()
     response(203, 'You are successfully update your diary', true, { diary }, res)
 })
@@ -148,17 +149,21 @@ async function addFood(foods, diaryId) {
     if (foods) {
         for (let i = 0; i < foods.length; i++) {
             const food = foods[i]
-            await FoodConsumer.create({
-                name: food.name,
-                cals: food.cals,
-                carbs: food.carbs,
-                protein: food.protein,
-                fat: food.fat,
-                amount: food.amount,
-                unit: food.unit,
-                diaryId,
-                image: food.image,
-            })
+            const foodClient = FoodConsumer.findOne({ diaryId, spoon_id: food.spoon_id })
+            if (!foodClient) {
+                await FoodConsumer.create({
+                    name: food.name,
+                    cals: food.cals,
+                    carbs: food.carbs,
+                    protein: food.protein,
+                    fat: food.fat,
+                    amount: food.amount,
+                    unit: food.unit,
+                    diaryId,
+                    image: food.image,
+                })
+            }
+
             const macro = await ingredintGetMacros(food.spoon_id, food.amount)
 
             macros.fat += macro.fat
@@ -172,7 +177,7 @@ async function addFood(foods, diaryId) {
 
 async function getFoodItem(foodItemId) {
     const macros = { cals: 0, carbs: 0, fat: 0, protein: 0 }
-    const foodItem = await Food.findOne(foodItemId, { include: [{ model: Recipe }] })
+    const foodItem = await Food.findByPk(foodItemId, { include: [{ model: Recipe }] })
     macros.cals = foodItem.recipe.cals
     macros.carbs = foodItem.recipe.carbs
     macros.fat = foodItem.recipe.fat

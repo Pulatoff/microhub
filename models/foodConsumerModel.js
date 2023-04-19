@@ -14,6 +14,7 @@ const FoodConsumer = sequelize.define(
         amount: { type: DataTypes.FLOAT, allowNull: false },
         unit: { type: DataTypes.STRING, allowNull: false, defaultValue: 'g' },
         image: { type: DataTypes.TEXT, allowNull: true },
+        spoon_id: { type: DataTypes.INTEGER },
     },
     { timestamps: true, createdAt: true, updatedAt: false }
 )
