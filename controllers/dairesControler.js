@@ -145,7 +145,7 @@ exports.deleteDairy = CatchError(async (req, res, next) => {
 exports.deleteDairyFood = CatchError(async (req, res, next) => {
     const id = req.params.id
     await FoodConsumer.destroy({ where: { id } })
-    response(200, 'You are successfully delete food in diary', true, '', res)
+    response(206, 'You are successfully delete food in diary', true, '', res)
 })
 
 async function ingredintGetMacros(id, amount, unit) {
