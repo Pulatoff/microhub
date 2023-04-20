@@ -202,9 +202,11 @@ async function addFood(foods, diaryId) {
 async function getFoodItem(foodItemId) {
     const macros = { cals: 0, carbs: 0, fat: 0, protein: 0 }
     const foodItem = await Food.findByPk(foodItemId, { include: [{ model: Recipe }] })
-    macros.cals = foodItem.recipe.cals
-    macros.carbs = foodItem.recipe.carbs
-    macros.fat = foodItem.recipe.fat
-    macros.protein = foodItem.recipe.protein
+    if (foodItem.recipe) {
+        macros.cals = foodItem.recipe.cals
+        macros.carbs = foodItem.recipe.carbs
+        macros.fat = foodItem.recipe.fat
+        macros.protein = foodItem.recipe.protein
+    }
     return macros
 }
