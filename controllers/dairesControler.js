@@ -37,8 +37,9 @@ exports.addDairy = CatchError(async (req, res, next) => {
     if (!diary) {
         diary = await Dairy.create({ course, foodItemId, consumerId: consumer.id })
     }
+    let macrosFoodItems = { cals: 0, carbs: 0, fat: 0, protein: 0 }
     if (foodItemId) {
-        const macrosFoodItems = await getFoodItem(foodItemId)
+        macrosFoodItems = await getFoodItem(foodItemId)
     }
     const macroFoods = await addFood(foods, diary.id)
 
