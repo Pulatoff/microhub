@@ -77,14 +77,18 @@ exports.getOneDairy = CatchError(async (req, res, next) => {
 
 exports.updateDairy = CatchError(async (req, res, next) => {
     const userId = req.user.id
-    const { course, foodItemId } = req.body
+
+    const { course, foodItemId, date } = req.body
+
+    const startDate = moment(date).format('YYYY-MM-DD 00:00')
+    const endDate = moment(date).format('YYYY-MM-DD 23:59')
+
     const consumer = await Consumer.findOne({ where: { userId } })
     const diary = await Dairy.findOne({
-        where: { id: req.params.id, consumerId: consumer.id },
+        where: { course, consumerId: consumer.id, createdAt: { [Op.between]: [startDate, endDate] } },
     })
     if (!diary) next(new AppError('this diary not found,please try again', 400))
-    diary.course = course || diary.course
-    diary.foodItemId = foodItemId || diary.foodItemId
+    diary.foodItemId = foodItemId || null
     await diary.save()
     response(203, 'You are successfully update your diary', true, { diary }, res)
 })
