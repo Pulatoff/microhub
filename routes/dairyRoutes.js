@@ -3,6 +3,7 @@ const router = require('express').Router()
 const controller = require('../controllers/dairesControler')
 const auth = require('../controllers/authController')
 const swap = require('../controllers/swaperController')
+
 router
     .route('/')
     .post(auth.protect, auth.role(['consumer', 'admin']), controller.addDairy)

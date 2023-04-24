@@ -66,10 +66,7 @@ exports.getOneGroup = CatchError(async (req, res, next) => {
             },
         ],
     })
-    res.status(200).json({
-        status: 'success',
-        data: { group },
-    })
+    res.status(200).json({ status: 'success', data: { group } })
 })
 
 exports.updateGroup = CatchError(async (req, res, next) => {

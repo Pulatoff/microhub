@@ -6,33 +6,20 @@ const Consumer = require('../models/consumerModel')
 const Ingredient = require('../models/ingredientModel')
 const axios = require('axios')
 const AppError = require('../utils/AppError')
+const formatMacros = require('../utils/formatMacros')
+const querystring = require('querystring')
 
 exports.addSwapIngredient = CatchError(async (req, res, next) => {
     const { ingredientId, swapIngredientId, foodItemId } = req.body
     const userId = req.user.id
     const consumer = await Consumer.findOne({ userId })
-
-    let cals
-    let carbs
-    let fat
-    let protein
-
-    const respon = await axios.get(
+    const spoonData = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${swapIngredientId}/information?apiKey=${SPOONACULAR_API_KEY}&unit=g&amount=1`
     )
 
-    const data = respon.data
-    data.nutrition.nutrients.filter((val) => {
-        if (val.name.toLowerCase() === 'fat') {
-            fat = val.amount
-        } else if (val.name.toLowerCase() === 'protein') {
-            protein = val.amount
-        } else if (val.name.toLowerCase() === 'calories') {
-            cals = val.amount
-        } else if (val.name.toLowerCase() === 'carbohydrates') {
-            carbs = val.amount
-        }
-    })
+    const data = spoonData.data
+    const macros = formatMacros(data.nutrition.nutrients)
+
     const swap = await Swaper.create({
         ingredientId,
         swapIngredientId,
@@ -45,10 +32,7 @@ exports.addSwapIngredient = CatchError(async (req, res, next) => {
             unit: data.unit,
             possibleUnits: data.possibleUnits,
             image: data.image,
-            cals,
-            carbs,
-            fat,
-            protein,
+            ...macros,
         }),
     })
     response(201, 'You are successfully swap ingredient', true, { swap }, res)
@@ -58,15 +42,16 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     let { ingredient_id, gap, swap_ingredient, offset, number } = req.query
     offset = offset || 0
     number = number || 1
-
+    const swaps = []
     const ingredient = await Ingredient.findByPk(ingredient_id)
+
     const spoon = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/${ingredient?.spoon_id}/information?amount=${ingredient?.amount}&apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}`
     )
 
     if (!spoon.data) next(new AppError('Not found ingredient whatt you search', 404))
     const macros = getMacros(spoon.data.nutrition.nutrients)
-    const swaps = []
+
     const swap = await axios.get(
         `${SPOONACULAR_API_URL}/food/ingredients/search?query=${swap_ingredient}&apiKey=${SPOONACULAR_API_KEY}&minProteinPercent${
             macros.protein - gap * macros.protein
@@ -77,43 +62,25 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
         }&maxCarbsPercent=${macros.carbs + gap * macros.carbs}&number=4`
     )
 
-    let cals
-    let carbs
-    let fat
-    let protein
-
     if (swap?.data?.results?.length > 0) {
         for (let i = 0; i < swap.data.results.length; i++) {
             const responData = await axios.get(
                 `${SPOONACULAR_API_URL}/food/ingredients/${swap.data.results[i].id}/information?apiKey=${SPOONACULAR_API_KEY}&unit=${ingredient?.unit}&amount=${ingredient?.amount}`
             )
             const data = responData.data
-            data.nutrition.nutrients.filter((val) => {
-                if (val.name.toLowerCase() === 'fat') {
-                    fat = val.amount
-                } else if (val.name.toLowerCase() === 'protein') {
-                    protein = val.amount
-                } else if (val.name.toLowerCase() === 'calories') {
-                    cals = val.amount
-                } else if (val.name.toLowerCase() === 'carbohydrates') {
-                    carbs = val.amount
-                }
-            })
+            const macro = formatMacros(data.nutrition.nutrients)
 
-            const structured_ingredient = {
+            const structuredIngredient = {
                 id: data.id,
                 name: data.name,
                 amount: data.amount,
                 unit: data.unit,
                 possibleUnits: data.possibleUnits,
                 image: data.image,
-                cals,
-                carbs,
-                fat,
-                protein,
+                ...macro,
             }
 
-            swaps.push(structured_ingredient)
+            swaps.push(structuredIngredient)
         }
     }
 
@@ -141,13 +108,23 @@ exports.searchSwapIngredints = CatchError(async (req, res, next) => {
     response(200, `Found ${swaps.length} substitutes for the ingredient`, true, { data: swaps }, res)
 })
 
+exports.searchIngredientToSwap = CatchError(async (req, res, next) => {
+    const { search } = req.query
+
+    const swapData = await axios.get(
+        `${SPOONACULAR_API_URL}/food/ingredients/substitutes?ingredientName=${search}&apiKey=${SPOONACULAR_API_KEY}`
+    )
+
+    const parseResponse = await axios.post(
+        `${SPOONACULAR_API_URL}/recipes/parseIngredients?apiKey=${SPOONACULAR_API_KEY}`,
+        querystring.stringify({ ingredientList: swapData.data.substitutes[0], servings: 1, includeNutrition: true })
+    )
+    response(200, 'You are successfully get swap ingredients', true, { data: parseResponse.data }, res)
+})
+
 function getMacros(nutrients) {
-    let macros = {
-        cals: 0,
-        carbs: 0,
-        protein: 0,
-        fat: 0,
-    }
+    let macros = { cals: 0, carbs: 0, protein: 0, fat: 0 }
+
     for (let i = 0; i < nutrients.length; i++) {
         const nutrient = nutrients[i]
         switch (nutrient.name.toLowerCase()) {

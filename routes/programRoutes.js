@@ -34,6 +34,8 @@ router
     .get(swap.searchSwapIngredints)
     .post(auth.protect, auth.role(['consumer']), swap.addSwapIngredient)
 
+router.route('/swaps/search').get(swap.searchIngredientToSwap)
+
 router
     .route('/:id')
     .get(auth.protect, controller.getProgram)
