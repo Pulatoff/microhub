@@ -43,10 +43,10 @@ exports.addDairy = CatchError(async (req, res, next) => {
     }
     const macroFoods = await addFood(foods, diary.id)
 
-    diary.fat = macros.fat + macrosFoodItems.fat + macroFoods.fat
-    diary.cals = macros.cals + macrosFoodItems.cals + macroFoods.cals
-    diary.carbs = macros.carbs + macrosFoodItems.carbs + macroFoods.carbs
-    diary.protein = macros.protein + macrosFoodItems.protein + macroFoods.protein
+    diary.fat = macros.fat + macrosFoodItems.fat + macroFoods.fat + diary.fat
+    diary.cals = macros.cals + macrosFoodItems.cals + macroFoods.cals + diary.cals
+    diary.carbs = macros.carbs + macrosFoodItems.carbs + macroFoods.carbs + diary.carbs
+    diary.protein = macros.protein + macrosFoodItems.protein + macroFoods.protein + diary.protein
     await diary.save()
     response(201, 'you successfully add your diary', true, {}, res)
 })
